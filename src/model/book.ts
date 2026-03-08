@@ -32,17 +32,17 @@ export class Book {
     condition: BookCondition = BookCondition.Good,
     reviews: BookReview[] = [],
   ) {
-    ;((this.title = title),
-      (this.bookType = bookType),
-      (this.desc = desc),
-      (this.gender = gender),
-      (this.author = author),
-      (this.pages = pages),
-      (this.ISBN = ISBN),
-      (this.language = language),
-      (this.editorial = editorial),
-      (this.publishDate = publishDate),
-      (this.condition = condition),
-      (this.reviews = reviews))
+    this.title = title
+    this.bookType = bookType
+    this.desc = desc
+    this.gender = gender
+    this.author = author
+    this.pages = pages
+    this.ISBN = ISBN
+    this.language = language
+    this.editorial = editorial
+    this.publishDate = publishDate
+    this.condition = condition
+    this.reviews = reviews
   }
 }
