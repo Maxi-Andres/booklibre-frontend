@@ -1,9 +1,9 @@
-import "./App.css";
-
+import NavBar from './components/NavBar'
 export default function App() {
   return (
-    <h1 className="text-3xl font-bold text-blue-500">
-      Hello World from Tailwind!
-    </h1>
+    <NavBar />
+    // <h1 className="text-3xl font-bold text-blue-500">
+    //   Hello World from Tailwind!
+    // </h1>
   );
 }
