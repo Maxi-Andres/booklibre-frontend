@@ -1,0 +1,20 @@
+import { useRouteError, isRouteErrorResponse, Link } from "react-router"
+
+export default function NotFound() {
+  const error = useRouteError() // esto es un hook que agarra el error que tiro React Router
+
+  return (
+    <div className="flex h-screen flex-col items-center justify-center gap-4">
+      <h1 className="text-4xl font-bold">
+        {isRouteErrorResponse(error) ? error.status : "Error"}
+        {/* devuelve true si tiro un error React Router */}
+      </h1>
+      <p className="text-gray-500">
+        {isRouteErrorResponse(error) ? error.statusText : "Algo salió mal"}
+      </p>
+      <Link to="/" className="text-blue-500 underline">
+        Volver al inicio
+      </Link>
+    </div>
+  )
+}
