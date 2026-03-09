@@ -1,9 +1,17 @@
-import "./App.css";
+// Temporalmente, en el archivo de rutas
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {Login} from './pages/auth/login'
+import {EditBook} from './pages/auth/editBook'
 
-export default function App() {
+function App() {
   return (
-    <h1 className="text-3xl font-bold text-blue-500">
-      Hello World from Tailwind!
-    </h1>
-  );
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/editBook" element={<EditBook />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
+
+export default App
