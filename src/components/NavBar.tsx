@@ -1,10 +1,11 @@
 import logo from "../assets/logo.svg"
 import userAvatar from "../assets/user-avatar.jpg"
+import { Link } from "react-router"
 
 const navigation = [
-  { name: "Inicio", href: "#", current: true },
-  { name: "Mis Préstamos", href: "#", current: false },
-  { name: "Perfil", href: "#", current: false },
+  { name: "Inicio", href: "/", current: true },
+  { name: "Mis Préstamos", href: "/prestamos", current: false },
+  { name: "Perfil", href: "/perfil", current: false },
 ]
 
 export default function NavBar() {
@@ -28,9 +29,9 @@ export default function NavBar() {
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex items-center space-x-1">
                 {navigation.map((item) => (
-                  <a
+                  <Link
                     key={item.name}
-                    href={item.href}
+                    to={item.href}
                     className={`px-3 py-2 text-sm font-semibold transition-colors duration-150 ${
                       item.current
                         ? "text-blue-500"
@@ -38,7 +39,7 @@ export default function NavBar() {
                     }`}
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -47,7 +48,6 @@ export default function NavBar() {
           {/* Right: Bibliokarma + Avatar */}
           <div className="flex items-center gap-12">
             <div className="flex items-center gap-1.5 text-sm text-gray-500">
-              {/* Icon */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -55,10 +55,9 @@ export default function NavBar() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="icon icon-tabler icons-tabler-outline icon-tabler-chart-histogram"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                 <path d="M3 3v18h18" />
@@ -73,6 +72,7 @@ export default function NavBar() {
                 <span className="font-semibold text-[#636F80]">2345</span>
               </span>
             </div>
+
             {/* Avatar */}
             <div>
               <img
