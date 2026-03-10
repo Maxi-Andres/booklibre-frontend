@@ -5,7 +5,7 @@ import { Link } from "react-router"
 const navigation = [
   { name: "Inicio", href: "/", current: true },
   { name: "Mis Préstamos", href: "/prestamos", current: false },
-  { name: "Perfil", href: "/perfil", current: false },
+  { name: "Perfil", href: "/profile", current: false },
 ]
 
 export default function NavBar() {
@@ -74,13 +74,13 @@ export default function NavBar() {
             </div>
 
             {/* Avatar */}
-            <div>
+            <Link to={"/profile"}>
               <img
                 alt="User avatar"
                 src={userAvatar}
                 className="size-8 rounded-full object-cover ring-2 ring-gray-100"
               />
-            </div>
+            </Link>
           </div>
         </div>
       </div>

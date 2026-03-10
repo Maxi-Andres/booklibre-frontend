@@ -3,6 +3,7 @@ import RootLayout from "@/layouts/RootLayout"
 import LoanDetails from "@/pages/LoanDetails"
 import NotFound from "@/pages/NotFound"
 import BookDetail from "@/pages/BookDetail"
+import Profile from "@/pages/Profile"
 import App from "@/App"
 import AuthLayout from "@/layouts/AuthLayout"
 
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
       { index: true, element: <App /> }, // index es la ruta por defecto
       { path: "prestamos-de-libros", element: <LoanDetails /> },
       { path: "detalle-de-libro", element: <BookDetail /> },
+      { path: "profile", element: <Profile/>}
     ],
   },
   {
