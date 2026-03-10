@@ -29,7 +29,7 @@ export class UserType {
     this.errors.push(new ValidationMessage(field, message))
   }
 
-  validate(checkMock: boolean = true) {
+  validate() {
   this.errors = [];
   
   // validacion de mail
@@ -48,23 +48,6 @@ export class UserType {
   } else if (this.password.length < 6) {
     this.addError('password', 'La contraseña debe tener al menos 6 caracteres');
   }
-
-  // valido en el mock
-  if (checkMock && this.errors.length === 0) {
-    // busco el usuario en el mock
-    const userByEmail = USERS_LIST_MOCK.find(user => user.mail === this.mail);
-    
-    if (!userByEmail) {
-      // el email no existe en el mock
-      this.addError('email', 'Este email no está registrado');
-    } else {
-      // la contraseña no coincide con la mockeada
-      if (userByEmail.password !== this.password) {
-        this.addError('password', 'Contraseña incorrecta');
-      }
-    }
-  }
-
   return this.errors;
 }
 }

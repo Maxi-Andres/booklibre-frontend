@@ -7,6 +7,7 @@ class UserService {
   }
 
   async getUser(mail: string, password: string) {
+    console.log('Mocks:', USERS_LIST_MOCK);
     return USERS_LIST_MOCK.find(user => 
       user.mail !== undefined && 
       user.mail === mail && 
