@@ -1,22 +1,22 @@
 import logo from "../assets/logo.svg"
 import userAvatar from "../assets/user-avatar.jpg"
 import { Link, useLocation } from "react-router"
-import type { LogProps } from "@/types/authState";
+import type { LogProps } from "@/types/authState"
 
 
 const navigation = [
-  { name: "Inicio", href: "/" },
-  { name: "Mis Préstamos", href: "/prestamos-de-libros" },
-  { name: "Perfil", href: "/perfil" },
-];
+  { name: "Inicio", href: "/", current: true },
+  { name: "Mis Préstamos", href: "/prestamos", current: false },
+  { name: "Perfil", href: "/profile", current: false },
+]
 
 export default function NavBar({ onLog }: LogProps) {
-  const location = useLocation();
+  const location = useLocation()
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-  onLog(null)
-  };
+    localStorage.removeItem('user')
+    onLog(null)
+  }
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -58,12 +58,13 @@ export default function NavBar({ onLog }: LogProps) {
               </span>
             </div>
 
-            {/* Avatar */}
-            <img
-              alt="User avatar"
-              src={userAvatar}
-              className="size-8 rounded-full object-cover ring-2 ring-gray-100"
-            />
+            <Link to={"/profile"}>
+              <img
+                alt="User avatar"
+                src={userAvatar}
+                className="size-8 rounded-full object-cover ring-2 ring-gray-100"
+              />
+            </Link>
 
             {/* Logout button */}
             <button
@@ -75,9 +76,9 @@ export default function NavBar({ onLog }: LogProps) {
               </svg>
               Salir
             </button>
+            
           </div>
         </div>
       </div>
     </nav>
-  );
-}
+  )}
