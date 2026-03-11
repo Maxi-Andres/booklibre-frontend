@@ -1,4 +1,4 @@
-import ProfileBook from "@/components/profileBook"
+import ProfileBook from '../components/ProfileBook'
 import Tag from "@/components/Tag"
 
 import {

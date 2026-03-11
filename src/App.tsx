@@ -3,6 +3,7 @@ import { useState} from 'react'
 import { Login } from '../src/pages/login'
 import HomePage from './pages/HomePages'
 import { PrivateLayer } from './components/PrivateLayer'
+import Profile from "@/pages/Profile"
 
 
 const BookDetail = () => <div className="p-8">Detalle del Libro</div>;
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/detalle-de-libro" element={<BookDetail />} />
           <Route path="/prestamos-de-libros" element={<LoanDetails />} />
+          <Route path="/profile" element={<Profile/>} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Route>
       ) : (<>
