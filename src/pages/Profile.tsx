@@ -1,3 +1,6 @@
+import ProfileBook from "@/components/profileBook"
+import Tag from "@/components/Tag"
+
 import {
   GearIcon,
   PlusCircleIcon,
@@ -5,6 +8,7 @@ import {
   CalendarBlankIcon,
   MapPinIcon,
   ChartLineIcon,
+  ArrowsDownUpIcon,
 } from "@phosphor-icons/react"
 
 export default function Profile() {
@@ -21,13 +25,22 @@ export default function Profile() {
             <p className="text-3xl font-bold">Emilia Romero</p>
             <p className="text-blue-400">Pedazo de lectora</p>
             <div className="flex gap-1 text-sm text-gray-400">
-              <p><CalendarBlankIcon size={15} className="inline" /> Se unio en 2001 ·</p>
-              <p><MapPinIcon size={15} className="inline" /> Gonzalez Catán, BA · </p>
-              <p><ChartLineIcon size={15} className="inline" /> Bibliokarmas 2345 </p>
+              <p>
+                <CalendarBlankIcon size={15} className="inline" /> Se unio en
+                2001 ·
+              </p>
+              <p>
+                <MapPinIcon size={15} className="inline" /> Gonzalez Catán, BA
+                ·
+              </p>
+              <p>
+                <ChartLineIcon size={15} className="inline" /> Bibliokarmas
+                2345
+              </p>
             </div>
           </div>
 
-          <button className="max-w-25 rounded-lg text-sm bg-gray-200">
+          <button className="max-w-25 cursor-pointer rounded-lg bg-gray-200 text-sm hover:bg-gray-300">
             <div className="flex flex-row items-center p-2">
               <GearIcon size={20} />
               <p className="font-bold">Editar Perfil</p>
@@ -78,13 +91,64 @@ export default function Profile() {
           <div className="flex flex-1 flex-col">
             <section className="mb-4 flex justify-between">
               <p className="text-2xl font-bold">Gestión de Mis Libros</p>
-              <button className="rounded-lg p-1.5 text-sm bg-red-300">
+              <button className="cursor-pointer rounded-lg bg-red-300 p-1.5 text-sm hover:bg-red-400">
                 <PlusCircleIcon size={20} className="mr-1 inline" />
                 <p className="inline font-bold">Agregar Nuevo Libro</p>
               </button>
             </section>
 
-            <section className="h-102 flex-1 rounded-xl border border-gray-200 bg-white"></section>
+            <section className="flex h-102 flex-1 flex-col rounded-xl border border-gray-200 bg-white gap-1">
+              <section className="flex gap-2 p-4">
+                <Tag text="Todos"></Tag>
+                <Tag text="Disponibles"></Tag>
+                <Tag text="Prestados"></Tag>
+              </section>
+              <section className="flex pl-3 gap-2">
+                <div className="flex items-center w-3/5 justify-between">
+                  <p>Titulo y Autor</p>
+                  <button className="hover:cursor-pointer">
+                    <ArrowsDownUpIcon size={15} />
+                  </button>
+                </div>
+                <div className="flex justify-center items-center ">
+                  <p>Disponible</p>
+                  <button className="hover:cursor-pointer">
+                    <ArrowsDownUpIcon size={15} />
+                  </button>
+                </div>
+                <div className="flex justify-center items-center ">
+                  <p>Agregado</p>
+                  <button className="hover:cursor-pointer">
+                    <ArrowsDownUpIcon size={15} />
+                  </button>
+                </div>
+                <p>Acciones</p>
+              </section>
+              <ProfileBook
+                bookImg="/src/assets/book_cover1.png"
+                bookAuthor="Ray Bradbury"
+                bookGender="PsyFi"
+                bookName="Farenheit 451"
+                bookState="Prestado"
+                additionDate="4 Oct, 2023"
+              />
+              <ProfileBook 
+                bookImg="/src/assets/book_cover2.png"
+                bookAuthor="Stephen King"
+                bookGender="Terror"
+                bookName="Pet Semetary"
+                bookState="Disponible"
+                additionDate="24 Feb, 2023"
+              />
+              <ProfileBook 
+                bookImg="/src/assets/book_cover3.png"
+                bookAuthor="Hannah Kaner"
+                bookGender="Fantasia"
+                bookName="Godkiller"
+                bookState="Disponible"
+                additionDate="1 Mar, 2023"
+              />
+            </section>
           </div>
         </section>
       </section>
