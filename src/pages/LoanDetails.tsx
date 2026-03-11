@@ -125,7 +125,7 @@ export default function LoanDetails() {
           {filtered.map((book) => (
             <div
               key={book.id}
-              className="relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm"
+              className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.03] hover:shadow-xl hover:shadow-gray-300/60"
             >
               {/* =================== Status badge =================== */}
               <span
@@ -138,7 +138,7 @@ export default function LoanDetails() {
               <img
                 src={book.cover}
                 alt={book.title}
-                className="h-68 object-cover transition duration-150 hover:scale-105"
+                className="h-68 object-cover transition duration-300 group-hover:scale-103"
               />
 
               {/* =================== Info =================== */}
