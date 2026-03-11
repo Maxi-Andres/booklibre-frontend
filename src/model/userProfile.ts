@@ -1,5 +1,6 @@
 import { Book } from "./book"
 import { type UserType, Reader } from "../types/userType"
+import type { UserProfileJSON } from "@/json/userProfileJSON"
 
 export class UserProfile {
   name: string
@@ -35,5 +36,10 @@ export class UserProfile {
     this.userType = userType
     this.ownBooks = ownBooks
     this.readBooks = readBooks
+  }
+
+  static fromJSON(userJSON: UserProfileJSON): UserProfile {
+    const profile = Object.assign(new UserProfile(), userJSON, {})
+    return profile
   }
 }
