@@ -3,13 +3,15 @@ import { BookType } from "../types/bookType"
 import { BookGender } from "../types/bookGender"
 import { Languages } from "../types/languages"
 import { BookCondition } from "../types/bookCondition"
+import { Author } from "./author"
+import { BookReserve } from "./bookReserve"
 
 export class Book {
   title: string
   bookType: BookType
   desc: string
   gender: BookGender
-  author: string
+  author: Author
   pages: number
   ISBN: string
   language: Languages
@@ -17,13 +19,15 @@ export class Book {
   publishDate: Date
   condition: BookCondition
   reviews: BookReview[]
+  img: string
+  reservation?: BookReserve
 
   constructor(
     title: string = "",
     bookType: BookType = BookType.Common,
     desc: string = "",
     gender: BookGender = BookGender.Drama,
-    author: string = "",
+    author: Author = new Author("",""),
     pages: number = 0,
     ISBN: string = "",
     language: Languages = Languages.Spanish,
@@ -31,6 +35,8 @@ export class Book {
     publishDate: Date = new Date(),
     condition: BookCondition = BookCondition.Good,
     reviews: BookReview[] = [],
+    img: string = "",
+    reservation?: BookReserve 
   ) {
     this.title = title
     this.bookType = bookType
@@ -44,5 +50,11 @@ export class Book {
     this.publishDate = publishDate
     this.condition = condition
     this.reviews = reviews
+    this.img = img
+    this.reservation = reservation
+  }
+
+  calculateBibliokarmas(): number{
+    return 0
   }
 }
