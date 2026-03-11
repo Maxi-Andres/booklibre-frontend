@@ -1,4 +1,3 @@
-import { USERS_LIST_MOCK } from "../data/userMock"
 import { ValidationMessage } from "./validationMessage"
 
 export type UserJSON = {

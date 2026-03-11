@@ -1,12 +1,12 @@
 import { Link, useNavigate, useLocation} from 'react-router'
-import { UserType } from '../../domain/user'
+import { UserType } from '../../src/domain/user'
 import { useState} from 'react'
-import { ValidationMessage } from '../../domain/validationMessage'
-import ValidationField from '../../ValidationField/ValidationField'
-import { userService } from '../../services/UserService'
-import { getErrorMessage } from '../../domain/errorHandler'
-import { useOnInit } from '../../hooks/UseOnInit'
-import type { LogProps } from '../../types/authState'
+import { ValidationMessage } from '../../src/domain/validationMessage'
+import ValidationField from '../../src/ValidationField/ValidationField'
+import { userService } from '../../src/services/UserService'
+import { getErrorMessage } from '../../src/domain/errorHandler'
+import { useOnInit } from '../../src/hooks/UseOnInit'
+import type { LogProps } from '../../src/types/authState'
 
 interface LoginFormData {
   email: string;
@@ -18,7 +18,7 @@ export const Login = ({ onLog }: LogProps) => {
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
   
-  // Estado del formulario
+  // estado del formulario
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: ''
@@ -29,7 +29,7 @@ export const Login = ({ onLog }: LogProps) => {
   
 
 
-  // Muestra mensaje si viene de una ruta protegida
+  // muestra mensaje si viene de una ruta protegida
   useOnInit(() => {
     if (from !== '/') {
       alert('Debe iniciar sesión para acceder a esa página')

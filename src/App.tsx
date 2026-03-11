@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router'
 import { useState} from 'react'
-import { Login } from './pages/auth/login'
+import { Login } from '../src/pages/login'
 import HomePage from './pages/HomePages'
 import { PrivateLayer } from './components/PrivateLayer'
 
