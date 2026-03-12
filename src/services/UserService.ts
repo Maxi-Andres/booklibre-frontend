@@ -8,6 +8,7 @@ class UserService {
 
   async getUser(mail: string, password: string) {
     console.log('Mocks:', USERS_LIST_MOCK);
+    // localStorage.setItem(mail, password)
     return USERS_LIST_MOCK.find(user => 
       user.mail !== undefined && 
       user.mail === mail && 

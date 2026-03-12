@@ -7,7 +7,7 @@ import type { LogProps } from "@/types/authState"
 const navigation = [
   { name: "Inicio", href: "/", current: true },
   { name: "Mis Préstamos", href: "/prestamos-de-libros", current: false },
-  { name: "Perfil", href: "/perfil", current: false },
+  { name: "Perfil", href: "/profile", current: false },
 ]
 
 export default function NavBar({ onLog }: LogProps) {

@@ -67,6 +67,7 @@ export const Login = ({ onLog }: LogProps) => {
         localStorage.setItem('user', JSON.stringify(validation))
         onLog(validation)
         navigate(from, { replace: true })
+        // navigate("/", { replace: true })
       }
     } catch (error) {
       const errorMessage = getErrorMessage(error)
