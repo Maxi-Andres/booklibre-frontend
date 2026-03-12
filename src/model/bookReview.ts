@@ -1,5 +1,6 @@
 import { ValidationMessage } from "../ValidationField/validationMessage"
 import { type BookReviewJSON } from "../json/bookReviewJSON"
+import { UserReviewer } from "./userReviewer"
 
 export class BookReview {
   MAX_CHARACTERS: number = 250
@@ -8,14 +9,24 @@ export class BookReview {
   rate: number
   review: string
   reviewerId: number
+  color: string
+  reviewer: UserReviewer  
 
-  constructor(rate: number = 0, review: string = "", reviewerId: number = 0) {
+  constructor(
+    rate: number = 0, 
+    review: string = "",
+    color: string = "",
+    reviewerId: number = 0,
+    reviewer: UserReviewer =  new UserReviewer()
+  ) {
     this.rate = rate
     this.review = review
+    this.color = color
+    this.reviewer = reviewer
     this.reviewerId = reviewerId
   }
 
-  invalidReviewLength(): Boolean {
+  invalidReviewLength(): boolean {
     return this.review.length > this.MAX_CHARACTERS
   }
 
