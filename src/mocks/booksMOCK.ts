@@ -5,18 +5,31 @@ import { BookCondition } from "@/types/bookCondition";
 import { BookGender } from "@/types/bookGender";
 import { BookType } from "@/types/bookType";
 import { Languages } from "@/types/languages";
+import BookAvatar from "../assets/Scott Fitzgerald.jpg"
+import { Author } from "@/model/author";
 
-const reviewOne : BookReview = new BookReview(4)
+// const reviewOne : BookReview = new BookReview(4)
 const reviewTwo : BookReview = new BookReview(5)
 const reviewThree : BookReview = new BookReview(5)
+const reviewOne: BookReview = new BookReview(
+  5,
+  "Muy buen libro, me encantó, recomiendo",
+  "bg-green-500",
+  "Jorge"
+);
 
-const bookOne : Book = new Book(
+const author = new Author(
+  "F. Scott Fitzgerald",
+  BookAvatar
+);
+
+export const bookOne : Book = new Book(
   /* id: */ 1,
   /* title: */ 'La Biblioteca de la Medianoche',
   /* bookType: */ BookType.Common,
   /* desc: */ "",
   /* gender: */ BookGender.SciencieFiction,
-  /* author: */ "Matt Haig",
+  /* author: */ author,
   /* pages: */ 288,
   /* ISBN: */ "9780525559474",
   /* language: */ Languages.Spanish,
@@ -34,7 +47,7 @@ const bookTwo : Book = new Book(
   /* bookType: */ BookType.WithADedication,
   /* desc: */ "",
   /* gender: */ BookGender.ClassicLiterature,
-  /* author: */ "Tara Westover",
+  /* author: */ author,
   /* pages: */ 288,
   /* ISBN: */ "9780525559474",
   /* language: */ Languages.English,
@@ -52,7 +65,7 @@ const bookThree : Book = new Book(
   /* bookType: */ BookType.Collectible,
   /* desc: */ "",
   /* gender: */ BookGender.Drama,
-  /* author: */ "Frank Herbert",
+  /* author: */ author,
   /* pages: */ 288,
   /* ISBN: */ "9780525559474",
   /* language: */ Languages.Portuguese,
@@ -70,7 +83,7 @@ const bookFour : Book = new Book(
   /* bookType: */ BookType.Common,
   /* desc: */ "",
   /* gender: */ BookGender.Romance,
-  /* author: */ "Sally Rooney",
+  /* author: */ author,
   /* pages: */ 288,
   /* ISBN: */ "9780525559474",
   /* language: */ Languages.Spanish,

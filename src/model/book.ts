@@ -4,7 +4,6 @@ import { BookGender } from "../types/bookGender"
 import { Languages } from "../types/languages"
 import { BookCondition } from "../types/bookCondition"
 import { Author } from "./author"
-import { BookReserve } from "./bookReserve"
 import { UserProfile } from "./userProfile"
 
 export class Book {
@@ -21,7 +20,7 @@ export class Book {
   publishDate: Date
   condition: BookCondition
   reviews: BookReview[]
-  reservation?: BookReserve
+  // reservation?: BookReserve
   imageSrc: string
   owner: UserProfile
 
@@ -39,7 +38,7 @@ export class Book {
     publishDate: Date = new Date(),
     condition: BookCondition = BookCondition.Good,
     reviews: BookReview[] = [],
-    reservation?: BookReserve ,
+    // reservation?: BookReserve ,
     imageSrc: string = "",
     owner: UserProfile = new UserProfile()
   ) {
@@ -56,7 +55,7 @@ export class Book {
     this.publishDate = publishDate
     this.condition = condition
     this.reviews = reviews
-    this.reservation = reservation
+    // this.reservation = reservation
     this.imageSrc = imageSrc
     this.owner = owner
   }

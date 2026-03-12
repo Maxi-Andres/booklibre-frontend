@@ -16,7 +16,7 @@ const BookCardHome = ({book} : {book : Book}) => {
       </div>
 
       <h3 className="mt-4 text-lg truncate font-bold text-gray-700">{book.title}</h3>
-      <h3 className="mt-1 text-md text-gray-700">{book.author}</h3>
+      <h3 className="mt-1 text-md text-gray-700">{book.author.name}</h3>
       <hr className="my-2 border-gray-300"/>
 
 {/* =========== VER SI SE PUEDE HACER DINAMICAMENTE !! ==== */}
