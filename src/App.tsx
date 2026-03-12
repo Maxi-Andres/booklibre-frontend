@@ -10,6 +10,12 @@ export default function App() {
         </Link>
         <Link
           className="rounded-md border bg-red-200 p-1"
+          to="home"
+        >
+          Home
+        </Link>
+        <Link
+          className="rounded-md border bg-red-200 p-1"
           to="detalle-de-libro"
         >
           BookDetail

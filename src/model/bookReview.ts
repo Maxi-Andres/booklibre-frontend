@@ -7,10 +7,12 @@ export class BookReview {
   errors: ValidationMessage[] = []
   rate: number
   review: string
+  reviewerId: number
 
-  constructor(rate: number = 0, review: string = "") {
+  constructor(rate: number = 0, review: string = "", reviewerId: number = 0) {
     this.rate = rate
     this.review = review
+    this.reviewerId = reviewerId
   }
 
   invalidReviewLength(): Boolean {
