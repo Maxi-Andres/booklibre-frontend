@@ -20,6 +20,9 @@ export default function App() {
         >
           LoanDetails
         </Link>
+        <Link className="rounded-md border bg-red-200 p-1" to="perfil">
+          Profile
+        </Link>
       </div>
     </div>
   )

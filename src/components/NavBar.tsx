@@ -4,8 +4,8 @@ import { Link } from "react-router"
 
 const navigation = [
   { name: "Inicio", href: "/", current: true },
-  { name: "Mis Préstamos", href: "/prestamos", current: false },
-  { name: "Perfil", href: "/profile", current: false },
+  { name: "Mis Préstamos", href: "/prestamos-de-libros", current: false },
+  { name: "Perfil", href: "/perfil", current: false },
 ]
 
 export default function NavBar() {
