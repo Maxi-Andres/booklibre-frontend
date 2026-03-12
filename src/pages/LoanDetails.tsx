@@ -1,4 +1,3 @@
-// src/pages/LoanDetails.tsx
 import { useState } from "react"
 import { Link } from "react-router"
 
@@ -96,10 +95,10 @@ export default function LoanDetails() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-2 text-sm font-medium transition-all ${
+              className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer ${
                 activeTab === tab
                   ? "border-b-3 border-blue-500 text-blue-500"
-                  : "text-gray-500 hover:text-gray-700"
+                  : "border-b-3 text-gray-500 hover:text-gray-700"
               }`}
             >
               {tab === "prestados-a-mi" ? "Prestados a mí" : "Prestados por mí"}
@@ -185,7 +184,7 @@ export default function LoanDetails() {
                 </div>
 
                 {book.canRate && (
-                  <button className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg border border-gray-200 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:cursor-pointer hover:bg-gray-50">
+                  <button className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg border border-blue-50 bg-blue-100 py-1.5 text-xs font-semibold text-blue-500 transition-colors hover:cursor-pointer hover:bg-blue-200">
                     <IconStar size={12} />
                     Calificar
                   </button>
@@ -196,17 +195,18 @@ export default function LoanDetails() {
         </div>
 
         {/* =================== Pagination =================== */}
-        <div className="mt-8 flex items-center justify-center gap-2">
-          <button className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-50">
+        {/* no te tiene que dejas tocar ni los bordes ni el que esta seleccionado */}
+        <div className="mt-8 flex items-center justify-center gap-1.5">
+          <button className="h-8 w-8 rounded-lg border border-gray-200 text-sm text-gray-400 transition-all duration-150 ease-out hover:scale-[1.08] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60">
             ‹
           </button>
-          <button className="rounded-lg bg-blue-500 px-3 py-1.5 text-sm font-semibold text-white">
+          <button className="h-8 w-8 rounded-lg bg-blue-500 text-sm font-semibold text-white shadow-sm shadow-blue-200">
             1
           </button>
-          <button className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-50">
+          <button className="h-8 w-8 rounded-lg border border-gray-200 text-sm text-gray-400 transition-all duration-150 ease-out hover:scale-[1.08] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60">
             2
           </button>
-          <button className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-50">
+          <button className="h-8 w-8 rounded-lg border border-gray-200 text-sm text-gray-400 transition-all duration-150 ease-out hover:scale-[1.08] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60">
             ›
           </button>
         </div>
@@ -226,7 +226,7 @@ export default function LoanDetails() {
           {/* no se a donde por ahora */}
           <Link
             to="/catalogo"
-            className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
+            className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600"
           >
             Explorar Catálogo
           </Link>
