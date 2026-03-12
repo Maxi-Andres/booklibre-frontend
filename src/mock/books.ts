@@ -51,7 +51,7 @@ export const mockBook = new Book(
   "978-0743273565",
   Languages.English,
   "Scribner",
-  new Date("1925-04-10"),
+  new Date("10 Abril, 1925"),
   BookCondition.Good,
   [review_1, review_2],
   BookImg
@@ -60,8 +60,8 @@ export const mockBook = new Book(
 export const mockReservation = new BookReserve(
   undefined,
   mockBook,
-  new Date("2026-03-11"),
-  new Date("2026-03-20"),
+  new Date("24 Oct, 2024"),
+  new Date("07 Nov, 2023"),
   9
 );
 
