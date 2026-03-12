@@ -4,4 +4,5 @@ export type BookReviewJSON = {
   review: string
   color: string
   reviewer: UserReviewer
+  reviewerId: number
 }

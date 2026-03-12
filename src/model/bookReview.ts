@@ -10,17 +10,20 @@ export class BookReview {
   review: string
   color: string
   reviewer: UserReviewer
+  reviewerId: number
 
   constructor(
     rate: number = 0, 
     review: string = "",
     color: string = "",
-    reviewer: UserReviewer =  new UserReviewer()
+    reviewer: UserReviewer =  new UserReviewer(),
+    reviewerId: number = 0
   ) {
     this.rate = rate
     this.review = review
     this.color = color
     this.reviewer = reviewer
+    this.reviewerId = reviewerId    
   }
 
   invalidReviewLength(): boolean {

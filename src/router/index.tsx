@@ -3,6 +3,7 @@ import RootLayout from "@/layouts/RootLayout"
 import LoanDetails from "@/pages/LoanDetails"
 import NotFound from "@/pages/NotFound"
 import BookDetail from "@/pages/BookDetail"
+import Home from "@/pages/Home"
 import App from "@/App"
 import AuthLayout from "@/layouts/AuthLayout"
 
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
     children: [
       // rutas hijas dentro de el outlet
       { index: true, element: <App /> }, // index es la ruta por defecto
+      { path: "home", element: <Home /> }, // luego será el index esta
       { path: "prestamos-de-libros", element: <LoanDetails /> },
       { path: "detalle-de-libro", element: <BookDetail /> },
     ],
