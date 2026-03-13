@@ -22,6 +22,9 @@ importers:
       axios:
         specifier: ^1.13.6
         version: 1.13.6
+      phosphor-icons:
+        specifier: ^1.4.2
+        version: 1.4.2
       react:
         specifier: ^19.2.0
         version: 19.2.4
@@ -2225,6 +2228,9 @@ packages:
       }
     engines: { node: ">=8" }
 
+  phosphor-icons@1.4.2:
+    resolution: {integrity: sha512-vDyuRWLSEb87dxpoOGpP1GCjr/TFzA0Ljt0TtJcwXO7/iPdSZW0e/2m1jsANH1ML5ZyZXcjeWx6pzT0A0tgYDA==}
+
   picocolors@1.1.1:
     resolution:
       {
@@ -3793,6 +3799,8 @@ snapshots:
   path-exists@4.0.0: {}
 
   path-key@3.1.1: {}
+
+  phosphor-icons@1.4.2: {}
 
   picocolors@1.1.1: {}
 

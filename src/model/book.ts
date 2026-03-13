@@ -3,13 +3,16 @@ import { BookType } from "../types/bookType"
 import { BookGender } from "../types/bookGender"
 import { Languages } from "../types/languages"
 import { BookCondition } from "../types/bookCondition"
+import { Author } from "./author"
+import { UserProfile } from "./userProfile"
 
 export class Book {
+  id: number
   title: string
   bookType: BookType
   desc: string
   gender: BookGender
-  author: string
+  author: Author
   pages: number
   ISBN: string
   language: Languages
@@ -17,13 +20,17 @@ export class Book {
   publishDate: Date
   condition: BookCondition
   reviews: BookReview[]
+  // reservation?: BookReserve
+  imageSrc: string
+  owner: UserProfile
 
   constructor(
+    id: number = 0,
     title: string = "",
     bookType: BookType = BookType.Common,
     desc: string = "",
     gender: BookGender = BookGender.Drama,
-    author: string = "",
+    author: Author = new Author("",""),
     pages: number = 0,
     ISBN: string = "",
     language: Languages = Languages.Spanish,
@@ -31,7 +38,11 @@ export class Book {
     publishDate: Date = new Date(),
     condition: BookCondition = BookCondition.Good,
     reviews: BookReview[] = [],
+    // reservation?: BookReserve ,
+    imageSrc: string = "",
+    owner: UserProfile = new UserProfile()
   ) {
+    this.id = id
     this.title = title
     this.bookType = bookType
     this.desc = desc
@@ -44,5 +55,17 @@ export class Book {
     this.publishDate = publishDate
     this.condition = condition
     this.reviews = reviews
+    // this.reservation = reservation
+    this.imageSrc = imageSrc
+    this.owner = owner
+  }
+
+  calculateBibliokarmas(): number{
+    return 0
+  }
+
+  ratingAvg(): number {
+    if (this.reviews.length == 0) return 0.0
+    return this.reviews.reduce((s, r) => s + r.rate, 0) / this.reviews.length
   }
 }

@@ -7,13 +7,25 @@ export class BookReview {
   errors: ValidationMessage[] = []
   rate: number
   review: string
+  color: string
+  userName : string
+  // reviewerId: number
 
-  constructor(rate: number = 0, review: string = "") {
+  constructor(
+    rate: number = 0, 
+    review: string = "",
+    color: string = "",
+    userName: string = "",
+    // reviewerId: number = 0
+  ) {
     this.rate = rate
     this.review = review
+    this.color = color
+    this.userName = userName
+    // this.reviewerId = reviewerId    
   }
 
-  invalidReviewLength(): Boolean {
+  invalidReviewLength(): boolean {
     return this.review.length > this.MAX_CHARACTERS
   }
 
