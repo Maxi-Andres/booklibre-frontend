@@ -1,7 +1,10 @@
+import { REST_SERVER_URL } from "@/config/configuration";
 import { booksMOCK } from "@/mocks/booksMOCK";
-import type { Book } from "@/model/book";
+import { Book } from "@/model/book";
 import type { Reservation } from "@/model/reservation";
 import type { BookFilters } from "@/types/bookFilters";
+import axios from "axios";
+import { getAxiosData } from "./common";
 
 
 class BookService {
@@ -38,7 +41,14 @@ class BookService {
         matchesOwner
       )
     })
-}
+  }
+
+  async getUserOwnBooks(): Promise<Book[]> {
+    const response = () => axios.get<Book[]>(
+      REST_SERVER_URL + `/userOwnBooks/${localStorage.getItem('id')}`
+    )
+    return (await getAxiosData(response)).map(Book.fromJSON)
+  }
 
 }
 

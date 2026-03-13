@@ -1,9 +1,9 @@
-import { UserType } from '../domain/user'
+import { UserLogin } from '@/model/user'
 import { USERS_LIST_MOCK } from '../data/userMock'
 
 class UserService {
   async getAllUsers(){
-    return USERS_LIST_MOCK.map(UserType.fromJson)
+    return USERS_LIST_MOCK.map(UserLogin.fromJson)
   }
 
   async getUser(mail: string, password: string) {
@@ -23,7 +23,7 @@ class UserService {
     return !foundUser
   }
 
-  async createUser(user: UserType) {
+  async createUser(user: UserLogin) {
     const userJSON = { ...user }
     USERS_LIST_MOCK.push(userJSON)
     return userJSON  

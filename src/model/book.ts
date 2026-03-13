@@ -1,10 +1,11 @@
-import type { BookReview } from "./bookReview"
+import type { BookReview } from "./review"
 import { BookType } from "../types/bookType"
 import { BookGender } from "../types/bookGender"
 import { Languages } from "../types/languages"
 import { BookCondition } from "../types/bookCondition"
 import { Author } from "./author"
 import { UserProfile } from "./userProfile"
+import type { BookJSON } from "@/json/bookJSON"
 
 export class Book {
   id: number
@@ -20,7 +21,6 @@ export class Book {
   publishDate: Date
   condition: BookCondition
   reviews: BookReview[]
-  // reservation?: BookReserve
   imageSrc: string
   owner: UserProfile
 
@@ -30,7 +30,7 @@ export class Book {
     bookType: BookType = BookType.Common,
     desc: string = "",
     gender: BookGender = BookGender.Drama,
-    author: Author = new Author("",""),
+    author: Author = new Author(),
     pages: number = 0,
     ISBN: string = "",
     language: Languages = Languages.Spanish,
@@ -38,9 +38,8 @@ export class Book {
     publishDate: Date = new Date(),
     condition: BookCondition = BookCondition.Good,
     reviews: BookReview[] = [],
-    // reservation?: BookReserve ,
     imageSrc: string = "",
-    owner: UserProfile = new UserProfile()
+    owner: UserProfile = new UserProfile(),
   ) {
     this.id = id
     this.title = title
@@ -55,17 +54,21 @@ export class Book {
     this.publishDate = publishDate
     this.condition = condition
     this.reviews = reviews
-    // this.reservation = reservation
     this.imageSrc = imageSrc
     this.owner = owner
   }
 
-  calculateBibliokarmas(): number{
+  calculateBibliokarmas(): number {
     return 0
   }
 
   ratingAvg(): number {
     if (this.reviews.length == 0) return 0.0
     return this.reviews.reduce((s, r) => s + r.rate, 0) / this.reviews.length
+  }
+
+  static fromJSON(bookJSON: BookJSON): Book {
+    const book = Object.assign(new Book(), bookJSON, {})
+    return book
   }
 }

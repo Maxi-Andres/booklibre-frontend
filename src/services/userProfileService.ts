@@ -4,10 +4,12 @@ import { UserProfile } from "@/model/userProfile"
 import axios from "axios"
 
 class UserProfileService {
-  async getProfile(id: number): Promise<UserProfile> {
+  async getProfile() {
     const response = await axios.get<UserProfileJSON>(
-      REST_SERVER_URL + `/profile/${id}`,
+      REST_SERVER_URL + `/profile/${localStorage.getItem('id')}`,
     )
     return UserProfile.fromJSON(response.data)
   }
 }
+
+export const userProfileService = new UserProfileService()

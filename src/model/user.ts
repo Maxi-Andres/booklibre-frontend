@@ -1,11 +1,11 @@
-import { ValidationMessage } from "./validationMessage"
+import { ValidationMessage } from "@/validation/validationMessage"
 
 export type UserJSON = {
   mail: string
   password: string
 }
 
-export class UserType {
+export class UserLogin {
   public mail: string = ''.trim()
   public password: string = ''.trim()  
   errors: ValidationMessage[] = []
@@ -16,8 +16,8 @@ export class UserType {
 
   }
 
-  static fromJson(userJSON: UserJSON): UserType {
-  return new UserType(
+  static fromJson(userJSON: UserJSON): UserLogin {
+  return new UserLogin(
     userJSON.mail || '',      
     userJSON.password || '',  
 

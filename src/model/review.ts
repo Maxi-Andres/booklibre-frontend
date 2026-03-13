@@ -1,28 +1,28 @@
-import { ValidationMessage } from "../ValidationField/validationMessage"
-import { type BookReviewJSON } from "../json/bookReviewJSON"
+import type { ReviewJSON } from "@/json/ReviewJSON"
+import { ValidationMessage } from "../validation/validationMessage"
 
 export class BookReview {
   MAX_CHARACTERS: number = 250
 
   errors: ValidationMessage[] = []
+  id: number
   rate: number
   review: string
   color: string
-  userName : string
-  // reviewerId: number
+  userName: string
 
   constructor(
-    rate: number = 0, 
+    id: number = 0,
+    rate: number = 0,
     review: string = "",
     color: string = "",
     userName: string = "",
-    // reviewerId: number = 0
   ) {
+    this.id = id
     this.rate = rate
     this.review = review
     this.color = color
     this.userName = userName
-    // this.reviewerId = reviewerId    
   }
 
   invalidReviewLength(): boolean {
@@ -44,7 +44,7 @@ export class BookReview {
     }
   }
 
-  static fromJSON(bookReviewJSON: BookReviewJSON): BookReview {
+  static fromJSON(bookReviewJSON: ReviewJSON): BookReview {
     return Object.assign(new BookReview(), bookReviewJSON, {})
   }
 }
