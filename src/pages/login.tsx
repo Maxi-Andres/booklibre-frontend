@@ -1,55 +1,38 @@
 import { Link, useNavigate, useLocation } from "react-router"
-import { UserLogin } from "../model/user"
+import type { UserJSONLoginRequest } from "@/model/user"
+import { UserType } from "@/model/user"
 import { useState } from "react"
-import { ValidationMessage } from "../validation/validationMessage"
-import ValidationField from "../validation/ValidationField"
-import { userService } from "../services/UserService"
-import { getErrorMessage } from "../validation/errorHandler"
-import { useOnInit } from "../hooks/UseOnInit"
-import type { LogProps } from "../types/authState"
+import { ValidationMessage } from "@/validation/validationMessage"
+import ValidationField from "@/validation/ValidationField"
+import { userService } from "@/services/UserService"
+import { getErrorMessage } from "@/validation/errorHandler"
+import { useOnInit } from "@/hooks/UseOnInit"
 import { InputField } from "@/components/InputField"
-import { Field } from "@headlessui/react"
+import { useAuth } from '@/context/AuthContext'
 
-interface LoginFormData {
-  email: string
-  password: string
-}
 
-export const Login = ({ onLog }: LogProps) => {
+
+
+export const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const {login} = useAuth()
+  const [user, setUser] = useState<UserJSONLoginRequest>({mail:'',password:''})
+  const [errors, setErrors] = useState<Array<ValidationMessage>>([])
   const from = location.state?.from?.pathname || "/"
 
-  // estado del formulario
-  const [formData, setFormData] = useState<LoginFormData>({
-    email: "",
-    password: "",
-  })
-
-  const [errors, setErrors] = useState<ValidationMessage[]>([])
-
-  // muestra mensaje si viene de una ruta protegida
-  useOnInit(() => {
-    if (from !== "/") {
-      alert("Debe iniciar sesión para acceder a esa página")
-    }
-  })
-
-  const handleInputChange = (field: keyof LoginFormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
     ev.preventDefault()
-    setErrors([])
+    const form = ev.currentTarget as HTMLFormElement
+    const formData = new FormData(form)
 
-    // crea el usuario con los datos del form
-    const user = new UserLogin(formData.email, formData.password)
+    const userLogin = new UserType(user.mail, user.password,'')
 
-    user.validate()
+    userLogin.validate()
 
-    if (user.errors.length > 0) {
-      setErrors(user.errors)
+    if (userLogin.errors.length > 0) {
+      setErrors(userLogin.errors)
       return
     }
 
@@ -58,16 +41,21 @@ export const Login = ({ onLog }: LogProps) => {
 
       if (validation) {
         // Guardar en localStorage
-        localStorage.setItem("user", JSON.stringify(validation))
-        onLog(validation)
+        //localStorage.setItem("user", JSON.stringify(validation))
+        login(validation)
         navigate(from, { replace: true })
-        // navigate("/", { replace: true })
       }
     } catch (error) {
       const errorMessage = getErrorMessage(error)
       // aca va a ir el toast
     } 
   }
+
+  const update = (key: keyof typeof user, value:unknown) => {
+    setUser({...user, [key]:value})
+  }
+
+  useOnInit(() => { if (location.state?.from?.pathname != '/' && location.state?.from?.pathname != undefined) alert('Debe loguearse')})
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -88,8 +76,8 @@ export const Login = ({ onLog }: LogProps) => {
               id="email"
               type="email"
               required
-              value={formData.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
+              value={user.mail}
+              onChange={(e) => update("mail", e.target.value)}
               />
               <ValidationField field="email" errors={errors} />
             </div>
@@ -101,8 +89,8 @@ export const Login = ({ onLog }: LogProps) => {
               id="password"
               type="password"
               required
-              value={formData.password}
-              onChange={(e)=> handleInputChange("password", e.target.value)}
+              value={user.password}
+              onChange={(e)=> update("password", e.target.value)}
               />
               <ValidationField field="password" errors={errors} />
             </div>

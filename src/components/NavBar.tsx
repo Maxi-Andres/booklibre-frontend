@@ -1,7 +1,8 @@
-import logo from "../assets/logo.svg"
-import userAvatar from "../assets/user-avatar.jpg"
+import logo from "@/assets/logo.svg"
+import userAvatar from "@/assets/user-avatar.jpg"
 import { Link, useLocation } from "react-router"
-import type { LogProps } from "@/types/authState"
+import { useAuth } from '@/context/AuthContext'
+import { useNavigate } from 'react-router'
 
 
 const navigation = [
@@ -10,12 +11,14 @@ const navigation = [
   { name: "Perfil", href: "/profile", current: false },
 ]
 
-export default function NavBar({ onLog }: LogProps) {
+export default function NavBar() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { logout } = useAuth()
 
   const handleLogout = () => {
-    localStorage.removeItem('user')
-    onLog(null)
+    logout()
+    navigate('/login', { replace: true })
   }
 
   const isActive = (path: string) => location.pathname === path;
