@@ -1,12 +1,14 @@
 import { Link, useNavigate, useLocation } from "react-router"
-import { UserLogin } from "../../src/model/user"
+import { UserLogin } from "../model/user"
 import { useState } from "react"
-import { ValidationMessage } from "../../src/validation/validationMessage"
+import { ValidationMessage } from "../validation/validationMessage"
 import ValidationField from "../validation/ValidationField"
-import { userService } from "../../src/services/UserService"
+import { userService } from "../services/UserService"
 import { getErrorMessage } from "../validation/errorHandler"
-import { useOnInit } from "../../src/hooks/UseOnInit"
-import type { LogProps } from "../../src/types/authState"
+import { useOnInit } from "../hooks/UseOnInit"
+import type { LogProps } from "../types/authState"
+import { InputField } from "@/components/InputField"
+import { Field } from "@headlessui/react"
 
 interface LoginFormData {
   email: string
@@ -25,7 +27,6 @@ export const Login = ({ onLog }: LogProps) => {
   })
 
   const [errors, setErrors] = useState<ValidationMessage[]>([])
-  const [isLoading, setIsLoading] = useState(false)
 
   // muestra mensaje si viene de una ruta protegida
   useOnInit(() => {
@@ -40,7 +41,6 @@ export const Login = ({ onLog }: LogProps) => {
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
     ev.preventDefault()
-    setIsLoading(true)
     setErrors([])
 
     // crea el usuario con los datos del form
@@ -50,7 +50,6 @@ export const Login = ({ onLog }: LogProps) => {
 
     if (user.errors.length > 0) {
       setErrors(user.errors)
-      setIsLoading(false)
       return
     }
 
@@ -67,9 +66,7 @@ export const Login = ({ onLog }: LogProps) => {
     } catch (error) {
       const errorMessage = getErrorMessage(error)
       // aca va a ir el toast
-    } finally {
-      setIsLoading(false)
-    }
+    } 
   }
 
   return (
@@ -86,42 +83,26 @@ export const Login = ({ onLog }: LogProps) => {
           <div className="space-y-4">
             {/* Email Field */}
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
-                disabled={isLoading}
+              <InputField 
+              label="Email"
+              id="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => handleInputChange("email", e.target.value)}
               />
               <ValidationField field="email" errors={errors} />
             </div>
 
             {/* Password Field */}
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Contraseña
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={formData.password}
-                onChange={(e) => handleInputChange("password", e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
-                disabled={isLoading}
+              <InputField 
+              label="Password"
+              id="password"
+              type="password"
+              required
+              value={formData.password}
+              onChange={(e)=> handleInputChange("password", e.target.value)}
               />
               <ValidationField field="password" errors={errors} />
             </div>
@@ -130,10 +111,9 @@ export const Login = ({ onLog }: LogProps) => {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading}
             className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+            { "Iniciar sesión"}
           </button>
         </form>
 
