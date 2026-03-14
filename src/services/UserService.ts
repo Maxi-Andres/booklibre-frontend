@@ -1,16 +1,11 @@
-import { UserLogin } from '@/model/user'
+import { type UserJSONLoginRequest, UserType,  type UserJSONResponse } from '@/model/user'
 import { USERS_LIST_MOCK } from '../data/userMock'
 
 class UserService {
-  async getAllUsers(){
-    return USERS_LIST_MOCK.map(UserLogin.fromJson)
-  }
-
   async getUser(mail: string, password: string) {
     console.log('Mocks:', USERS_LIST_MOCK);
     // localStorage.setItem(mail, password)
-    return USERS_LIST_MOCK.find(user => 
-      user.mail !== undefined && 
+    return USERS_LIST_MOCK.find((user: UserJSONLoginRequest) => 
       user.mail === mail && 
       user.password === password)
   }
@@ -23,7 +18,7 @@ class UserService {
     return !foundUser
   }
 
-  async createUser(user: UserLogin) {
+  async createUser(user: UserType) {
     const userJSON = { ...user }
     USERS_LIST_MOCK.push(userJSON)
     return userJSON  
