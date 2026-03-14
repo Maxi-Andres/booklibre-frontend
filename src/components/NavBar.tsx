@@ -1,5 +1,5 @@
-import logo from "../assets/logo.svg"
-import userAvatar from "../assets/user-avatar.jpg"
+import logo from "@/assets/logo.svg"
+import userAvatar from "@/assets/user-avatar.jpg"
 import { Link, useLocation } from "react-router"
 import type { LogProps } from "@/types/authState"
 
