@@ -1,4 +1,4 @@
-import { type UserJSONLoginRequest, UserType,  type UserJSONResponse } from '@/model/user'
+import { type UserJSONLoginRequest, UserType } from '@/model/user'
 import { USERS_LIST_MOCK } from '../data/userMock'
 
 class UserService {

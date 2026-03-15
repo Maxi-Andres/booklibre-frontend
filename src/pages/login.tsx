@@ -24,8 +24,6 @@ export const Login = () => {
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
     ev.preventDefault()
-    const form = ev.currentTarget as HTMLFormElement
-    const formData = new FormData(form)
 
     const userLogin = new UserType(user.mail, user.password,'')
 
