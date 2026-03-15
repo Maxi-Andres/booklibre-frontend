@@ -25,6 +25,7 @@ import { addDays } from '@/utils/addDays'
 import Pagination from '@/components/Pagination'
 import { bookService } from '@/services/bookService'
 import { SortByTitle, SortByAuthor, SortByOwner, type BookSortCriteria } from '@/model/bookSortCriteria';
+import OrderDirectionArrow from '@/components/OrderDirectionArrow/OrderDirectionArrow';
 
 const sortOptions = [
   { name: 'Título', value: new SortByTitle(), current: true },
@@ -70,18 +71,15 @@ export default function Home() {
 
   const isInitializedRef = useRef(false)
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
-  // const [filteredReservations, setFilteredReservations] = useState<Reservation[]>([])
   const [filters, setFilters] = useState<BookFilters>(InitialFilters)
   const [page, setPage] = useState(0)
-  const pageSize = 6
+  // const pageSize = 6
   const [totalPages, setTotalPages] = useState(0)
 
   const getFilteredBooksPage = async (newFilters: BookFilters) => {
-    // Los mapeos ver si hacerlos aca o extraerlos 
-    // a alguna funcion que se encargue alguien mas?
     const response = await bookService.getFilteredBooksPage(newFilters)
-    // console.log("reservas: ", response)
     const filtered = response.content.map(book => Book.fromJSON(book))
+    // console.log("page: ", response)
     setFilteredBooks(filtered)
     setTotalPages(response.totalPages)
   }
@@ -129,8 +127,6 @@ export default function Home() {
       ...prev,
       ["ascending"]: !filters.ascending
     }))
-    // Se acttualiza bien el filtro??
-    handleApplyFilters()
   }
 
    //* ==== INITIALIZE FILTERS ====
@@ -147,7 +143,7 @@ export default function Home() {
   //! RELOADS WHEN SORTING OPTION CHANGES ====
   useEffect(() => {
     handleApplyFilters()
-  }, [filters.sortedBy])
+  }, [filters.sortedBy, filters.ascending])
 
    //* ==== APPLY FILTERS & RESTART PAGE ====
   const handleApplyFilters = () => {
@@ -293,7 +289,7 @@ export default function Home() {
                   <div className='w-full grid grid-cols-3 grid-cols-[min-content_1fr_min-content] gap-x-2 justify-start items-center bg-gray-100 border border-gray-200 rounded-lg px-5 py-2'>
                     <IconSearch stroke={2} className='text-gray-400'/>
                     <input type='text' name="owner" id="owner" placeholder='Buscar por título...'
-                    className='py-2 px-4 text-sm bg-gray-100 text-gray-600 rounded focus:outline-none' 
+                    className='py-2 px-4 text-sm bg-gray-100 text-gray-600 rounded focus:outline-none selected:bg-gray-100' 
                     value={filters.title}
                     onChange={(e) => updateSimpleFilter("title", e.target.value)} />
                     <button onClick={handleApplyFilters} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
@@ -309,8 +305,9 @@ export default function Home() {
 
                   <div className="flex items-center">
                     <Menu as="div" className="relative inline-block text-left">
-                      <MenuButton className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                        Ordenar por:
+                      <MenuButton className="group inline-flex justify-center text-md font-medium text-gray-700 hover:text-gray-900">
+                        Ordenar por: 
+                        <span className='pl-2 text-blue-400 text-md'>{sortOptions.find((o) => o.current)?.name}</span>
                         <ChevronDownIcon
                           aria-hidden="true"
                           className="-mr-1 ml-1 size-5 shrink-0 text-gray-400 group-hover:text-gray-500"
@@ -320,7 +317,7 @@ export default function Home() {
                       <MenuItems
                         transition
                         className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
-                      >
+                        >
                         <div className="py-1">
                           {sortOptions.map((option) => (
                             <MenuItem key={option.name}>
@@ -338,6 +335,9 @@ export default function Home() {
                         </div>
                       </MenuItems>
                     </Menu>
+
+                    {/* ========== CAMBIAR DIRECCION DE ORDEN ========== */}
+                    <OrderDirectionArrow onClick={toggleSortDirection} ascending={filters.ascending} />
 
                   </div>
                 </div>
