@@ -7,12 +7,12 @@ const BookCardHome = ({book} : {book : Book}) => {
     className="group grid h-full grid-rows-[auto_auto_auto_auto_auto_1fr_auto]">
       <img
         // alt={book.imageAlt}
-        src={book.imageSrc}
+        src={book.imageSrc ? book.imageSrc : "https://img.freepik.com/free-psd/blank-white-book-mockup-perfect-book-cover-designs-publishing-projects_191095-80351.jpg?semt=ais_hybrid&w=740&q=80"}
         className="aspect-square w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75 xl:aspect-7/8"
       />
       <div className="w-full grid grid-cols-[1fr_auto] justify-between p-2">
         <span className="w-fit px-3 py-1 text-sm font-medium text-purple-700 bg-purple-100 rounded-full">{book.gender}</span>
-        <span className="w-fit font-bold">{book.ratingAvg().toFixed(1)}</span>
+        <span className="w-fit font-bold">{0}</span>
       </div>
 
       <h3 className="mt-4 text-lg truncate font-bold text-gray-700">{book.title}</h3>

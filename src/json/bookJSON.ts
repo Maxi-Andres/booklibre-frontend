@@ -1,25 +1,23 @@
-import type { Author } from "@/model/author"
-import type { BookReview } from "@/model/review"
-import type { UserProfile } from "@/model/userProfile"
-import type { BookCondition } from "@/types/bookCondition"
 import type { BookGender } from "@/types/bookGender"
 import type { BookType } from "@/types/bookType"
 import type { Languages } from "@/types/languages"
+import type { UserProfileJSON } from "./userProfileJSON"
 
 export type BookJSON = {
   id: number
   title: string
-  bookType: BookType
+  bookType: BookType // string?
   desc: string
-  gender: BookGender
-  author: Author
-  pages: number
+  gender: BookGender // string?
+  authorName: string
+  authorAvatarUrl: string
+  numPages: number
   ISBN: string
-  language: Languages
+  language: Languages // string?
   editorial: string
   publishDate: Date
-  condition: BookCondition
-  reviews: BookReview[]
+  condition: string
+  reservetionsIds: number[]
+  owner: UserProfileJSON
   imageSrc: string
-  owner: UserProfile
 }

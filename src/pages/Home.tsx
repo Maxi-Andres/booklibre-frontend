@@ -25,15 +25,15 @@ import {
 } from '@headlessui/react'
 // import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
-
-import { booksMOCK } from '@/mocks/booksMOCK'
 import type { Book } from '@/model/book'
 import BookCardHome from '@/components/BookCardHome'
-import { bookService } from '@/services/bookService'
 import { Reservation } from '@/model/reservation'
 import { BookGender } from '@/types/bookGender'
 import type { BookFilters } from '@/types/bookFilters'
 import MultiRangeSlider from '@/components/MultiRangeSlider/MultiRangeSlider'
+import { reserveService } from '@/services/reserveService'
+import { addDays } from '@/utils/addDays'
+import Pagination from '@/components/BookPagination/Pagination'
 
 const sortOptions = [
   { name: 'Most Popular', href: '#', current: true },
@@ -42,13 +42,7 @@ const sortOptions = [
   { name: 'Price: Low to High', href: '#', current: false },
   { name: 'Price: High to Low', href: '#', current: false },
 ]
-// const subCategories = [
-//   { name: 'Totes', href: '#' },
-//   { name: 'Backpacks', href: '#' },
-//   { name: 'Travel Bags', href: '#' },
-//   { name: 'Hip Bags', href: '#' },
-//   { name: 'Laptop Sleeves', href: '#' },
-// ]
+
 const genderFilters = {
     id: 'genero',
     name: 'Genero',
@@ -63,20 +57,21 @@ const genderFilters = {
   }
 
 const InitialFilters: BookFilters = {
-  genders: [], //! debe ser keyof enum BookGender
-  numPagesRange: {
-    min: 0,
-    max: 1500
-  },
-  //-- necesario una Reserva o solo fechaIni - fechaFin ??
-  reservation: new Reservation(/*id*/ 0, /*userID*/ 1, new Date(), new Date()),
+  title: "",
+  genders: [], //! debe ser value de enum BookGender
+  pagesRangeMin: 0,
+  pagesRangeMax: 1500,
+  pickUpDate: new Date(),
+  dropOffDate: addDays(new Date(), 1), // 1 dia despues
   ISBN: "",
-  ownersName: ""
+  ownersName: "",
+  page: 0,
+  pageSize: 6
 }
 
 //! ========== FIJATE EL ANY[] por si trae problemas despues !! ==========
 // Esto le pone las clases a las opciones del Select de Ordenar por.
-// Si está seleccionado, bold o no
+// Si está seleccionado, bold o no (active)
 function classNames(...classes : any[]) {
   return classes.filter(Boolean).join(' ')
 }
@@ -85,13 +80,20 @@ export default function Home() {
 
   const isInitializedRef = useRef(false)
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
+  // const [filteredReservations, setFilteredReservations] = useState<Reservation[]>([])
   const [filters, setFilters] = useState<BookFilters>(InitialFilters)
+  const [page, setPage] = useState(0)
+  const pageSize = 6
+  const [totalPages, setTotalPages] = useState(0)
 
-  const getFilteredBooks = async (newFilters: BookFilters) => {
-    // const availableBooks = await bookService.getAvailableBooks(newFilters)
-    const availableBooks = bookService.getFilteredBooks(newFilters)
-    
-    setFilteredBooks(availableBooks)
+  const getFilteredBooksPage = async (newFilters: BookFilters) => {
+    // Los mapeos ver si hacerlos aca o extraerlos 
+    // a alguna funcion que se encargue alguien mas?
+    const response = await reserveService.getFilteredBooksPage(newFilters)
+    // console.log("reservas: ", response)
+    const filtered = response.content.map(reservation => Reservation.fromJSON(reservation))
+    setFilteredBooks(filtered.map(reservation => reservation.book))
+    setTotalPages(response.totalPages)
   }
   
 
@@ -103,19 +105,6 @@ export default function Home() {
     setFilters(prev => ({
       ...prev,
       [key]: value
-    }))
-  }
-
-  const updateNumPagesRange = (
-    key: keyof BookFilters["numPagesRange"],
-    value: number
-  ) => {
-    setFilters(prev => ({
-      ...prev,
-      numPagesRange: {
-        ...prev.numPagesRange,
-        [key]: value
-      }
     }))
   }
 
@@ -137,21 +126,26 @@ export default function Home() {
   const handleRangeChange = (values: { min: number; max: number }) => {
     // setRangeValues(values)
     // update filters
-    updateNumPagesRange("min", values.min)
-    updateNumPagesRange("max", values.max) 
+    updateSimpleFilter("pagesRangeMin", values.min)
+    updateSimpleFilter("pagesRangeMax", values.max) 
   };
 
 
   if(!isInitializedRef.current) {
-    getFilteredBooks(InitialFilters)
+    getFilteredBooksPage(InitialFilters)
 
     isInitializedRef.current = true
   }
 
-  //* ==== Reloads when filters change ====
+  //! NOOOOO ==== Reloads when filters change ====
   useEffect(() => {
-    getFilteredBooks(filters)
-  }, [filters])
+    getFilteredBooksPage({...filters, page: page})
+  }, [page])
+
+  const handleApplyFilters = () => {
+    getFilteredBooksPage(filters)
+    setPage(0)
+  }
 
   return (
     <div className="bg-white">
@@ -212,15 +206,6 @@ export default function Home() {
 
 {/* ========== FILTERS ========== */}
               <form className="hidden lg:block">
-                {/* <h3 className="sr-only">Categories</h3>
-                <ul role="list" className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
-                  {subCategories.map((category) => (
-                    <li key={category.name}>
-                      <a href={category.href}>{category.name}</a>
-                    </li>
-                  ))}
-                </ul> */}
-
                   {/* ========== GENDER FILTERS ========== */}
                   <Disclosure key={genderFilters.id} as="div" className="border-b border-gray-200 py-6">
                     <h3 className="-my-3 flow-root">
@@ -287,10 +272,17 @@ export default function Home() {
                     onChange={handleRangeChange} trackColor={'#cecece'} rangeColor={'#2790F1'} width={'300px'} />
                 </Disclosure>
 
+                {/* ========== APPLY FILTERS ========== */}
+                <Disclosure key="applyFiltersBtn" as="div" className="border-b border-gray-200 py-6 flex justify-center">
+                  <button type='button' onClick={handleApplyFilters} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Aplicar Filtros
+                  </button>
+                </Disclosure>
+
               </form>
 
 {/* ============ Product grid ============== */}
-              <div className="lg:block">
+              <div className="lg:block lg:flex flex-col gap-y-4 justify-center items-center">
               
                 {/* Your content */}
 
@@ -303,7 +295,15 @@ export default function Home() {
                     ))}
                   </div>
                 {/* </div> */}
-              
+                    
+                  <div className="flex gap-2 mt-4">
+                    <Pagination
+                        currentPage={page}
+                        totalPages={totalPages}
+                        onPageChange={setPage}
+                      />
+                  </div>
+
               </div>
             </div>
           </section>
