@@ -41,7 +41,7 @@ const Pagination = ({
   totalPages,
   onPageChange
 }: PaginationProps) => {
-  // if (totalPages <= 1) return null
+  if (totalPages < 1) return null
 
   const visiblePages = getVisiblePages(currentPage, totalPages)
   // console.log("Visible Pages:", visiblePages)

@@ -25,6 +25,7 @@ import {
 } from '@headlessui/react'
 // import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
+import { IconSearch } from '@tabler/icons-react';
 import { Book } from '@/model/book'
 import BookCardHome from '@/components/BookCardHome'
 import { BookGender } from '@/types/bookGender'
@@ -148,65 +149,20 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-white w-full">
+    <div className="w-full">
       <div>
 {/* =============== MAIN ================ */}
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           
-          <div>
-            <h1 className='text-4xl font-bold'>Encuentra tu próxima lectura</h1>
-            
-          </div>
-
-
-          <div className="flex items-baseline justify-between border-b border-gray-200 pt-24 pb-6">
-            <h2 className="text-4xl font-bold tracking-tight text-gray-900">Libros populares</h2>
-
-            <div className="flex items-center">
-              <Menu as="div" className="relative inline-block text-left">
-                <MenuButton className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                  Ordenar por:
-                  <ChevronDownIcon
-                    aria-hidden="true"
-                    className="-mr-1 ml-1 size-5 shrink-0 text-gray-400 group-hover:text-gray-500"
-                  />
-                </MenuButton>
-
-                <MenuItems
-                  transition
-                  className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
-                >
-                  <div className="py-1">
-                    {sortOptions.map((option) => (
-                      <MenuItem key={option.name}>
-                        <a
-                          href={option.href}
-                          className={classNames(
-                            option.current ? 'font-medium text-gray-900' : 'text-gray-500',
-                            'block px-4 py-2 text-sm data-focus:bg-gray-100 data-focus:outline-hidden',
-                          )}
-                        >
-                          {option.name}
-                        </a>
-                      </MenuItem>
-                    ))}
-                  </div>
-                </MenuItems>
-              </Menu>
-
-            </div>
-          </div>
-
           <section aria-labelledby="products-heading" className="pt-6 pb-24">
-            <h2 id="products-heading" className="sr-only">
+            <h1 id="products-heading" className="sr-only">
               Products
-            </h2>
+            </h1>
 
-{/* ========== PRODUCTOS + FILTERS ========== */}
-            <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-[1fr_2fr]">
-
-{/* ========== FILTERS ========== */}
-              <form className="hidden lg:block">
+  {/* ========== PRODUCTOS + FILTERS ========== */}
+            <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-[300px_1fr]">
+    {/* ========== FILTERS ========== */}
+              <form className="hidden lg:flex flex flex-col bg-white p-5 rounded-2xl border border-gray-200 h-max">
                   {/* ========== GENDER FILTERS ========== */}
                   <Disclosure key={genderFilters.id} as="div" className="border-b border-gray-200 py-6">
                     <h3 className="-my-3 flow-root">
@@ -270,21 +226,42 @@ export default function Home() {
                   <MultiRangeSlider
                     min={0}
                     max={1500}
-                    onChange={handleRangeChange} trackColor={'#cecece'} rangeColor={'#2790F1'} width={'300px'} />
+                    onChange={handleRangeChange} trackColor={'#cecece'} rangeColor={'#2790F1'} width={'260px'} />
                 </Disclosure>
 
                 {/* ========== RESERVATION DATES RANGE FILTERS ========== */}
                 <Disclosure key="reservationDatesRangeFilter" as="div" className="border-b border-gray-200 py-6">
                   <label className="block mb-2.5 text-sm font-medium text-heading">RANGO DE FECHAS DE RESERVA</label>
-                  <div className='flex gap-x-4 justify-center align-items-center'>
+                  <div className='w-full grid grid-cols-2 gap-x-2 justify-center align-items-center'>
                     <input type='date' name="" id="date-from" 
-                    className='py-2 px-4 text-sm text-center bg-gray-100 border-gray-400 text-gray-600 rounded' 
+                    className='py-2 px-2 text-sm focus:outline-none bg-gray-100 border border-gray-200 text-gray-500 rounded' 
                     value={filters.pickUpDate}
                     onChange={(e) => updateSimpleFilter("pickUpDate", e.target.value)} />
                     <input type='date' name="" id="date-to" 
-                    className='py-2 px-4 text-sm text-center bg-gray-100 border-gray-400 text-gray-600 rounded' 
+                    className='py-2 px-2 text-sm focus:outline-none bg-gray-100 border border-gray-200 text-gray-500 rounded' 
                     value={filters.dropOffDate}
                     onChange={(e) => updateSimpleFilter("dropOffDate", e.target.value)} />
+                  </div>
+                </Disclosure>
+
+                {/* ========== DETAILS FILTERS ========== */}
+                <Disclosure key="detailsFilter" as="div" className="flex flex-col gap-y-4 border-b border-gray-200 py-6">
+                  <label className="block mb-2.5 text-sm font-medium text-heading">DETALLES</label>
+
+                  <div className='flex flex-col justify-start align-items-start'>
+                    <label htmlFor="isbn" className='text-gray-600'>ISBN</label>
+                    <input type='text' name="isbn" id="isbn" placeholder='978-950-xxxx-xx-x'
+                    className='py-2 px-4 text-sm bg-gray-100 border border-gray-200 text-gray-600 rounded' 
+                    value={filters.ISBN}
+                    onChange={(e) => updateSimpleFilter("ISBN", e.target.value)} />
+                  </div>
+
+                  <div className='flex flex-col justify-start align-items-start'>
+                    <label htmlFor="owner" className='text-gray-600'>Prestado por</label>
+                    <input type='text' name="owner" id="owner" placeholder='Usuario...'
+                    className='py-2 px-4 text-sm bg-gray-100 border border-gray-200 text-gray-600 rounded' 
+                    value={filters.ownersName}
+                    onChange={(e) => updateSimpleFilter("ownersName", e.target.value)} />
                   </div>
                 </Disclosure>
 
@@ -297,22 +274,75 @@ export default function Home() {
 
               </form>
 
-{/* ============ Product grid ============== */}
+    {/* ========== BUSQUEDA + ORDENAR + PRODUCTOS ========== */}
               <div className="lg:block lg:flex flex-col gap-y-4 justify-center items-center">
-              
-                {/* Your content */}
 
-                 {/* <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8"> */}
-                  <h2 className="sr-only">Products</h2>
+          {/* ========== BUSQUEDA POR TITULO ========== */}
+                <div className='w-full flex flex-col gap-y-2 bg-white p-10 rounded-2xl border border-gray-200'>
+                  <h1 className='text-4xl font-bold'>Encuentra tu próxima lectura</h1>
+                  <p className='text-gray-400'>Explora miles de libros disponibles para préstamo en nuestra comunidad.</p>
 
+                  <form className='w-full grid grid-cols-3 grid-cols-[min-content_1fr_min-content] gap-x-2 justify-start items-center bg-gray-100 border border-gray-200 rounded-lg px-5 py-2'>
+                    <IconSearch stroke={2} className='text-gray-400'/>
+                    <input type='text' name="owner" id="owner" placeholder='Buscar por título...'
+                    className='py-2 px-4 text-sm bg-gray-100 text-gray-600 rounded focus:outline-none' 
+                    value={filters.title}
+                    onChange={(e) => updateSimpleFilter("title", e.target.value)} />
+                    <button onClick={handleApplyFilters} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
+                      Buscar
+                    </button>
+                  </form>
+                  
+                </div>
+
+          {/* ========== ORDERAR POR ========== */}
+                <div className="w-full flex items-baseline justify-between border-b border-gray-200 pt-4 pb-6">
+                  <h2 className="text-2xl font-bold tracking-tight text-gray-900">Libros populares</h2>
+
+                  <div className="flex items-center">
+                    <Menu as="div" className="relative inline-block text-left">
+                      <MenuButton className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
+                        Ordenar por:
+                        <ChevronDownIcon
+                          aria-hidden="true"
+                          className="-mr-1 ml-1 size-5 shrink-0 text-gray-400 group-hover:text-gray-500"
+                        />
+                      </MenuButton>
+
+                      <MenuItems
+                        transition
+                        className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                      >
+                        <div className="py-1">
+                          {sortOptions.map((option) => (
+                            <MenuItem key={option.name}>
+                              <a
+                                href={option.href}
+                                className={classNames(
+                                  option.current ? 'font-medium text-gray-900' : 'text-gray-500',
+                                  'block px-4 py-2 text-sm data-focus:bg-gray-100 data-focus:outline-hidden',
+                                )}
+                              >
+                                {option.name}
+                              </a>
+                            </MenuItem>
+                          ))}
+                        </div>
+                      </MenuItems>
+                    </Menu>
+
+                  </div>
+                </div>
+
+          {/* ============ PRODUCT GRID ============== */}
                   <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8">
                     {filteredBooks.map((book: Book) => (
                       <BookCardHome key={book.id} book={book} />
                     ))}
                   </div>
-                {/* </div> */}
-                    
-                  <div className="flex gap-2 mt-4">
+          
+          {/* ============ PAGINACION============== */}
+                  <div className="flex gap-2 mt-4 justify-center items-center">
                     <Pagination
                         currentPage={page}
                         totalPages={totalPages}

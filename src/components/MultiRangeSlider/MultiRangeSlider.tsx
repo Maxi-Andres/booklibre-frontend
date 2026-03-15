@@ -81,7 +81,7 @@ const MultiRangeSlider = ({
         <div className='w-full flex items-center justify-center flex-col space-y-14 multi-range-slider-container'>
 
             {/* Display Price Value */}
-            <div className="w-[300px] flex items-center justify-between gap-x-5 mb-2">
+            <div className={`w-full flex items-center justify-between gap-x-5 mb-2`}>
 
                 <p className="text-xl text-gray-500 font-semibold">
                     {minVal}
