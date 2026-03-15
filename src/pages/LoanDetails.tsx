@@ -113,7 +113,10 @@ export default function LoanDetails() {
     setSearch(newSearch)
     if (!userIDtest) return
     try {
-      const reservesByUser = await reserveService.getReservesByUserId(newSearch)
+      const reservesByUser = await reserveService.getReservesByUserId(
+        userIDtest,
+        newSearch,
+      )
       setReserves(reservesByUser)
     } catch (error) {
       showToast.httpError(error, "Error al cargar las reservas")

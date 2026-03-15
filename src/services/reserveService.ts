@@ -22,13 +22,13 @@ class ReserveService {
   //     },
   //   )
   // }
-  async getReservesByUserId(search: string): Promise<ReservationDTO[]> {
-    const { data } = await axios.get(
-      REST_SERVER_URL + "/lector/" + sessionStorage.getItem("userIDtest"),
-      {
-        params: { search },
-      },
-    )
+  async getReservesByUserId(
+    userId: string,
+    search: string,
+  ): Promise<ReservationDTO[]> {
+    const { data } = await axios.get(REST_SERVER_URL + "/lector/" + userId, {
+      params: { search },
+    })
     return data.map(mapReservation)
   }
 }
