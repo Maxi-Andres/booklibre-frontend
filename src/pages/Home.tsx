@@ -31,7 +31,7 @@ import { BookGender } from '@/types/bookGender'
 import type { BookFilters } from '@/types/bookFilters'
 import MultiRangeSlider from '@/components/MultiRangeSlider/MultiRangeSlider'
 import { addDays } from '@/utils/addDays'
-import Pagination from '@/components/BookPagination/Pagination'
+import Pagination from '@/components/Pagination'
 import { bookService } from '@/services/bookService'
 
 const sortOptions = [
@@ -46,18 +46,18 @@ const genderFilters = {
     id: 'genero',
     name: 'Genero',
     options: [
-      { value: 'SciencieFiction', label: 'Ciencia Ficción', checked: false },
-      { value: 'Drama', label: 'Drama', checked: false },
-      { value: 'SelfHelp', label: 'Autoayuda', checked: false },
-      { value: 'Romance', label: 'Romance', checked: false },
-      { value: 'Design', label: 'Diseño', checked: false },
-      { value: 'ClassicLiterature', label: 'Literatura Clásica', checked: false },
+      { value: 'DRAMA', label: 'Drama', checked: false },
+      { value: 'SCIENCE_FICTION', label: 'Ciencia Ficción', checked: false },
+      { value: 'ROMANCE', label: 'Romance', checked: false },
+      { value: 'SELF_HELP', label: 'Autoayuda', checked: false },
+      { value: 'DESIGN', label: 'Diseño', checked: false },
+      { value: 'CLASSIC_LITERATURE', label: 'Literatura Clásica', checked: false },
     ],
   }
 
 const InitialFilters: BookFilters = {
   title: "",
-  genders: [], //! debe ser value de enum BookGender
+  genders: [], //! debe ser value de keyof enum BookGender
   pagesRangeMin: 0,
   pagesRangeMax: 1500,
   pickUpDate: new Date(),
@@ -142,6 +142,7 @@ export default function Home() {
   }, [page])
 
   const handleApplyFilters = () => {
+    // console.log("Applying filters: ", filters)
     getFilteredBooksPage(filters)
     setPage(0)
   }
@@ -229,7 +230,7 @@ export default function Home() {
                                   name={`${genderFilters.id}[]`}
                                   type="checkbox"
                                   className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
-                                  onClick={() => toggleGenderFilter(option.label)}
+                                  onClick={() => toggleGenderFilter(option.value as BookGender)}
                                 />
                                 <svg
                                   fill="none"
