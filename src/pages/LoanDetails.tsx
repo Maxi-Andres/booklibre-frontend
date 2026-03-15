@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Link } from "react-router"
-
 import {
   IconSearch,
   IconUser,
@@ -8,6 +7,10 @@ import {
   IconBook,
   IconStar,
 } from "@tabler/icons-react"
+
+import { reserveService } from "@/services/reserveService"
+import { useOnInit } from "@/hooks/UseOnInit"
+import { showToast } from "@/utils/toast"
 
 const books = [
   {
@@ -77,6 +80,33 @@ export default function LoanDetails() {
       b.author.toLowerCase().includes(search.toLowerCase()),
   )
 
+  const [userIDtest, setuserIDtest] = useState("")
+
+  sessionStorage.setItem("userIDtest", userIDtest)
+  console.log(sessionStorage.getItem("userIDtest"))
+
+  const handleStateChange = (newSearch: string) => {
+    setSearch(newSearch)
+    getReservesByUserId(newSearch)
+  }
+
+  const getReservesByUserId = async (newSearch: string) => {
+    setSearch(newSearch)
+    if (userIDtest == "") return
+    try {
+      const reservesByUser = await reserveService.getReservesByUserId(newSearch)
+      setReserves(reservesByUser)
+    } catch (error) {
+      showToast.httpError(error, "Error al cargar las reservas")
+    }
+  }
+
+  const [reserves, setReserves] = useState("")
+
+  console.log(reserves.data)
+
+  useOnInit(() => handleStateChange(search)) // la primera busqueda es vacia
+
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-10 font-sans">
       <div className="mx-auto max-w-5xl">
@@ -112,9 +142,22 @@ export default function LoanDetails() {
 
           <input
             type="text"
+            placeholder="Esto es solo de prueba, pone el id del usuario que queres probar"
+            value={userIDtest}
+            onChange={(e) => setuserIDtest(e.target.value)}
+            className="w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
+          />
+        </div>
+
+        {/* =================== Search =================== */}
+        <div className="mt-6 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
+          <IconSearch size={18} className="text-gray-400" />
+
+          <input
+            type="text"
             placeholder="Buscar por título, autor..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => getReservesByUserId(e.target.value)}
             className="w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
           />
         </div>
