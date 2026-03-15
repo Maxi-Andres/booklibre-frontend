@@ -1,6 +1,7 @@
 import { REST_SERVER_URL } from "@/config/configuration"
 import axios from "axios"
 import { getAxiosData } from "./common"
+import { mapReservation, type ReservationDTO } from "@/types/reservationType"
 
 class ReserveService {
   async getUserReadBooks(): Promise<number> {
@@ -11,15 +12,24 @@ class ReserveService {
     )
   }
 
-  async getReservesByUserId(search: string) {
-    return axios.get(
+  // async getReservesByUserId(search: string): Promise<ReservationDTO[]> {
+  //   return axios.get(
+  //     REST_SERVER_URL + "/lector/" + sessionStorage.getItem("userIDtest"),
+  //     {
+  //       params: {
+  //         search: search,
+  //       },
+  //     },
+  //   )
+  // }
+  async getReservesByUserId(search: string): Promise<ReservationDTO[]> {
+    const { data } = await axios.get(
       REST_SERVER_URL + "/lector/" + sessionStorage.getItem("userIDtest"),
       {
-        params: {
-          search: search,
-        },
+        params: { search },
       },
     )
+    return data.map(mapReservation)
   }
 }
 
