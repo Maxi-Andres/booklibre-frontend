@@ -165,10 +165,10 @@ export default function Profile() {
           <div className="flex flex-1 flex-col">
             <section className="mb-4 flex justify-between">
               <p className="text-2xl font-bold">Gestión de Mis Libros</p>
-              <button className="cursor-pointer rounded-lg bg-red-300 p-1.5 text-sm hover:bg-red-400">
+              <a className="cursor-pointer rounded-lg bg-red-300 p-1.5 text-sm hover:bg-red-400" href='/edicion-de-libro'>
                 <PlusCircleIcon size={20} className="mr-1 inline" />
                 <p className="inline font-bold">Agregar Nuevo Libro</p>
-              </button>
+              </a>
             </section>
 
             <section className="flex h-102 flex-1 flex-col rounded-xl border border-gray-200 bg-white gap-1">

@@ -9,6 +9,7 @@ import LoanDetails from "@/pages/LoanDetails"
 import { useAuth } from "./context/AuthContext"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import EditBook from "./pages/EditBook"
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route path="/detalle-de-libro" element={<BookDetail />} />
             <Route path="/prestamos-de-libros" element={<LoanDetails />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/edicion-de-libro" element={<EditBook />} />
           </Route>
         ) : (
           <>
