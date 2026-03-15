@@ -282,7 +282,7 @@ export default function Home() {
                   <h1 className='text-4xl font-bold'>Encuentra tu próxima lectura</h1>
                   <p className='text-gray-400'>Explora miles de libros disponibles para préstamo en nuestra comunidad.</p>
 
-                  <form className='w-full grid grid-cols-3 grid-cols-[min-content_1fr_min-content] gap-x-2 justify-start items-center bg-gray-100 border border-gray-200 rounded-lg px-5 py-2'>
+                  <div className='w-full grid grid-cols-3 grid-cols-[min-content_1fr_min-content] gap-x-2 justify-start items-center bg-gray-100 border border-gray-200 rounded-lg px-5 py-2'>
                     <IconSearch stroke={2} className='text-gray-400'/>
                     <input type='text' name="owner" id="owner" placeholder='Buscar por título...'
                     className='py-2 px-4 text-sm bg-gray-100 text-gray-600 rounded focus:outline-none' 
@@ -291,7 +291,7 @@ export default function Home() {
                     <button onClick={handleApplyFilters} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
                       Buscar
                     </button>
-                  </form>
+                  </div>
                   
                 </div>
 
