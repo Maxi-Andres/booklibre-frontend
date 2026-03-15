@@ -65,6 +65,7 @@ export class Book {
 
   static fromJSON(bookJSON: BookJSON): Book {
     const book = Object.assign(new Book(), bookJSON, {
+      author: new Author(0, bookJSON.authorName, bookJSON.authorAvatarUrl),
       publishDate: new Date(bookJSON.publishDate),
     })
     return book
