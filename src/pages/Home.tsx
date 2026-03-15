@@ -60,8 +60,8 @@ const InitialFilters: BookFilters = {
   genders: [], //! debe ser value de keyof enum BookGender
   pagesRangeMin: 0,
   pagesRangeMax: 1500,
-  pickUpDate: new Date(),
-  dropOffDate: addDays(new Date(), 1), // 1 dia despues
+  pickUpDate: new Date().toISOString().split("T")[0],
+  dropOffDate: addDays(new Date(), 1).toISOString().split("T")[0], // 1 dia despues
   ISBN: "",
   ownersName: "",
   page: 0,
@@ -142,13 +142,13 @@ export default function Home() {
   }, [page])
 
   const handleApplyFilters = () => {
-    // console.log("Applying filters: ", filters)
+    console.log("Applying filters: ", filters)
     getFilteredBooksPage(filters)
     setPage(0)
   }
 
   return (
-    <div className="bg-white">
+    <div className="bg-white w-full">
       <div>
 {/* =============== MAIN ================ */}
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -202,7 +202,8 @@ export default function Home() {
               Products
             </h2>
 
-            <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-[1fr_3fr]">
+{/* ========== PRODUCTOS + FILTERS ========== */}
+            <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-[1fr_2fr]">
 
 {/* ========== FILTERS ========== */}
               <form className="hidden lg:block">
@@ -270,6 +271,21 @@ export default function Home() {
                     min={0}
                     max={1500}
                     onChange={handleRangeChange} trackColor={'#cecece'} rangeColor={'#2790F1'} width={'300px'} />
+                </Disclosure>
+
+                {/* ========== RESERVATION DATES RANGE FILTERS ========== */}
+                <Disclosure key="reservationDatesRangeFilter" as="div" className="border-b border-gray-200 py-6">
+                  <label className="block mb-2.5 text-sm font-medium text-heading">RANGO DE FECHAS DE RESERVA</label>
+                  <div className='flex gap-x-4 justify-center align-items-center'>
+                    <input type='date' name="" id="date-from" 
+                    className='py-2 px-4 text-sm text-center bg-gray-100 border-gray-400 text-gray-600 rounded' 
+                    value={filters.pickUpDate}
+                    onChange={(e) => updateSimpleFilter("pickUpDate", e.target.value)} />
+                    <input type='date' name="" id="date-to" 
+                    className='py-2 px-4 text-sm text-center bg-gray-100 border-gray-400 text-gray-600 rounded' 
+                    value={filters.dropOffDate}
+                    onChange={(e) => updateSimpleFilter("dropOffDate", e.target.value)} />
+                  </div>
                 </Disclosure>
 
                 {/* ========== APPLY FILTERS ========== */}

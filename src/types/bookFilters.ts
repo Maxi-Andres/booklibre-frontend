@@ -6,8 +6,8 @@ export type BookFilters = {
   genders: BookGender[],
   pagesRangeMin: number,
   pagesRangeMax: number,
-  pickUpDate: Date,
-  dropOffDate: Date,
+  pickUpDate: string, //! ISO string
+  dropOffDate: string, //! ISO string
   ISBN: string,
   ownersName: string,
   page: number,
