@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Link } from "react-router"
-
 import {
   IconSearch,
   IconUser,
@@ -8,74 +7,123 @@ import {
   IconBook,
   IconStar,
 } from "@tabler/icons-react"
+import { reserveService } from "@/services/reserveService"
+import { useOnInit } from "@/hooks/UseOnInit"
+import { showToast } from "@/utils/toast"
+import type { ReservationDTO } from "@/types/reservationType"
 
-const books = [
-  {
-    id: 1,
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    rating: 4.8,
-    loanedBy: "Juan Pérez",
-    range: "01/10/23 - 15/10/23",
-    karma: "+240",
-    status: "ACTIVO",
-    cover: "/assets/img/gatsby.png",
-  },
-  {
-    id: 2,
-    title: "1984",
-    author: "George Orwell",
-    rating: 4.9,
-    loanedBy: "Ana Garcia",
-    range: "05/10/23 - 20/10/23",
-    karma: "+240",
-    status: "PRÓXIMO A VENCER",
-    cover: "/assets/img/1984.png",
-  },
-  {
-    id: 3,
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    rating: 4.7,
-    loanedBy: "Carlos Ruiz",
-    range: "10/10/23 - 25/10/23",
-    karma: "+240",
-    status: "ACTIVO",
-    cover: "/assets/img/killamock.png",
-  },
-  {
-    id: 4,
-    title: "The Catcher in the Rye",
-    author: "J.D. Salinger",
-    rating: 4.5,
-    loanedBy: "Elena Beltran",
-    range: "12/10/23 - 27/10/23",
-    karma: "+240",
-    status: "DEVUELTO",
-    cover: "/assets/img/catcher.png",
-    canRate: true,
-  },
-]
+//! poner los libros de mock en el boostrap
+//! fijate si se busca con debouncing o con enter
+//! fijate como vas a filtrar despeus igual te tienen que mostrar como implementar cache
+//! hace el modal para poner una review
+//! implemente lo de las tabs
+
+//! NO BORRAR POR AHORA
+// const books = [
+//   {
+//     id: 1,
+//     title: "The Great Gatsby",
+//     author: "F. Scott Fitzgerald",
+//     rating: 4.8,
+//     loanedBy: "Juan Pérez",
+//     range: "01/10/23 - 15/10/23",
+//     karma: "+240",
+//     status: "ACTIVO",
+//     cover: "/assets/img/gatsby.png",
+//   },
+//   {
+//     id: 2,
+//     title: "1984",
+//     author: "George Orwell",
+//     rating: 4.9,
+//     loanedBy: "Ana Garcia",
+//     range: "05/10/23 - 20/10/23",
+//     karma: "+240",
+//     status: "PRÓXIMO A VENCER",
+//     cover: "/assets/img/1984.png",
+//   },
+//   {
+//     id: 3,
+//     title: "To Kill a Mockingbird",
+//     author: "Harper Lee",
+//     rating: 4.7,
+//     loanedBy: "Carlos Ruiz",
+//     range: "10/10/23 - 25/10/23",
+//     karma: "+240",
+//     status: "ACTIVO",
+//     cover: "/assets/img/killamock.png",
+//   },
+//   {
+//     id: 4,
+//     title: "The Catcher in the Rye",
+//     author: "J.D. Salinger",
+//     rating: 4.5,
+//     loanedBy: "Elena Beltran",
+//     range: "12/10/23 - 27/10/23",
+//     karma: "+240",
+//     status: "DEVUELTO",
+//     cover: "/assets/img/catcher.png",
+//     canRate: true,
+//   },
+// ]
 
 // Record<tipoDeClave, tipoDeValor>
 const statusStyles: Record<string, string> = {
-  ACTIVO: "bg-blue-500 text-white",
-  "PRÓXIMO A VENCER": "bg-orange-400 text-white",
-  DEVUELTO: "bg-red-400 text-white",
+  AVAILABLE: "bg-blue-500 text-white",
+  BORROWED: "bg-green-500 text-white",
+  SOON_TO_END: "bg-orange-400 text-white",
+  RETURNED: "bg-red-400 text-white",
 }
+
+const statusLabels: Record<string, string> = {
+  AVAILABLE: "ACTIVO",
+  BORROWED: "PRESTADO",
+  SOON_TO_END: "PRÓXIMO A VENCER",
+  RETURNED: "DEVUELTO",
+}
+
+const DEFAULT_USER_ID = "1" //! esto es solo para MOCK
 
 export default function LoanDetails() {
   const [activeTab, setActiveTab] = useState<
     "prestados-a-mi" | "prestados-por-mi"
   >("prestados-a-mi")
-
   const [search, setSearch] = useState("")
   // cuando esto cambia se vuelve a renderizar el componente y se vuelve a llamar
-  const filtered = books.filter(
-    (b) =>
-      b.title.toLowerCase().includes(search.toLowerCase()) ||
-      b.author.toLowerCase().includes(search.toLowerCase()),
+  const [reserves, setReserves] = useState<ReservationDTO[]>([])
+
+  // default userId = "1" si no hay nada en sessionStorage
+  const [userIDtest, setuserIDtest] = useState<string>(
+    sessionStorage.getItem("userIDtest") ?? DEFAULT_USER_ID,
   )
+  // console.log(sessionStorage.getItem("userIDtest"))
+
+  // const filtered = books.filter(
+  //   (b) =>
+  //     b.title.toLowerCase().includes(search.toLowerCase()) ||
+  //     b.author.toLowerCase().includes(search.toLowerCase()),
+  // )
+
+  const handleStateChange = (newSearch: string) => {
+    setSearch(newSearch)
+    getReservesByUserId(newSearch)
+  }
+
+  const getReservesByUserId = async (newSearch: string) => {
+    setSearch(newSearch)
+    if (!userIDtest) return
+    try {
+      const reservesByUser = await reserveService.getReservesByUserId(
+        userIDtest,
+        newSearch,
+      )
+      setReserves(reservesByUser)
+    } catch (error) {
+      showToast.httpError(error, "Error al cargar las reservas")
+    }
+  }
+
+  useOnInit(() => handleStateChange(search)) // la primera busqueda es vacia
 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-10 font-sans">
@@ -108,35 +156,48 @@ export default function LoanDetails() {
 
         {/* =================== Search =================== */}
         <div className="mt-6 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
+          <IconUser size={18} className="text-gray-400" />
+
+          <input
+            type="text"
+            placeholder="ID de usuario (prueba)"
+            value={userIDtest}
+            onChange={(e) => setuserIDtest(e.target.value)}
+            className="w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
+          />
+        </div>
+
+        {/* =================== Search =================== */}
+        <div className="mt-6 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
           <IconSearch size={18} className="text-gray-400" />
 
           <input
             type="text"
             placeholder="Buscar por título, autor..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => getReservesByUserId(e.target.value)}
             className="w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
           />
         </div>
 
         {/* =================== Cards =================== */}
         <div className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-          {filtered.map((book) => (
+          {reserves.map((book) => (
             <div
               key={book.id}
               className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.03] hover:shadow-xl hover:shadow-gray-300/60"
             >
               {/* =================== Status badge =================== */}
               <span
-                className={`absolute top-1 right-2 z-10 rounded-full px-2 py-0.5 text-xs font-semibold ${statusStyles[book.status]}`}
+                className={`absolute top-1 right-2 z-10 rounded-full px-2 py-0.5 text-xs font-semibold ${statusStyles[book.state]}`}
               >
-                {book.status}
+                {statusLabels[book.state] ?? book.state}
               </span>
 
               {/* =================== Cover =================== */}
               <img
-                src={book.cover}
-                alt={book.title}
+                src={book.bookCover}
+                alt={book.bookTitle}
                 className="h-68 object-cover transition duration-300 group-hover:scale-103"
               />
 
@@ -144,7 +205,7 @@ export default function LoanDetails() {
               <div className="flex flex-col gap-2 p-3">
                 <div className="flex items-start justify-between gap-1">
                   <p className="text-sm leading-tight font-bold text-gray-800">
-                    {book.title}
+                    {book.bookTitle}
                   </p>
                   <span className="flex items-center gap-1 text-xs font-bold whitespace-nowrap text-gray-500">
                     <IconStar
@@ -155,7 +216,9 @@ export default function LoanDetails() {
                     {book.rating}
                   </span>
                 </div>
-                <p className="text-xs font-bold text-gray-400">{book.author}</p>
+                <p className="text-xs font-bold text-gray-400">
+                  {book.bookAuthor}
+                </p>
 
                 <div className="border-b border-gray-100"></div>
 
@@ -172,14 +235,16 @@ export default function LoanDetails() {
                     <IconCalendar size={14} />
                     Rango:
                     <span className="font-medium text-gray-700">
-                      {book.range}
+                      {book.pickUpDate} - {book.dropOffDate}
                     </span>
                   </p>
 
                   <div className="flex items-center gap-1">
                     <IconBook size={14} className="text-blue-400" />
                     <p className="font-semibold text-blue-400">BIBLOKARMA</p>
-                    <p className="font-semibold text-gray-700">{book.karma}</p>
+                    <p className="font-semibold text-gray-700">
+                      +{book.bibliokarmas}
+                    </p>
                   </div>
                 </div>
 
