@@ -1,13 +1,3 @@
-
-
-// const Home = () => {
-//   return (
-//     <div>Home</div>
-//   )
-// }
-
-// export default Home
-
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
@@ -34,13 +24,12 @@ import MultiRangeSlider from '@/components/MultiRangeSlider/MultiRangeSlider'
 import { addDays } from '@/utils/addDays'
 import Pagination from '@/components/Pagination'
 import { bookService } from '@/services/bookService'
+import { SortByTitle, SortByAuthor, SortByOwner, type BookSortCriteria } from '@/model/bookSortCriteria';
 
 const sortOptions = [
-  { name: 'Most Popular', href: '#', current: true },
-  { name: 'Best Rating', href: '#', current: false },
-  { name: 'Newest', href: '#', current: false },
-  { name: 'Price: Low to High', href: '#', current: false },
-  { name: 'Price: High to Low', href: '#', current: false },
+  { name: 'Título', value: new SortByTitle(), current: true },
+  { name: 'Autor', value: new SortByAuthor(), current: false },
+  { name: 'Dueño', value: new SortByOwner(), current: false },
 ]
 
 const genderFilters = {
@@ -65,14 +54,15 @@ const InitialFilters: BookFilters = {
   dropOffDate: addDays(new Date(), 1).toISOString().split("T")[0], // 1 dia despues
   ISBN: "",
   ownersName: "",
+  sortedBy: new SortByTitle(),
+  ascending: true,
   page: 0,
   pageSize: 6
 }
 
-//! ========== FIJATE EL ANY[] por si trae problemas despues !! ==========
 // Esto le pone las clases a las opciones del Select de Ordenar por.
 // Si está seleccionado, bold o no (active)
-function classNames(...classes : any[]) {
+function classNames(...classes : string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
@@ -121,29 +111,47 @@ export default function Home() {
     })
   }
 
-  //* ==== Range values for MultiRangeSlider ====
-  // const [rangeValues, setRangeValues] = useState({ min: 0, max: 1500 })
+  //* ==== PAGE RANGE VALUES ====
   const handleRangeChange = (values: { min: number; max: number }) => {
-    // setRangeValues(values)
-    // update filters
     updateSimpleFilter("pagesRangeMin", values.min)
     updateSimpleFilter("pagesRangeMax", values.max) 
   };
 
+  //* ==== SORTING ====
+  const updateSortOptions = (selectedOption: BookSortCriteria) => {
+    // console.log("Selected sort option: ", selectedOption)
+    updateSimpleFilter("sortedBy", selectedOption)
+    sortOptions.forEach(option => option.current = option.value.type === selectedOption.type)
+  }
+  
+  const toggleSortDirection = () => {
+    setFilters(prev => ({
+      ...prev,
+      ["ascending"]: !filters.ascending
+    }))
+    // Se acttualiza bien el filtro??
+    handleApplyFilters()
+  }
 
+   //* ==== INITIALIZE FILTERS ====
   if(!isInitializedRef.current) {
     getFilteredBooksPage(InitialFilters)
-
+    // console.log("Initial filters: ", filters)
     isInitializedRef.current = true
   }
 
-  //! NOOOOO ==== Reloads when filters change ====
+  //! RELOADS WHEN PAGE CHANGES ====
   useEffect(() => {
     getFilteredBooksPage({...filters, page: page})
   }, [page])
+  //! RELOADS WHEN SORTING OPTION CHANGES ====
+  useEffect(() => {
+    handleApplyFilters()
+  }, [filters.sortedBy])
 
+   //* ==== APPLY FILTERS & RESTART PAGE ====
   const handleApplyFilters = () => {
-    console.log("Applying filters: ", filters)
+    // console.log("Applying filters: ", filters)
     getFilteredBooksPage(filters)
     setPage(0)
   }
@@ -317,7 +325,7 @@ export default function Home() {
                           {sortOptions.map((option) => (
                             <MenuItem key={option.name}>
                               <a
-                                href={option.href}
+                                onClick={() => {updateSortOptions(option.value)}}
                                 className={classNames(
                                   option.current ? 'font-medium text-gray-900' : 'text-gray-500',
                                   'block px-4 py-2 text-sm data-focus:bg-gray-100 data-focus:outline-hidden',

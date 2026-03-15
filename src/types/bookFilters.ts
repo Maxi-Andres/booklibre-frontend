@@ -1,3 +1,4 @@
+import type { BookSortCriteria } from "@/model/bookSortCriteria"
 import type { BookGender } from "./bookGender"
 
 
@@ -10,6 +11,8 @@ export type BookFilters = {
   dropOffDate: string, //! ISO string
   ISBN: string,
   ownersName: string,
+  sortedBy: BookSortCriteria,
+  ascending: boolean,
   page: number,
   pageSize: number
 }
