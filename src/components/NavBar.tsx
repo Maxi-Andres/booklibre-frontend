@@ -3,6 +3,10 @@ import userAvatar from "@/assets/user-avatar.jpg"
 import { Link, useLocation } from "react-router"
 import { useAuth } from '@/context/AuthContext'
 import { useNavigate } from 'react-router'
+import { useOnInit } from "@/hooks/UseOnInit"
+import { userProfileService } from "@/services/userProfileService"
+import { useState } from "react"
+import { UserProfile } from "@/model/userProfile"
 
 
 const navigation = [
@@ -15,6 +19,7 @@ export default function NavBar() {
   const location = useLocation()
   const navigate = useNavigate()
   const { logout } = useAuth()
+  const [user, setUser] = useState<UserProfile>(new UserProfile())
 
   const handleLogout = () => {
     logout()
@@ -22,6 +27,17 @@ export default function NavBar() {
   }
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleFetch = async () => {
+    try {
+      const user = await userProfileService.getProfile()
+      setUser(user)
+    } catch (error) {
+
+    }
+  }
+
+  useOnInit(handleFetch)
 
   return (
     <nav className="border-b border-gray-100 bg-white shadow-sm">
@@ -57,7 +73,7 @@ export default function NavBar() {
             {/* Bibliokarma */}
             <div className="flex items-center gap-1.5 text-sm text-gray-500">
               <span className="font-semibold text-[#636F80]">
-                Bibliokarma <span className="font-semibold">2345</span>
+                Bibliokarma <span className="font-semibold">{user.bibliokarmas}</span>
               </span>
             </div>
 

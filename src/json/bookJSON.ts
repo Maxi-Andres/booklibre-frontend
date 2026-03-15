@@ -23,3 +23,13 @@ export type BookJSON = {
   imageSrc: string
   owner: UserProfile
 }
+
+export type ProfileBookJSON = {
+  id: number,
+  imgSrc: String,
+  title: String,
+  authorName: String,
+  gender: BookGender,
+  state: String
+  timestamp: String
+}

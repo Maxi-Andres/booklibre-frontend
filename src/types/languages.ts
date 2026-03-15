@@ -1,8 +1,8 @@
 export const Languages = {
-  Spanish: "ESPAÑOL",
-  English: "INGLES",
-  French: "FRANCES",
-  Portuguese: "PORTUGUES",
+  SPANISH: "ESPAÑOL",
+  ENGLISH: "INGLES",
+  FRENCH: "FRANCES",
+  PORTUGUESE: "PORTUGUES",
 }
 
 export type Languages = (typeof Languages)[keyof typeof Languages]

@@ -5,7 +5,7 @@ export default function ProfileBook({bookImg, bookName, bookAuthor, bookGender, 
   return (
     <div className="flex h-25 gap-4 justify-center items-center pl-3">
       <img src={bookImg} alt="" className="w-16 h-23 rounded-lg"/>
-      <div className="w-3/7">
+      <div className="w-3/8">
         <p>{bookName}</p>
         <p>{bookAuthor}</p>
         <p>{bookGender}</p>

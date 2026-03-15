@@ -1,4 +1,4 @@
-import { REST_SERVER_URL } from "@/config/configuration";
+import { REST_SERVER_URL, sessionId } from "@/config/configuration";
 import { booksMOCK } from "@/mocks/booksMOCK";
 import { Book } from "@/model/book";
 import type { Reservation } from "@/model/reservation";
@@ -45,7 +45,7 @@ class BookService {
 
   async getUserOwnBooks(): Promise<Book[]> {
     const response = () => axios.get<Book[]>(
-      REST_SERVER_URL + `/userOwnBooks/${localStorage.getItem('id')}`
+      REST_SERVER_URL + `/userOwnBooks/${sessionId}`
     )
     return (await getAxiosData(response)).map(Book.fromJSON)
   }
