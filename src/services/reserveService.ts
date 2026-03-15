@@ -17,14 +17,14 @@ class ReserveService {
   }
 
 
-  async getFilteredBooksPage(filters: BookFilters): Promise<PageResponse<ReservationJSON>> {
-    const response = () => axios.post<PageResponse<ReservationJSON>>(
-      REST_SERVER_URL + `/filtered-reservations`,
-      filters
-    )
-    const data = (await response()).data
-    return data
-  }
+  // async getFilteredBooksPage(filters: BookFilters): Promise<PageResponse<ReservationJSON>> {
+  //   const response = () => axios.post<PageResponse<ReservationJSON>>(
+  //     REST_SERVER_URL + `/filtered-reservations`,
+  //     filters
+  //   )
+  //   const data = (await response()).data
+  //   return data
+  // }
 
 
 

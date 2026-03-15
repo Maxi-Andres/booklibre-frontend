@@ -25,15 +25,14 @@ import {
 } from '@headlessui/react'
 // import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
-import type { Book } from '@/model/book'
+import { Book } from '@/model/book'
 import BookCardHome from '@/components/BookCardHome'
-import { Reservation } from '@/model/reservation'
 import { BookGender } from '@/types/bookGender'
 import type { BookFilters } from '@/types/bookFilters'
 import MultiRangeSlider from '@/components/MultiRangeSlider/MultiRangeSlider'
-import { reserveService } from '@/services/reserveService'
 import { addDays } from '@/utils/addDays'
 import Pagination from '@/components/BookPagination/Pagination'
+import { bookService } from '@/services/bookService'
 
 const sortOptions = [
   { name: 'Most Popular', href: '#', current: true },
@@ -89,10 +88,10 @@ export default function Home() {
   const getFilteredBooksPage = async (newFilters: BookFilters) => {
     // Los mapeos ver si hacerlos aca o extraerlos 
     // a alguna funcion que se encargue alguien mas?
-    const response = await reserveService.getFilteredBooksPage(newFilters)
+    const response = await bookService.getFilteredBooksPage(newFilters)
     // console.log("reservas: ", response)
-    const filtered = response.content.map(reservation => Reservation.fromJSON(reservation))
-    setFilteredBooks(filtered.map(reservation => reservation.book))
+    const filtered = response.content.map(book => Book.fromJSON(book))
+    setFilteredBooks(filtered)
     setTotalPages(response.totalPages)
   }
   

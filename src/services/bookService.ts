@@ -1,10 +1,11 @@
 import { REST_SERVER_URL } from "@/config/configuration";
 import { booksMOCK } from "@/mocks/booksMOCK";
 import { Book } from "@/model/book";
-import type { Reservation } from "@/model/reservation";
 import type { BookFilters } from "@/types/bookFilters";
 import axios from "axios";
 import { getAxiosData } from "./common";
+import type { BookJSON } from "@/json/bookJSON";
+import type { PageResponse } from "@/types/pageResponse";
 
 
 class BookService {
@@ -15,33 +16,15 @@ class BookService {
     return booksMOCK
   }
 
-  //* Filtrado en front!! con MOCK
-  // getFilteredBooks(filters: BookFilters): Book[] {
-  //   return booksMOCK.filter(book => {
-  //     const matchesGender =
-  //       filters.genders.length === 0 ||
-  //       filters.genders.includes(book.gender)
-
-  //     const matchesPages =
-  //       book.numPages >= filters.numPagesRange.min &&
-  //       book.numPages <= filters.numPagesRange.max
-
-  //     const matchesISBN =
-  //       filters.ISBN.trim() === "" ||
-  //       book.ISBN.toLowerCase().includes(filters.ISBN.toLowerCase())
-
-  //     const matchesOwner =
-  //       filters.ownersName.trim() === "" ||
-  //       book.owner.name.toLowerCase().includes(filters.ownersName.toLowerCase())
-
-  //     return (
-  //       matchesGender &&
-  //       matchesPages &&
-  //       matchesISBN &&
-  //       matchesOwner
-  //     )
-  //   })
-  // }
+  // -- LIBROS FILTRADOS PARA PAGINACION EN HOME --
+  async getFilteredBooksPage(filters: BookFilters): Promise<PageResponse<BookJSON>> {
+    const response = () => axios.post<PageResponse<BookJSON>>(
+      REST_SERVER_URL + `/filtered-books`,
+      filters
+    )
+    const data = (await response()).data
+    return data
+  }
 
   async getUserOwnBooks(): Promise<Book[]> {
     const response = () => axios.get<Book[]>(
