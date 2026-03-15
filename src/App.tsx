@@ -25,7 +25,8 @@ function App() {
             <Route path="/detalle-de-libro" element={<BookDetail />} />
             <Route path="/prestamos-de-libros" element={<LoanDetails />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/edicion-de-libro" element={<EditBook />} />
+            <Route path="/editar-libro/:id" element={<EditBook />} />
+            <Route path="/crear-libro" element={<EditBook />} />
           </Route>
         ) : (
           <>

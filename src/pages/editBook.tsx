@@ -3,21 +3,44 @@ import { InputField } from "@/components/InputField"
 import  ValidationField  from "@/validation/ValidationField"
 import { ValidationMessage } from "@/validation/validationMessage"
 import { Book } from "@/model/book"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { BookGender } from "@/types/bookGender"
 import { GenericCombobox } from "@/components/GenericComboBox"
 import { Languages } from "@/types/languages"
 import { BookCondition } from "@/types/bookCondition"
+import { useParams, Navigate } from 'react-router'
+import { Button } from "@headlessui/react"
+import { bookService } from "@/services/bookService"
 
 
 
  export default function EditBook() {
   //const book = bookOne
+  
+  const { id } = useParams()
+  const isEditing = !!id
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
-  const [book, setBook] = useState<Book>(bookOne)
+  const [book, setBook] = useState<Book>(isEditing ? bookOne : new Book())
+  
+  useEffect(() => {
+  if (isEditing) {
+    bookService.getBookByID(Number(id)).then(found => {
+      if (found) setBook(found)
+    })
+  }
+ }, [id])
 
   const updateBook = (key: keyof Book, value: unknown) => {
    setBook(prev => Object.assign(new Book(), prev, { [key]: value }))
+  }
+
+  const handleSubmit = async () => {
+    if (isEditing) {
+      await bookService.updateBook(Number(id),book)
+    } else {
+      await bookService.createBook(book)
+    }
+    
   }
 
   return (
@@ -45,7 +68,7 @@ import { BookCondition } from "@/types/bookCondition"
               />
             </svg>
           </li>
-          <li className="font-medium text-gray-700">Editar Libro</li>
+          <li className="font-medium text-gray-700">{isEditing ? 'Editar libro' : 'Crear libro'}</li>
         </ol>
       </div>
 
@@ -53,11 +76,22 @@ import { BookCondition } from "@/types/bookCondition"
       <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-8">
         <div className="flex items-start gap-6">
           <div className="flex w-64 shrink-0 flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-            <img
-              src={book.imageSrc}
-              alt={book.title}
+            <div>
+              <img
+              src={book.imageSrc || 'https://static.vecteezy.com/system/resources/previews/024/152/745/original/upload-photo-icon-editable-vector.jpg'}
               className="h-78 w-64 rounded-xl object-cover shadow-md"
             />
+              <InputField 
+                       label="Portada"
+                       id="imageSrc"
+                       type="imageSrc"
+                       required
+                       value={book.title}
+                       onChange={(e) => updateBook('imageSrc', e.target.value)}
+                />
+                <ValidationField field="title" errors={errors} />
+            </div>
+            
             
           </div>
         
@@ -73,16 +107,18 @@ import { BookCondition } from "@/types/bookCondition"
                        type="title"
                        required
                        value={book.title}
+                       onChange={(e) => updateBook('title', e.target.value)}
                 />
                 <ValidationField field="title" errors={errors} />
                 <InputField 
                        label="Tipo"
-                       id="type"
-                       type="tyoe"
+                       id="bookType"
+                       type="bookType"
                        required
                        value={book.bookType}
+                       onChange={(e) => updateBook('bookType', e.target.value)}
                       />
-                      <ValidationField field="title" errors={errors} />
+                      <ValidationField field="bookType" errors={errors} />
               </div>
               {/* dos columnas   */}
               {/* fila 1 genero - autor   */}
@@ -109,6 +145,7 @@ import { BookCondition } from "@/types/bookCondition"
                         type="author"
                         required
                         value={book.author.name}
+                        onChange={(e) => updateBook('author', e.target.value)}
                       />
                       <ValidationField field="author" errors={errors} />
                     </div>
@@ -157,6 +194,7 @@ import { BookCondition } from "@/types/bookCondition"
                        type="editorial"
                        required
                        value={book.editorial}
+                       onChange={(e) => updateBook('editorial', e.target.value)}
                       />
                       <ValidationField field="editorial" errors={errors} />
                     </div>
@@ -172,6 +210,7 @@ import { BookCondition } from "@/types/bookCondition"
                         required
                         // todo lo que sigue a ? es para transformar al tipo de fecha que acepta el inputfield
                         value={book.publishDate ? new Date(book.publishDate).toISOString().split('T')[0] : ''}
+                        onChange={(e) => updateBook('publishDate', e.target.value)}
                       />
                       <ValidationField field="publishDate" errors={errors} />
                     </div>
@@ -190,6 +229,7 @@ import { BookCondition } from "@/types/bookCondition"
                        type="pages"
                        required
                        value={book.pages}
+                       onChange={(e) => updateBook('pages', e.target.value)}
                       />
                       <ValidationField field="pages" errors={errors} />
                     </div>
@@ -204,6 +244,7 @@ import { BookCondition } from "@/types/bookCondition"
                         type="ISBN"
                         required
                         value={book.ISBN}
+                        onChange={(e) => updateBook('ISBN', e.target.value)}
                       />
                       <ValidationField field="ISBN" errors={errors} />
                     </div>
@@ -218,8 +259,14 @@ import { BookCondition } from "@/types/bookCondition"
                        type="desc"
                        required
                        value={book.desc}
+                       onChange={(e) => updateBook('desc', e.target.value)}
                 />
                 <ValidationField field="desc" errors={errors} />
+              </div>
+              <div>
+                <Button onClick={handleSubmit} className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600">
+                {isEditing ? 'Guardar cambios' : 'Crear'}
+                </Button>
               </div>
           </div>
           </div>
@@ -230,4 +277,5 @@ import { BookCondition } from "@/types/bookCondition"
           
         
 </div>
-)}
+)
+}
