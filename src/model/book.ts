@@ -14,13 +14,12 @@ export class Book {
   desc: string
   gender: BookGender
   author: Author
-  pages: number
+  numPages: number
   ISBN: string
   language: Languages
   editorial: string
   publishDate: Date
   condition: BookCondition
-  reviews: BookReview[]
   imageSrc: string
   owner: UserProfile
 
@@ -29,15 +28,14 @@ export class Book {
     title: string = "",
     bookType: BookType = BookType.Common,
     desc: string = "",
-    gender: BookGender = BookGender.Drama,
+    gender: BookGender = BookGender.DRAMA,
     author: Author = new Author(),
-    pages: number = 0,
+    numPages: number = 0,
     ISBN: string = "",
     language: Languages = Languages.SPANISH,
     editorial: string = "",
     publishDate: Date = new Date(),
-    condition: BookCondition = BookCondition.Good,
-    reviews: BookReview[] = [],
+    condition: BookCondition = BookCondition.GOOD,
     imageSrc: string = "",
     owner: UserProfile = new UserProfile(),
   ) {
@@ -47,13 +45,12 @@ export class Book {
     this.desc = desc
     this.gender = gender
     this.author = author
-    this.pages = pages
+    this.numPages = numPages
     this.ISBN = ISBN
     this.language = language
     this.editorial = editorial
     this.publishDate = publishDate
     this.condition = condition
-    this.reviews = reviews
     this.imageSrc = imageSrc
     this.owner = owner
   }
@@ -63,12 +60,14 @@ export class Book {
   }
 
   ratingAvg(): number {
-    if (this.reviews.length == 0) return 0.0
-    return this.reviews.reduce((s, r) => s + r.rate, 0) / this.reviews.length
+    return 0
   }
 
   static fromJSON(bookJSON: BookJSON): Book {
-    const book = Object.assign(new Book(), bookJSON, {})
+    const book = Object.assign(new Book(), bookJSON, {
+      author: new Author(0, bookJSON.authorName, bookJSON.authorAvatarUrl),
+      publishDate: new Date(bookJSON.publishDate),
+    })
     return book
   }
 }
