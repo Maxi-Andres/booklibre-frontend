@@ -46,7 +46,7 @@ const genderFilters = {
     ],
   }
 
-const InitialFilters: BookFilters = {
+const initialFilters: BookFilters = {
   title: "",
   genders: [], //! debe ser value de keyof enum BookGender
   pagesRangeMin: 0,
@@ -71,7 +71,7 @@ export default function Home() {
 
   const isInitializedRef = useRef(false)
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
-  const [filters, setFilters] = useState<BookFilters>(InitialFilters)
+  const [filters, setFilters] = useState<BookFilters>(initialFilters)
   const [page, setPage] = useState(0)
   // const pageSize = 6
   const [totalPages, setTotalPages] = useState(0)
@@ -131,7 +131,7 @@ export default function Home() {
 
    //* ==== INITIALIZE FILTERS ====
   if(!isInitializedRef.current) {
-    getFilteredBooksPage(InitialFilters)
+    getFilteredBooksPage(initialFilters)
     // console.log("Initial filters: ", filters)
     isInitializedRef.current = true
   }
@@ -145,11 +145,16 @@ export default function Home() {
     handleApplyFilters()
   }, [filters.sortedBy, filters.ascending])
 
-   //* ==== APPLY FILTERS & RESTART PAGE ====
+   //* ==== APPLY & CLEAR FILTERS & RESTART PAGE ====
   const handleApplyFilters = () => {
     // console.log("Applying filters: ", filters)
     getFilteredBooksPage(filters)
+  }
+  
+  const handleClearFilters = () => {
+    setFilters(initialFilters)
     setPage(0)
+    handleApplyFilters()
   }
 
   return (
@@ -270,9 +275,12 @@ export default function Home() {
                 </Disclosure>
 
                 {/* ========== APPLY FILTERS ========== */}
-                <Disclosure key="applyFiltersBtn" as="div" className="border-b border-gray-200 py-6 flex justify-center">
+                <Disclosure key="applyFiltersBtn" as="div" className="border-b border-gray-200 py-6 flex justify-center gap-x-4">
                   <button type='button' onClick={handleApplyFilters} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Aplicar Filtros
+                  </button>
+                  <button type='button' onClick={handleClearFilters} className="bg-white hover:bg-blue-500 hover:text-white border border-blue-500 text-blue-500 font-bold py-2 px-4 rounded">
+                    Borrar Filtros
                   </button>
                 </Disclosure>
 
