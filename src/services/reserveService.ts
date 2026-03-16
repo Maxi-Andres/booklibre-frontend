@@ -1,10 +1,11 @@
 import { REST_SERVER_URL } from "@/config/configuration"
 import axios from "axios"
 import { getAxiosData } from "./common"
-import type { BookFilters } from "@/types/bookFilters"
-import type { PageResponse } from "@/types/pageResponse"
-import { Reservation } from "@/model/reservation"
-import type { ReservationJSON } from "@/json/reservationJSON"
+// import type { Book } from "@/model/book"
+// import type { BookFilters } from "@/types/bookFilters"
+// import type { PageResponse } from "@/types/pageResponse"
+// import { Reservation } from "@/model/reservation"
+// import type { ReservationJSON } from "@/json/reservationJSON"
 
 class ReserveService {
   
@@ -14,6 +15,11 @@ class ReserveService {
     return getAxiosData<number>(() => axios.get<number>(
       REST_SERVER_URL + `/userReadBooks/${userId}`
     ))
+  }
+
+  async createReservation(bookId: number, pickUpDate: string, dropOffDate: string) {
+    const userId = localStorage.getItem("id")
+    return axios.post(REST_SERVER_URL + "/create-reservation", {bookId, userId, pickUpDate, dropOffDate})
   }
 
 

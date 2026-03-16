@@ -1,4 +1,3 @@
-import type { BookReview } from "./review"
 import { BookType } from "../types/bookType"
 import { BookGender } from "../types/bookGender"
 import { Languages } from "../types/languages"
@@ -65,6 +64,7 @@ export class Book {
 
   static fromJSON(bookJSON: BookJSON): Book {
     const book = Object.assign(new Book(), bookJSON, {
+      author: new Author(0, bookJSON.authorName, bookJSON.authorAvatarUrl),
       publishDate: new Date(bookJSON.publishDate),
     })
     return book

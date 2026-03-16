@@ -33,6 +33,12 @@ class BookService {
     return (await getAxiosData(response))
   }
 
+  async getBookDetail(id: number){
+    const queryById = () => axios.get<BookJSON>(REST_SERVER_URL + '/book-detail/' + id)
+    const bookJSON = await getAxiosData(queryById)
+    return Book.fromJSON(bookJSON)
+  }
+
 }
 
 export const bookService = new BookService()

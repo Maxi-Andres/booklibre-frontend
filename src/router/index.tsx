@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
       { index: true, element: <App /> }, // index es la ruta por defecto
       { path: "home", element: <Home /> }, // luego será el index esta
       { path: "prestamos-de-libros", element: <LoanDetails /> },
-      { path: "detalle-de-libro", element: <BookDetail /> },
+      { path: "book-detail/:id", element: <BookDetail /> },
       { path: "perfil", element: <Profile /> },
     ],
   },

@@ -3,7 +3,7 @@ import { Book } from "./book"
 import { UserProfile } from "./userProfile"
 import { BookReview } from "./review"
 import { ReservationState } from "@/types/reservationState"
-import { Author } from "./author"
+// import { Author } from "./author"
 
 export class Reservation {
   id: number
