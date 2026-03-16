@@ -26,8 +26,20 @@ export default function Profile() {
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
   const [userOwnBooks, setUserOwnBooks] = useState<ReservationProfileBook[]>([])
   const [userReadBooksNumber, setUserReadBooksNumber] = useState<number>(0)
+  const [shownBooks, setShownBooks] = useState<ReservationProfileBook[]>([])
+  const [filter, setFilter] = useState<string>("Todos")
 
   // const onSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {}
+
+  const showAllBooks = () => {
+    setFilter("Todos")
+    setShownBooks(userOwnBooks)
+  }
+
+  const showFilteredBooks = (state: string) => {
+    setFilter(state)
+    setShownBooks(userOwnBooks.filter((book) => book.state == state))
+  }
 
   const getUser = async () => {
     try {
@@ -43,8 +55,11 @@ export default function Profile() {
     try {
       const userOwnBooks = await reserveService.getUserOwnBooks()
       setUserOwnBooks(userOwnBooks)
+      setShownBooks(userOwnBooks)
+
     } catch (error) {
       // const errorMessage = getErrorMessage(error)
+      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
     }
   }
 
@@ -54,6 +69,7 @@ export default function Profile() {
       setUserReadBooksNumber(userReadBooksNumber)
     } catch (error) {
       // const errorMessage = getErrorMessage(error)
+      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
     }
   }
 
@@ -61,6 +77,7 @@ export default function Profile() {
     getUser()
     getUserOwnBooks()
     getUserReadBooksNumber()
+    showAllBooks()
   }
 
   useOnInit(() => handleProfileLoad())
@@ -71,7 +88,7 @@ export default function Profile() {
         <section className="col-span-3 flex h-42 items-center gap-4 rounded-xl border border-gray-200 bg-white p-4">
           <img
             src={`http://localhost:9000/${profile.img}`}
-            alt=""
+            alt="Profile Image"
             className="h-26 w-26 rounded-full object-cover"
           />
           <div className="flex flex-1 flex-col gap-3">
@@ -115,11 +132,7 @@ export default function Profile() {
               <article className="border-b-2 border-gray-300 pb-2">
                 <p className="text-xs font-bold text-gray-500">TELÉFONO</p>
                 <p>
-                  {"+54" +
-                    " (" +
-                    profile.cel.slice(0, 2) +
-                    ") " +
-                    profile.cel.slice(2)}
+                  {profile.cel.slice(0, 3) + ' (' + profile.cel.slice(4,6) + ') ' + profile.cel.slice(7)}
                 </p>
               </article>
               <article>
@@ -158,9 +171,9 @@ export default function Profile() {
 
             <section className="flex h-102 flex-1 flex-col gap-1 rounded-xl border border-gray-200 bg-white">
               <section className="flex gap-2 p-4">
-                <Tag text="Todos"></Tag>
-                <Tag text="Disponibles"></Tag>
-                <Tag text="Prestados"></Tag>
+                <Tag filterKind="Todos" filter={filter} text="Todos" buttonOnClickFunction={showAllBooks}></Tag>
+                <Tag filterKind="Disponible" filter={filter} text="Disponibles" buttonOnClickFunction={() => showFilteredBooks("Disponible")}></Tag>
+                <Tag filterKind="Prestado" filter={filter} text="Prestados" buttonOnClickFunction={() => showFilteredBooks("Prestado")}></Tag>
               </section>
               <section className="flex gap-2 px-3">
                 <div className="flex w-3/5 items-center justify-between">
@@ -184,7 +197,7 @@ export default function Profile() {
                 <p>Acciones</p>
               </section>
               <section className="pr-1">
-                {userOwnBooks.map((reserve) => (
+                {shownBooks.map((reserve) => (
                   <ProfileBook key={reserve.book.id} 
                     bookImg={reserve.book.imageSrc}
                     bookAuthor={reserve.book.authorName}
