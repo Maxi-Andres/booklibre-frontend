@@ -2,9 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react'
 import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
@@ -76,6 +73,7 @@ export default function Home() {
   // const pageSize = 6
   const [totalPages, setTotalPages] = useState(0)
 
+  //* ==== GET DATA ====
   const getFilteredBooksPage = async (newFilters: BookFilters) => {
     const response = await bookService.getFilteredBooksPage(newFilters)
     const filtered = response.content.map(book => Book.fromJSON(book))
@@ -83,7 +81,6 @@ export default function Home() {
     setFilteredBooks(filtered)
     setTotalPages(response.totalPages)
   }
-  
 
   //* ==== FILTERS UPDATE ====
   const updateSimpleFilter = <K extends keyof BookFilters>(
@@ -151,11 +148,11 @@ export default function Home() {
     getFilteredBooksPage(filters)
   }
   
-  const handleClearFilters = () => {
-    setFilters(initialFilters)
-    setPage(0)
-    handleApplyFilters()
-  }
+  // const handleClearFilters = () => {
+  //   setFilters({...initialFilters})
+  //   setPage(0)
+  //   handleApplyFilters()
+  // }
 
   return (
     <div className="w-full">
@@ -235,7 +232,8 @@ export default function Home() {
                   <MultiRangeSlider
                     min={0}
                     max={1500}
-                    onChange={handleRangeChange} trackColor={'#cecece'} rangeColor={'#2790F1'} width={'260px'} />
+                    onChange={handleRangeChange} 
+                    trackColor={'#cecece'} rangeColor={'#2790F1'} width={'260px'} />
                 </Disclosure>
 
                 {/* ========== RESERVATION DATES RANGE FILTERS ========== */}
@@ -279,9 +277,9 @@ export default function Home() {
                   <button type='button' onClick={handleApplyFilters} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Aplicar Filtros
                   </button>
-                  <button type='button' onClick={handleClearFilters} className="bg-white hover:bg-blue-500 hover:text-white border border-blue-500 text-blue-500 font-bold py-2 px-4 rounded">
+                  {/* <button type='button' onClick={handleClearFilters} className="bg-white hover:bg-blue-500 hover:text-white border border-blue-500 text-blue-500 font-bold py-2 px-4 rounded">
                     Borrar Filtros
-                  </button>
+                  </button> */}
                 </Disclosure>
 
               </form>
