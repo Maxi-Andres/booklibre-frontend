@@ -8,7 +8,7 @@ import { BookGender } from "@/types/bookGender"
 import { GenericCombobox } from "@/components/GenericComboBox"
 import { Languages } from "@/types/languages"
 import { BookCondition } from "@/types/bookCondition"
-import { useParams, Navigate } from 'react-router'
+import { useParams } from 'react-router'
 import { Button } from "@headlessui/react"
 import { bookService } from "@/services/bookService"
 
@@ -40,7 +40,6 @@ import { bookService } from "@/services/bookService"
     } else {
       await bookService.createBook(book)
     }
-    
   }
 
   return (
