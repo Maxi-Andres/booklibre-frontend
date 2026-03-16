@@ -2,6 +2,7 @@
 import { useState } from "react"
 import type { Book } from "@/model/book"
 import { reserveService } from "@/services/reserveService"
+import { showToast } from "@/utils/toast"
 
 const formatDate = (str: string) => {
   if (!str) return ""
@@ -32,9 +33,10 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate }:
 
   const handleConfirmReservation = async () => {
     try {
-      await reserveService.createReservation(book.id, pickUpDate, dropOffDate)
+        await reserveService.createReservation(book.id, pickUpDate, dropOffDate)
+        showToast.success("Reserva confirmada!")
     } catch (error) {
-      console.error("error", error)
+        showToast.httpError(error, "Error al reservar")
     }
   }
 

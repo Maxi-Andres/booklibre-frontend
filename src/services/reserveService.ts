@@ -13,6 +13,7 @@ class ReserveService {
   }
 
   async createReservation(bookId: number, pickUpDate: string, dropOffDate: string) {
+    console.log("userId:", localStorage.getItem("id"))
     const userId = localStorage.getItem("id")
     return axios.post(REST_SERVER_URL + "/create-reservation", {bookId, userId, pickUpDate, dropOffDate})
   }
