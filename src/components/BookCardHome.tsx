@@ -1,6 +1,4 @@
 import type { Book } from "@/model/book"
-import { BookCondition } from "@/types/bookCondition"
-
 
 const BookCardHome = ({book} : {book : Book}) => {
   return (
