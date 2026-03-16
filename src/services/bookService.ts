@@ -26,13 +26,6 @@ class BookService {
     return data
   }
 
-  async getUserOwnBooks(): Promise<Book[]> {
-    const response = () => axios.get<Book[]>(
-      REST_SERVER_URL + `/userOwnBooks/${localStorage.getItem('id')}`
-    )
-    return (await getAxiosData(response))
-  }
-
   async getBookDetail(id: number){
     const queryById = () => axios.get<BookJSON>(REST_SERVER_URL + '/book-detail/' + id)
     const bookJSON = await getAxiosData(queryById)

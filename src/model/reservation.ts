@@ -47,5 +47,4 @@ export class Reservation {
     reservation.review = review
     return reservation
   }
-
 }
