@@ -12,7 +12,7 @@ export type BookJSON = {
   authorName: string
   authorAvatarUrl: string
   numPages: number
-  ISBN: string
+  isbn: string
   language: Languages // string?
   editorial: string
   publishDate: Date

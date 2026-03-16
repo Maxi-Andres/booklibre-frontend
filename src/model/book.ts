@@ -15,7 +15,7 @@ export class Book {
   gender: BookGender
   author: Author
   numPages: number
-  ISBN: string
+  isbn: string
   language: Languages
   editorial: string
   publishDate: Date
@@ -31,7 +31,7 @@ export class Book {
     gender: BookGender = BookGender.DRAMA,
     author: Author = new Author(),
     numPages: number = 0,
-    ISBN: string = "",
+    isbn: string = "",
     language: Languages = Languages.SPANISH,
     editorial: string = "",
     publishDate: Date = new Date(),
@@ -46,7 +46,7 @@ export class Book {
     this.gender = gender
     this.author = author
     this.numPages = numPages
-    this.ISBN = ISBN
+    this.isbn = isbn
     this.language = language
     this.editorial = editorial
     this.publishDate = publishDate

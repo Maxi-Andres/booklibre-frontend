@@ -9,7 +9,7 @@ export type BookFilters = {
   pagesRangeMax: number,
   pickUpDate: string, //! ISO string
   dropOffDate: string, //! ISO string
-  ISBN: string,
+  isbn: string,
   ownersName: string,
   sortedBy: BookSortCriteria,
   ascending: boolean,

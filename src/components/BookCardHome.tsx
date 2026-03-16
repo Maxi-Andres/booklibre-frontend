@@ -25,7 +25,7 @@ const BookCardHome = ({book} : {book : Book}) => {
         <div className="grid grid-cols-2 gap-x-6">
           <div className=''>
             <p className="mt-1 text-sm font-medium text-gray-400">ISBN</p>
-            <p className="mt-1 text-sm font-medium text-gray-900">{book.ISBN}</p>
+            <p className="mt-1 text-sm font-medium text-gray-900">{book.isbn}</p>
           </div>
 
           <div className=''>

@@ -53,7 +53,7 @@ const initialFilters: BookFilters = {
   pagesRangeMax: 1500,
   pickUpDate: new Date().toISOString().split("T")[0],
   dropOffDate: addDays(new Date(), 1).toISOString().split("T")[0], // 1 dia despues
-  ISBN: "",
+  isbn: "",
   ownersName: "",
   sortedBy: new SortByTitle(),
   ascending: true,
@@ -261,8 +261,8 @@ export default function Home() {
                     <label htmlFor="isbn" className='text-gray-600'>ISBN</label>
                     <input type='text' name="isbn" id="isbn" placeholder='978-950-xxxx-xx-x'
                     className='py-2 px-4 text-sm bg-gray-100 border border-gray-200 text-gray-600 rounded' 
-                    value={filters.ISBN}
-                    onChange={(e) => updateSimpleFilter("ISBN", e.target.value)} />
+                    value={filters.isbn}
+                    onChange={(e) => updateSimpleFilter("isbn", e.target.value)} />
                   </div>
 
                   <div className='flex flex-col justify-start align-items-start'>
