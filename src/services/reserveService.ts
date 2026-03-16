@@ -1,14 +1,14 @@
-import { REST_SERVER_URL } from "@/config/configuration"
+import { REST_SERVER_URL, sessionId } from "@/config/configuration"
 import axios from "axios"
 import { getAxiosData } from "./common"
 import { mapReservation, type ReservationDTO } from "@/types/reservationType"
+import type { ReservationProfileBookJSON } from "@/json/reservationJSON"
+import { ReservationProfileBook } from "@/model/reservationProfile"
 
 class ReserveService {
-  async getUserReadBooks(): Promise<number> {
-    const userId = localStorage.getItem("id")
-
+  async getUserReadBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
-      axios.get<number>(REST_SERVER_URL + `/userReadBooks/${userId}`),
+      axios.get<number>(REST_SERVER_URL + `/userReadBooks/${sessionId}`),
     )
   }
 
@@ -30,6 +30,14 @@ class ReserveService {
       params: { search },
     })
     return data.map(mapReservation)
+  }
+
+  async getUserOwnBooks(): Promise<ReservationProfileBook[]> {
+    const response = () =>
+      axios.get<ReservationProfileBookJSON[]>(
+        REST_SERVER_URL + `/userOwnBooks/${sessionId}`,
+      )
+    return (await getAxiosData(response)).map(ReservationProfileBook.fromJSON)
   }
 }
 

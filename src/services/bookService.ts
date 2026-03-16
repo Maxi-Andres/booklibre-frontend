@@ -43,13 +43,6 @@ class BookService {
     })
   }
 
-  async getUserOwnBooks(): Promise<Book[]> {
-    const response = () => axios.get<Book[]>(
-      REST_SERVER_URL + `/userOwnBooks/${sessionId}`
-    )
-    return (await getAxiosData(response)).map(Book.fromJSON)
-  }
-
 }
 
 export const bookService = new BookService()

@@ -26,10 +26,9 @@ export type BookJSON = {
 
 export type ProfileBookJSON = {
   id: number,
-  imgSrc: String,
-  title: String,
-  authorName: String,
+  title: string,
+  authorName: string,
   gender: BookGender,
-  state: String
-  timestamp: String
+  timestamp: string
+  imageSrc: string,
 }

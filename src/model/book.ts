@@ -33,7 +33,7 @@ export class Book {
     author: Author = new Author(),
     pages: number = 0,
     ISBN: string = "",
-    language: Languages = Languages.Spanish,
+    language: Languages = Languages.SPANISH,
     editorial: string = "",
     publishDate: Date = new Date(),
     condition: BookCondition = BookCondition.Good,

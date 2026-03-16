@@ -47,9 +47,4 @@ export class Reservation {
     reservation.review = review
     return reservation
   }
-
-  static fromReservationProfileJSON(reservation: ReservationProfileJSON): ReservationProfile {
-      const profile = Object.assign(new UserProfile(), userJSON, {})
-      return profile
-    }
 }

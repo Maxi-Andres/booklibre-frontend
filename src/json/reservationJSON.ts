@@ -13,8 +13,8 @@ export type ReservationJSON = {
   state: ReservationState
 }
 
-export type ReservationProfileJSON = {
+export type ReservationProfileBookJSON = {
   id: number
   book: ProfileBookJSON
-  state: String
+  state: string
 }
