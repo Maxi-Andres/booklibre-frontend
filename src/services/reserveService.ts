@@ -4,6 +4,7 @@ import { getAxiosData } from "./common"
 import { mapReservation, type ReservationDTO } from "@/types/reservationType"
 import type { ReservationProfileBookJSON } from "@/json/reservationJSON"
 import { ReservationProfileBook } from "@/model/reservationProfile"
+import type { BookReview } from "@/model/review"
 
 class ReserveService {
   async getUserReadBooksNumber(): Promise<number> {
@@ -11,6 +12,26 @@ class ReserveService {
       axios.get<number>(REST_SERVER_URL + `/userReadBooks/${sessionId}`),
     )
   }
+
+  async createReservation(bookId: number, pickUpDate: string, dropOffDate: string) {
+    return axios.post(REST_SERVER_URL + "/create-reservation", {bookId, sessionId, pickUpDate, dropOffDate})
+  }
+
+  async getReviews(bookId: number){
+    return axios.get<BookReview[]>(`${REST_SERVER_URL}/book-review/${bookId}`)
+  }
+
+
+  // async getFilteredBooksPage(filters: BookFilters): Promise<PageResponse<ReservationJSON>> {
+  //   const response = () => axios.post<PageResponse<ReservationJSON>>(
+  //     REST_SERVER_URL + `/filtered-reservations`,
+  //     filters
+  //   )
+  //   const data = (await response()).data
+  //   return data
+  // }
+
+
 
   // async getReservesByUserId(search: string): Promise<ReservationDTO[]> {
   //   return axios.get(

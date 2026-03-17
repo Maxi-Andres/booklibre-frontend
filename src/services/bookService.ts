@@ -1,4 +1,4 @@
-import { REST_SERVER_URL, sessionId } from "@/config/configuration";
+import { REST_SERVER_URL } from "@/config/configuration";
 import { booksMOCK } from "@/mocks/booksMOCK";
 import { Book } from "@/model/book";
 import type { BookFilters } from "@/types/bookFilters";
@@ -51,6 +51,11 @@ class BookService {
     return (await getAxiosData(response))
   }
 
+  async getBookDetail(id: number){
+    const queryById = () => axios.get<BookJSON>(REST_SERVER_URL + '/book-detail/' + id)
+    const bookJSON = await getAxiosData(queryById)
+    return Book.fromJSON(bookJSON)
+  }
 }
 
 export const bookService = new BookService()

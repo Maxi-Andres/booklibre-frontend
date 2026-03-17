@@ -22,7 +22,7 @@ function App() {
         {user ? (
           <Route element={<PrivateLayer />}>
             <Route path="/" element={<Home />} />
-            <Route path="/detalle-de-libro" element={<BookDetail />} />
+            <Route path="/book-detail/:id" element={<BookDetail />} />
             <Route path="/prestamos-de-libros" element={<LoanDetails />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/editar-libro/:id" element={<EditBook />} />
