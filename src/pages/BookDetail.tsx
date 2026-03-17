@@ -13,6 +13,7 @@ import { BookReview } from '@/model/review'
 import { showToast } from '@/utils/toast'
 import ReviewsModal from "@/components/ReviewsModal"
 import { StarRating } from '@/components/ReviewsModal'
+import { formatDate } from "@/utils/formatDate"
 
 export default function BookDetail() {
   const { id } = useParams()
@@ -95,6 +96,7 @@ export default function BookDetail() {
               </span>
               <div className="flex items-center gap-1.5">
                 <StarRating rating={(BookReview.averageRating(reviews))} />
+                <span className='text-gray-500 text-xs'>{`(${BookReview.averageRating(reviews).toFixed(1)})`}</span>
               </div>
             </div>
 
@@ -177,7 +179,7 @@ export default function BookDetail() {
               <div className="pr-[<3>]">
                 <p className="text-xs text-[#A3B0C2] uppercase">Publicado</p>
                 <p className="text-base text-gray-800">
-                  {book!.publishDate.toLocaleDateString()}
+                  {formatDate(book!.publishDate)}
                 </p>
               </div>
               <div className="pr-[3]">

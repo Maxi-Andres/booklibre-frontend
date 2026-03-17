@@ -31,7 +31,6 @@ class BookService {
     const bookJSON = await getAxiosData(queryById)
     return Book.fromJSON(bookJSON)
   }
-
 }
 
 export const bookService = new BookService()

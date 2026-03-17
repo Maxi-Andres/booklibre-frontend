@@ -3,15 +3,7 @@ import { useState } from "react"
 import type { Book } from "@/model/book"
 import { reserveService } from "@/services/reserveService"
 import { showToast } from "@/utils/toast"
-
-const formatDate = (str: string) => {
-  if (!str) return ""
-  const d = new Date(str + "T00:00:00")
-  const day = d.getDate().toString().padStart(2, "0")
-  const month = d.toLocaleString("en-US", { month: "short" })
-  const year = d.getFullYear()
-  return `${day} ${month} ${year}`
-}
+import { formatDate } from "@/utils/formatDate"
 
 type Props = {
   book: Book
