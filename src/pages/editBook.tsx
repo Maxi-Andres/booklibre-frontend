@@ -227,8 +227,8 @@ import { bookService } from "@/services/bookService"
                        id="pages"
                        type="pages"
                        required
-                       value={book.pages}
-                       onChange={(e) => updateBook('pages', e.target.value)}
+                       value={book.numPages}
+                       onChange={(e) => updateBook('numPages', e.target.value)}
                       />
                       <ValidationField field="pages" errors={errors} />
                     </div>
@@ -242,8 +242,8 @@ import { bookService } from "@/services/bookService"
                         id="ISBN"
                         type="ISBN"
                         required
-                        value={book.ISBN}
-                        onChange={(e) => updateBook('ISBN', e.target.value)}
+                        value={book.isbn}
+                        onChange={(e) => updateBook('isbn', e.target.value)}
                       />
                       <ValidationField field="ISBN" errors={errors} />
                     </div>
