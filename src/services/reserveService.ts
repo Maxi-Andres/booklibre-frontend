@@ -17,8 +17,10 @@ class ReserveService {
     return axios.post(REST_SERVER_URL + "/create-reservation", {bookId, sessionId, pickUpDate, dropOffDate})
   }
 
-  async getReviews(bookId: number){
-    return axios.get<BookReview[]>(`${REST_SERVER_URL}/book-review/${bookId}`)
+  async getReviews(bookId: number, page: number, pageSize: number) {
+    return axios.get<BookReview[]>(
+        `${REST_SERVER_URL}/book-review/${bookId}?page=${page}&pageSize=${pageSize}`
+    )
   }
 
 

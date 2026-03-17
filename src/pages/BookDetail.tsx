@@ -35,10 +35,10 @@ export default function BookDetail() {
 
   const getBookReviews = async () => {
     try {
-      const reviewsResponse = await reserveService.getReviews(Number(id))
-      setReviews(reviewsResponse.data)
-    } catch (error){
-      showToast.httpError(error,'Error al cargar reseñas')
+        const response = await reserveService.getReviews(Number(id), 0, 2)
+        setReviews(response.data)
+    } catch (error) {
+        showToast.httpError(error, 'Error al cargar reseñas')
     }
   }
 
@@ -199,7 +199,7 @@ export default function BookDetail() {
                 <h2 className="text-l border-b border-gray-100 font-bold text-gray-900">Reseñas de la Comunidad</h2>
                 {reviews.length === 0 ? (
                   <p className="text-center text-gray-500 py-8">Este libro todavía no tiene reseñas.</p>
-                ):(reviews.length > 2 && (<ReviewsModal reviews={reviews} bookTitle={book.title} />))}
+                ):(reviews.length >= 2 && (<ReviewsModal bookId={book.id} bookTitle={book.title} />))}
               </div>
 
             {/* First two reviews */}
