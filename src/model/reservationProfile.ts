@@ -19,7 +19,9 @@ export class ReservationProfileBook {
   static fromJSON(
     reservationJSON: ReservationProfileBookJSON,
   ): ReservationProfileBook {
-    const book = Object.assign(new ProfileBook(), reservationJSON.book, {})
+    const book = Object.assign(new ProfileBook(), reservationJSON.book, {
+      timestamp: new Date(reservationJSON.book.timestamp)
+    })
     const reservation = Object.assign(
       new ReservationProfileBook(),
       reservationJSON,

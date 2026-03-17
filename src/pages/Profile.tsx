@@ -3,7 +3,7 @@ import Tag from "@/components/Tag"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { UserProfile } from "@/model/userProfile"
 import { userProfileService } from "@/services/userProfileService"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import {
   GearIcon,
@@ -22,13 +22,14 @@ import type { ReservationProfileBook } from "@/model/reservationProfile"
 export default function Profile() {
   // const [errors, setErrors] = useState<ValidationMessage[]>([])
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
-  const [userOwnBooks, setUserOwnBooks] = useState<ReservationProfileBook[]>([])
   const [userReadBooksNumber, setUserReadBooksNumber] = useState<number>(0)
+  const [userLentBooksNumber, setUserLentBooksNumber] = useState<number>(0)
   const [shownBooks, setShownBooks] = useState<ReservationProfileBook[]>([])
   const [filter, setFilter] = useState<string>("Todos")
   const [sort, setSort] = useState<string>("date_desc")
 
   // const onSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {}
+
   const toggleTitleSort = () => {
     sort == "title_asc"
       ? setSort("title_desc")
@@ -52,11 +53,10 @@ export default function Profile() {
   }
 
   const getUserOwnBooks = async (filterCriteria: string, sortCriteria: string) => {
+    setFilter(filterCriteria)
     try {
       const userOwnBooks = await reserveService.getUserOwnBooks(filterCriteria, sortCriteria)
-      setUserOwnBooks(userOwnBooks)
       setShownBooks(userOwnBooks)
-      setFilter(filterCriteria)
 
     } catch (error) {
       // const errorMessage = getErrorMessage(error)
@@ -74,13 +74,26 @@ export default function Profile() {
     }
   }
 
+  const getUserLentBooksNumber = async () => {
+    try {
+      const userLentBooksNumber = await reserveService.getUserLentBooksNumber()
+      setUserLentBooksNumber(userLentBooksNumber)
+    } catch (error) {
+      // const errorMessage = getErrorMessage(error)
+      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
+    }
+  }
+
   const handleProfileLoad = async (filter: string, sortBy: string) => {
     getUser()
     getUserOwnBooks(filter, sortBy)
     getUserReadBooksNumber()
+    getUserLentBooksNumber()
   }
 
   useOnInit(() => handleProfileLoad(filter, sort))
+
+  useEffect(() => { getUserOwnBooks(filter, sort) }, [sort])
 
   return (
     <div className="flex min-h-screen justify-center bg-gray-100 pt-12">
@@ -145,7 +158,7 @@ export default function Profile() {
 
             <section className="flex h-42 items-center justify-center gap-4 rounded-xl border border-gray-200 bg-red-100 p-5">
               <article className="flex w-28 flex-col items-center gap-1 rounded-xl bg-gray-50 p-2">
-                <p className="text-xl font-extrabold text-gray-800">{userOwnBooks.filter((book) => book.state == "Prestado").length}</p>
+                <p className="text-xl font-extrabold text-gray-800">{userLentBooksNumber}</p>
                 <p className="text-center text-sm text-gray-500">
                   Libros Prestados
                 </p>
@@ -181,7 +194,6 @@ export default function Profile() {
                   <button className="hover:cursor-pointer">
                     <ArrowsDownUpIcon size={15} onClick={() => { 
                       toggleTitleSort()
-                      getUserOwnBooks(filter, sort)
                       }}/>
                   </button>
                 </div>
@@ -193,7 +205,6 @@ export default function Profile() {
                   <button className="hover:cursor-pointer">
                     <ArrowsDownUpIcon size={15} onClick={() => {
                       toggleDateSort()
-                      getUserOwnBooks(filter, sort)
                     }}/>
                   </button>
                 </div>

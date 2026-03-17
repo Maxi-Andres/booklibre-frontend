@@ -3,7 +3,6 @@ import { booksMOCK } from "@/mocks/booksMOCK";
 import { Book } from "@/model/book";
 import type { BookFilters } from "@/types/bookFilters";
 import axios from "axios";
-import { getAxiosData } from "./common";
 import type { BookJSON } from "@/json/bookJSON";
 import type { PageResponse } from "@/types/pageResponse";
 
@@ -24,13 +23,6 @@ class BookService {
     )
     const data = (await response()).data
     return data
-  }
-
-  async getUserOwnBooks(): Promise<Book[]> {
-    const response = () => axios.get<Book[]>(
-      REST_SERVER_URL + `/userOwnBooks/${localStorage.getItem('id')}`
-    )
-    return (await getAxiosData(response))
   }
 
 }

@@ -27,6 +27,6 @@ export type ProfileBookJSON = {
   title: string,
   authorName: string,
   gender: BookGender,
-  timestamp: string
+  timestamp: Date
   imageSrc: string,
 }
