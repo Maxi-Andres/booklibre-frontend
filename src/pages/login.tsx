@@ -41,7 +41,7 @@ export const Login = () => {
         // Guardar en localStorage
         //localStorage.setItem("user", JSON.stringify(validation))
         login(validation)
-        navigate(from, { replace: true })
+        navigate('/', { replace: true })
       }
     } catch (error) {
       const errorMessage = getErrorMessage(error)
