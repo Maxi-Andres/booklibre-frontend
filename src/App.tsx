@@ -9,9 +9,8 @@ import LoanDetails from "@/pages/LoanDetails"
 import { useAuth } from "./context/AuthContext"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import EditBook from "./pages/EditBook"
 
-// const BookDetail = () => <div className="p-8">Detalle del Libro</div>;
-// const LoanDetails = () => <div className="p-8">Detalle de Préstamos</div>;
 
 function App() {
   const { user } = useAuth()
@@ -26,11 +25,13 @@ function App() {
             <Route path="/detalle-de-libro" element={<BookDetail />} />
             <Route path="/prestamos-de-libros" element={<LoanDetails />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/editar-libro/:id" element={<EditBook />} />
+            <Route path="/crear-libro" element={<EditBook />} />
           </Route>
         ) : (
           <>
             <Route path="/login" element={<Login />} />
-            <Route path="*" element={<Navigate to="/login" />} />{" "}
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </>
         )}
       </Routes>

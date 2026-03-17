@@ -7,6 +7,7 @@ import Profile from "@/pages/Profile"
 import Home from "@/pages/Home"
 import App from "@/App"
 import AuthLayout from "@/layouts/AuthLayout"
+import EditBook from "@/pages/EditBook"
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
       { path: "prestamos-de-libros", element: <LoanDetails /> },
       { path: "detalle-de-libro", element: <BookDetail /> },
       { path: "perfil", element: <Profile /> },
+      { path: "edicion-de-libro", element: <EditBook /> },
     ],
   },
   {

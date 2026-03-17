@@ -17,17 +17,15 @@ export const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const {login} = useAuth()
-  const [user, setUser] = useState<UserJSONLoginRequest>({mail:'',password:''})
+  const [user, setUser] = useState<UserJSONLoginRequest>({email:'',password:''})
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
   const from = location.state?.from?.pathname || "/"
 
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
     ev.preventDefault()
-    const form = ev.currentTarget as HTMLFormElement
-    const formData = new FormData(form)
 
-    const userLogin = new UserType(user.mail, user.password,'')
+    const userLogin = new UserType(user.email, user.password,'')
 
     userLogin.validate()
 
@@ -37,13 +35,13 @@ export const Login = () => {
     }
 
     try {
-      const validation = await userService.getUser(user.mail, user.password)
+      const validation = await userService.login(user.email, user.password)
 
       if (validation) {
         // Guardar en localStorage
         //localStorage.setItem("user", JSON.stringify(validation))
         login(validation)
-        navigate(from, { replace: true })
+        navigate('/', { replace: true })
       }
     } catch (error) {
       const errorMessage = getErrorMessage(error)
@@ -76,8 +74,8 @@ export const Login = () => {
               id="email"
               type="email"
               required
-              value={user.mail}
-              onChange={(e) => update("mail", e.target.value)}
+              value={user.email}
+              onChange={(e) => update("email", e.target.value)}
               />
               <ValidationField field="email" errors={errors} />
             </div>
