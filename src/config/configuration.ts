@@ -1,6 +1,6 @@
 export const REST_SERVER_URL = "http://localhost:9000"
 
-sessionStorage.setItem("userIDtest", "3") // ->
+sessionStorage.setItem("userIDtest", "4") // ->
 export const sessionId = sessionStorage.getItem("userIDtest")
 
 export interface PaginationData {

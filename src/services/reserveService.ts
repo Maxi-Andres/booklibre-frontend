@@ -32,10 +32,10 @@ class ReserveService {
     return data.map(mapReservation)
   }
 
-  async getUserOwnBooks(): Promise<ReservationProfileBook[]> {
+  async getUserOwnBooks(filterCriteria: string, sortCriteria: string): Promise<ReservationProfileBook[]> {
     const response = () =>
       axios.get<ReservationProfileBookJSON[]>(
-        REST_SERVER_URL + `/userOwnBooks/${sessionId}`,
+        REST_SERVER_URL + `/userOwnBooks/${sessionId}?filterBy=${filterCriteria}&sortBy=${sortCriteria}`,
       )
     return (await getAxiosData(response)).map(ReservationProfileBook.fromJSON)
   }
