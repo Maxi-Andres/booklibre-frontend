@@ -78,7 +78,7 @@ export default function ReviewsModal({ reviews, bookTitle }: ReviewsModalProps) 
                         </div>
                         <StarRating rating={review.rating} />
                         <p className="mt-1.5 text-sm text-gray-600 leading-relaxed italic">
-                          "{review.comment}"
+                          "{review.review}"
                         </p>
                       </div>
                     </div>

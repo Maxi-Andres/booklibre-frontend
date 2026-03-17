@@ -7,26 +7,26 @@ export class BookReview {
   errors: ValidationMessage[] = []
   id: number
   rating: number
-  comment: string
+  review: string
   reviewerName: string
   timestamp: string
 
   constructor(
     id: number = 0,
     rating: number = 0,
-    comment: string = "",
+    review: string = "",
     reviewerName: string = "",
     timestamp: string = "",
   ) {
     this.id = id
     this.rating = rating
-    this.comment = comment
+    this.review = review
     this.reviewerName = reviewerName
     this.timestamp = timestamp
   }
 
   invalidReviewLength(): boolean {
-    return this.comment.length > this.MAX_CHARACTERS
+    return this.review.length > this.MAX_CHARACTERS
   }
 
   addError(field: string, message: string) {

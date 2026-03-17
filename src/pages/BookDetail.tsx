@@ -174,7 +174,7 @@ export default function BookDetail() {
               </div>
               <div className="pr-[<3>]">
                 <p className="text-xs text-[#A3B0C2] uppercase">ISBN-13</p>
-                <p className="text-base text-gray-800">{book!.ISBN}</p>
+                <p className="text-base text-gray-800">{book!.isbn}</p>
               </div>
               <div className="pr-[<3>]">
                 <p className="text-xs text-[#A3B0C2] uppercase">Publicado</p>
@@ -215,7 +215,7 @@ export default function BookDetail() {
                       <StarRating rating={review.rating} />
                     </div>
                   </div>
-                  <p className="text-sm text-gray-600 italic">"{review.comment}"</p>
+                  <p className="text-sm text-gray-600 italic">"{review.review}"</p>
                 </div>
               ))}
             </div>

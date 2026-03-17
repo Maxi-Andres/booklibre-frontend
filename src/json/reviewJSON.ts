@@ -3,6 +3,6 @@ export type ReviewJSON = {
   id: number
   reviewerName: string
   rating: number
-  comment: string
+  review: string
   timestamp: string
 }
