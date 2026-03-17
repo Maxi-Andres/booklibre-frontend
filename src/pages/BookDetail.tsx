@@ -8,36 +8,16 @@ import type { Book } from "@/model/book"
 // import DatePicker from "react-datepicker"
 // import { Disclosure } from "@headlessui/react"
 import { ReservationCard } from '@/components/ReservationDatePicker'
-
-// function StarRating({
-//   rating,
-//   max = 5,
-//   size = "sm",
-// }: {
-//   rating: number
-//   max?: number
-//   size?: "sm" | "md"
-// }) {
-//   const starSize = size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4"
-//   return (
-//     <div className="flex gap-0.5">
-//       {Array.from({ length: max }).map((_, i) => (
-//         <svg
-//           key={i}
-//           className={`${starSize} ${i < Math.floor(rating) ? "text-yellow-400" : i < rating ? "text-yellow-300" : "text-gray-300"}`}
-//           fill="currentColor"
-//           viewBox="0 0 20 20"
-//         >
-//           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-//         </svg>
-//       ))}
-//     </div>
-//   )
-// }
+import { reserveService } from '@/services/reserveService'
+import { BookReview } from '@/model/review'
+import { showToast } from '@/utils/toast'
+import ReviewsModal from "@/components/ReviewsModal"
+import { StarRating } from '@/components/ReviewsModal'
 
 export default function BookDetail() {
   const { id } = useParams()
   const [book, setBook] = useState<Book>()
+  const [reviews, setReviews] = useState<BookReview[]>([])
   const [loading, setLoading] = useState(true)
   const location = useLocation()
 
@@ -46,14 +26,24 @@ export default function BookDetail() {
       const bookResponse = await bookService.getBookDetail(Number(id))
       setBook(bookResponse)
     } catch (error) {
-      console.error("Error: ", error)
+      showToast.httpError(error,'Error al cargar libro')
     } finally {
       setLoading(false)
     }
   }
 
+  const getBookReviews = async () => {
+    try {
+      const reviewsResponse = await reserveService.getReviews(Number(id))
+      setReviews(reviewsResponse.data)
+    } catch (error){
+      showToast.httpError(error,'Error al cargar reseñas')
+    }
+  }
+
   useOnInit(() => {
     getBook()
+    getBookReviews()
   })
 
   if (loading) return <div>Cargando...</div>
@@ -89,11 +79,11 @@ export default function BookDetail() {
       {/* ================ Top Section ================ */}
       <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-8">
         <div className="flex items-start gap-6">
-          <div className="flex w-80 shrink-0 flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="flex h-120 w-80 shrink-0 flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <img
               src={book!.imageSrc}
               alt={book!.title}
-              className="h-78 w-64 rounded-xl object-cover shadow-md"
+              className="h-full w-full rounded-xl object-cover shadow-md"
             />
           </div>
 
@@ -104,8 +94,7 @@ export default function BookDetail() {
                 {book!.bookType}
               </span>
               <div className="flex items-center gap-1.5">
-                {/* <StarRating rating={book.rating} size="md" />
-                <span className="text-sm font-semibold text-gray-700">({book.reviews})</span> */}
+                <StarRating rating={(BookReview.averageRating(reviews))} />
               </div>
             </div>
 
@@ -118,8 +107,8 @@ export default function BookDetail() {
                 Autor
               </span>
               <img
-                src={book!.author.avatar}
-                alt={book!.author.avatar}
+                src={`http://localhost:9000/${book!.author.avatar}`}
+                alt={book!.author.name}
                 className="h-7 w-7 rounded-full object-cover"
               />
               <span className="text-sm font-semibold text-gray-700">
@@ -202,46 +191,36 @@ export default function BookDetail() {
             </div>
           </div>
 
-          {/* ================ Community Reviews ================ */}
-          <div className="mt-2 gap-2 p-2">
-            <div className="flex items-center justify-between">
-              <h2 className="text-l border-b border-gray-100 font-bold text-gray-900">
-                Reseñas de la Comunidad
-              </h2>
-              <a
-                href="#"
-                className="text-sm font-semibold text-blue-500 hover:underline"
-              >
-                Ver las 124 reseñas →
-              </a>
-            </div>
+            {/* ================ Community Reviews ================ */}
+            <div className="mt-2 gap-2 p-2">
+              <div className="flex items-center justify-between">
+                <h2 className="text-l border-b border-gray-100 font-bold text-gray-900">Reseñas de la Comunidad</h2>
+                {reviews.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">Este libro todavía no tiene reseñas.</p>
+                ):(reviews.length > 2 && (<ReviewsModal reviews={reviews} bookTitle={book.title} />))}
+              </div>
 
-            {/* <div className="grid grid-cols-2 gap-6">
-              {BookReview.map((review: BookReview, i: number) => (
-                <div key={i} className="flex flex-col gap-3 p-4">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`h-10 w-10 rounded-full ${review.color || "bg-blue-400"} flex items-center justify-center font-bold text-white`}
-                    >
-                      {review.userName.charAt(0) + review.userName.charAt(1)}
+            {/* First two reviews */}
+            <div className="grid grid-cols-2 gap-4 mt-3">
+              {reviews.slice(0, 2).map((review, i) => (
+                <div key={`${review.id}-${i}`} className="flex flex-col gap-2 p-3 rounded-xl border border-gray-300">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-full bg-[#E0E7FF] flex items-center justify-center font-bold text-[#6059E8] text-xs">
+                      {review.reviewerName.charAt(0)}{review.reviewerName.charAt(1)}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        {review.userName}
-                      </p>
-                      <StarRating rating={review.rate} />
+                      <p className="text-sm font-bold text-gray-900">{review.reviewerName}</p>
+                      <StarRating rating={review.rating} />
                     </div>
                   </div>
-                  <p className="text-sm leading-relaxed text-gray-600 italic">
-                    "{review.review}"
-                  </p>
+                  <p className="text-sm text-gray-600 italic">"{review.comment}"</p>
                 </div>
               ))}
-            </div> */}
+            </div>
+          </div>
+          </div>
           </div>
         </div>
       </div>
-      </div>
-    </div>
   )
 }
