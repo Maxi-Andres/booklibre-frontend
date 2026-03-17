@@ -1,10 +1,10 @@
 export const BookGender = {
-  Drama: "Drama",
-  SciencieFiction: "Ciencia Ficción",
-  Romance: "Romance",
-  SelfHelp: "Autoayuda",
-  Design: "Diseño",
-  ClassicLiterature: "Literatura Clásica",
+  DRAMA: "Drama",
+  SCIENCE_FICTION: "Ciencia Ficcion",
+  ROMANCE: "Romance",
+  SELF_HELP: "Autoayuda",
+  DESIGN: "Diseño",
+  CLASSIC_LITERATURE: "Literatura Clasica",
 }
 
 export type BookGender = (typeof BookGender)[keyof typeof BookGender]

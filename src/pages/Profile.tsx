@@ -3,7 +3,7 @@ import Tag from "@/components/Tag"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { UserProfile } from "@/model/userProfile"
 import { userProfileService } from "@/services/userProfileService"
-import { Reader, type UserType } from "@/types/userType"
+import { UserKind } from "@/types/userKind"
 import type { ValidationMessage } from "@/validation/validationMessage"
 import { useState } from "react"
 
@@ -16,73 +16,69 @@ import {
   ChartLineIcon,
   ArrowsDownUpIcon,
 } from "@phosphor-icons/react"
-import { getErrorMessage } from "@/validation/errorHandler"
-import { bookService } from "@/services/bookService"
-import type { Book } from "@/model/book"
+
+// import { getErrorMessage } from "@/validation/errorHandler"
 import { reserveService } from "@/services/reserveService"
-
-interface UserProfileFormData {
-  name: string
-  desc: string
-  img: string
-  location: string
-  timestamp: string
-  bibliokarmas: string
-  mail: string
-  cel: string
-  userType: UserType
-}
-
-
+import type { ReservationProfileBook } from "@/model/reservationProfile"
 
 export default function Profile() {
-  const [errors, setErrors] = useState<ValidationMessage[]>([]);
+  // const [errors, setErrors] = useState<ValidationMessage[]>([])
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
-  const [userOwnBooks, setUserOwnBooks] = useState<Book[]>([])
-  var userReadBooks = 0
- 
-  const onSubmit = async (event: React.SubmitEvent<HTMLFormElement> ) => {
+  const [userOwnBooks, setUserOwnBooks] = useState<ReservationProfileBook[]>([])
+  const [userReadBooksNumber, setUserReadBooksNumber] = useState<number>(0)
+  const [shownBooks, setShownBooks] = useState<ReservationProfileBook[]>([])
+  const [filter, setFilter] = useState<string>("Todos")
 
-  
+  // const onSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {}
+
+  const showAllBooks = () => {
+    setFilter("Todos")
+    setShownBooks(userOwnBooks)
+  }
+
+  const showFilteredBooks = (state: string) => {
+    setFilter(state)
+    setShownBooks(userOwnBooks.filter((book) => book.state == state))
   }
 
   const getUser = async () => {
     try {
       const userProfile = await userProfileService.getProfile()
       setProfile(userProfile)
-
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
+      // const errorMessage = getErrorMessage(error)
       // showToast('Error al traer el usuario. ' + errorMessage, 'error')
     }
   }
 
-  const getUserOwnBooks = async() => {
+  const getUserOwnBooks = async () => {
     try {
-      const userOwnBooks = await bookService.getUserOwnBooks()
+      const userOwnBooks = await reserveService.getUserOwnBooks()
       setUserOwnBooks(userOwnBooks)
+      setShownBooks(userOwnBooks)
 
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
+      // const errorMessage = getErrorMessage(error)
+      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
     }
   }
 
-  const getUserReadBooks = async() => {
+  const getUserReadBooksNumber = async () => {
     try {
-      const userReadBooksAmount = await reserveService.getUserReadBooks()
-      userReadBooks = userReadBooksAmount
-
+      const userReadBooksNumber = await reserveService.getUserReadBooksNumber()
+      setUserReadBooksNumber(userReadBooksNumber)
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
+      // const errorMessage = getErrorMessage(error)
+      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
     }
   }
 
-  const handleProfileLoad = async() => {
+  const handleProfileLoad = async () => {
     getUser()
     getUserOwnBooks()
-    getUserReadBooks()
+    getUserReadBooksNumber()
+    showAllBooks()
   }
-
 
   useOnInit(() => handleProfileLoad())
 
@@ -91,25 +87,25 @@ export default function Profile() {
       <section className="flex w-245 flex-col gap-7">
         <section className="col-span-3 flex h-42 items-center gap-4 rounded-xl border border-gray-200 bg-white p-4">
           <img
-            src="/src/assets/user-avatar.jpg"
-            alt=""
+            src={`http://localhost:9000/${profile.img}`}
+            alt="Profile Image"
             className="h-26 w-26 rounded-full object-cover"
           />
           <div className="flex flex-1 flex-col gap-3">
             <p className="text-3xl font-bold">{profile.name}</p>
-            <p className="text-blue-400">{profile.desc}</p>
+            <p className="text-blue-400">{profile.description}</p>
             <div className="flex gap-1 text-sm text-gray-400">
               <p>
-                <CalendarBlankIcon size={15} className="inline" /> Se unio en 
-                {' ' + profile.timestamp.slice(6)} ·
+                <CalendarBlankIcon size={15} className="inline" /> Se unio en
+                {" " + profile.timestamp.slice(6)} ·
               </p>
               <p>
-                <MapPinIcon size={15} className="inline" /> {profile.location + ' '}
-                ·
+                <MapPinIcon size={15} className="inline" />{" "}
+                {profile.location + " "}·
               </p>
               <p>
                 <ChartLineIcon size={15} className="inline" /> Bibliokarmas
-                {' ' + profile.bibliokarmas}
+                {" " + profile.bibliokarmas}
               </p>
             </div>
           </div>
@@ -131,30 +127,32 @@ export default function Profile() {
               </article>
               <article className="border-b-2 border-gray-300 pb-2">
                 <p className="text-xs font-bold text-gray-500">EMAIL</p>
-                <p>{profile.mail}</p>
+                <p>{profile.email}</p>
               </article>
               <article className="border-b-2 border-gray-300 pb-2">
                 <p className="text-xs font-bold text-gray-500">TELÉFONO</p>
-                <p>{'+54' + ' (' + profile.cel.slice(0, 2) + ') ' + profile.cel.slice(2)}</p>
+                <p>
+                  {profile.cel.slice(0, 3) + ' (' + profile.cel.slice(4,6) + ') ' + profile.cel.slice(7)}
+                </p>
               </article>
               <article>
                 <p className="text-xs font-bold text-gray-500">
                   TIPO DE PERFIL
                 </p>
-                <p>{profile.userType.type}</p>
+                <p>{profile.userType}</p>
               </article>
             </section>
 
             <section className="flex h-42 items-center justify-center gap-4 rounded-xl border border-gray-200 bg-red-100 p-5">
               <article className="flex w-28 flex-col items-center gap-1 rounded-xl bg-gray-50 p-2">
-                <p className="text-xl font-extrabold text-gray-800">12</p>
+                <p className="text-xl font-extrabold text-gray-800">{userOwnBooks.filter((book) => book.state == "Prestado").length}</p>
                 <p className="text-center text-sm text-gray-500">
                   Libros Prestados
                 </p>
               </article>
 
               <article className="flex h-22 w-28 flex-col items-center justify-center gap-1 rounded-xl bg-gray-50 p-2">
-                <p className="text-xl font-extrabold text-gray-800">45</p>
+                <p className="text-xl font-extrabold text-gray-800">{userReadBooksNumber}</p>
                 <p className="text-center text-sm text-gray-500">
                   Libros Leídos
                 </p>
@@ -171,26 +169,26 @@ export default function Profile() {
               </a>
             </section>
 
-            <section className="flex h-102 flex-1 flex-col rounded-xl border border-gray-200 bg-white gap-1">
+            <section className="flex h-102 flex-1 flex-col gap-1 rounded-xl border border-gray-200 bg-white">
               <section className="flex gap-2 p-4">
-                <Tag text="Todos"></Tag>
-                <Tag text="Disponibles"></Tag>
-                <Tag text="Prestados"></Tag>
+                <Tag filterKind="Todos" filter={filter} text="Todos" buttonOnClickFunction={showAllBooks}></Tag>
+                <Tag filterKind="Disponible" filter={filter} text="Disponibles" buttonOnClickFunction={() => showFilteredBooks("Disponible")}></Tag>
+                <Tag filterKind="Prestado" filter={filter} text="Prestados" buttonOnClickFunction={() => showFilteredBooks("Prestado")}></Tag>
               </section>
-              <section className="flex pl-3 gap-2">
-                <div className="flex items-center w-3/5 justify-between">
+              <section className="flex gap-2 px-3">
+                <div className="flex w-3/5 items-center justify-between">
                   <p>Titulo y Autor</p>
                   <button className="hover:cursor-pointer">
                     <ArrowsDownUpIcon size={15} />
                   </button>
                 </div>
-                <div className="flex justify-center items-center ">
+                <div className="flex items-center justify-center">
                   <p>Disponible</p>
                   <button className="hover:cursor-pointer">
                     <ArrowsDownUpIcon size={15} />
                   </button>
                 </div>
-                <div className="flex justify-center items-center ">
+                <div className="flex items-center justify-center">
                   <p>Agregado</p>
                   <button className="hover:cursor-pointer">
                     <ArrowsDownUpIcon size={15} />
@@ -198,30 +196,18 @@ export default function Profile() {
                 </div>
                 <p>Acciones</p>
               </section>
-              <ProfileBook
-                bookImg="/src/assets/book_cover1.png"
-                bookAuthor="Ray Bradbury"
-                bookGender="PsyFi"
-                bookName="Farenheit 451"
-                bookState="Prestado"
-                additionDate="4 Oct, 2023"
-              />
-              <ProfileBook 
-                bookImg="/src/assets/book_cover2.png"
-                bookAuthor="Stephen King"
-                bookGender="Terror"
-                bookName="Pet Semetary"
-                bookState="Disponible"
-                additionDate="24 Feb, 2023"
-              />
-              <ProfileBook 
-                bookImg="/src/assets/book_cover3.png"
-                bookAuthor="Hannah Kaner"
-                bookGender="Fantasia"
-                bookName="Godkiller"
-                bookState="Disponible"
-                additionDate="1 Mar, 2023"
-              />
+              <section className="pr-1">
+                {shownBooks.map((reserve) => (
+                  <ProfileBook key={reserve.book.id} 
+                    bookImg={reserve.book.imageSrc}
+                    bookAuthor={reserve.book.authorName}
+                    bookGender={reserve.book.gender}
+                    bookName={reserve.book.title}
+                    bookState={reserve.state}
+                    additionDate={reserve.book.timestamp}
+                  />
+                ))}
+              </section>
             </section>
           </div>
         </section>

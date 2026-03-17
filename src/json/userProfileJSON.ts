@@ -1,3 +1,5 @@
+import type { UserKind } from "@/types/userKind"
+
 export type UserProfileJSON = {
   id: number
   name: string
@@ -7,4 +9,6 @@ export type UserProfileJSON = {
   location: string
   timestamp: string
   bibliokarmas: number
+  userType: UserKind
+  img: string
 }

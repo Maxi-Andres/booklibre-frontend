@@ -1,43 +1,41 @@
-import { type UserType, Reader } from "../types/userType"
+import { UserKind } from "../types/userKind"
 import type { UserProfileJSON } from "@/json/userProfileJSON"
 
 export class UserProfile {
   id: number
   name: string
-  desc: string
+  description: string
   img: string
   location: string
   timestamp: string
   bibliokarmas: string
-  mail: string
+  email: string
   cel: string
-  userType: UserType
+  userType: UserKind
 
   constructor(
     id: number = 0,
     name: string = "",
-    desc: string = "",
+    description: string = "",
     img: string = "",
     location: string = "",
     timestamp: string = "",
     bibliokarmas: string = "",
-    mail: string = "",
+    email: string = "",
     cel: string = "",
-    userType: UserType = Reader,
-
+    userType: UserKind = UserKind.READER,
   ) {
 
     this.id = id
     this.name = name
-    this.desc = desc
+    this.description = description
     this.img = img
     this.location = location
     this.timestamp = timestamp
     this.bibliokarmas = bibliokarmas
-    this.mail = mail
+    this.email = email
     this.cel = cel
     this.userType = userType
-
   }
 
   static fromJSON(userJSON: UserProfileJSON): UserProfile {

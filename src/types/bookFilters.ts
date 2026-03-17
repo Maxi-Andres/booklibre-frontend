@@ -1,14 +1,18 @@
-import type { Reservation } from "@/model/reservation"
+import type { BookSortCriteria } from "@/model/bookSortCriteria"
+import type { BookGender } from "./bookGender"
 
 
 export type BookFilters = {
-  genders: string[],
-  numPagesRange: {
-    min: number,
-    max: number
-  },
-  //-- necesario una Reserva o solo fechaIni - fechaFin ??
-  reservation: Reservation,
-  ISBN: string,
-  ownersName: string
+  title: string,
+  genders: BookGender[],
+  pagesRangeMin: number,
+  pagesRangeMax: number,
+  pickUpDate: string, //! ISO string
+  dropOffDate: string, //! ISO string
+  isbn: string,
+  ownersName: string,
+  sortedBy: BookSortCriteria,
+  ascending: boolean,
+  page: number,
+  pageSize: number
 }
