@@ -28,12 +28,6 @@ class BookService {
     return booksMOCK[index]
   }
 
-  async getAvailableBooks(filters: BookFilters): Promise<Book[]> {
-    //TODO: backend call filteredBooks(), query body: filters (type/object?)
-    //! check how to send reservation because of DATES !!!"%#$¡
-    return booksMOCK
-  }
-
   // -- LIBROS FILTRADOS PARA PAGINACION EN HOME --
   async getFilteredBooksPage(filters: BookFilters): Promise<PageResponse<BookJSON>> {
     const response = () => axios.post<PageResponse<BookJSON>>(
@@ -42,13 +36,6 @@ class BookService {
     )
     const data = (await response()).data
     return data
-  }
-
-  async getUserOwnBooks(): Promise<Book[]> {
-    const response = () => axios.get<Book[]>(
-      REST_SERVER_URL + `/userOwnBooks/${localStorage.getItem('id')}`
-    )
-    return (await getAxiosData(response))
   }
 
   async getBookDetail(id: number){

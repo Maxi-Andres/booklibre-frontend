@@ -3,9 +3,7 @@ import Tag from "@/components/Tag"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { UserProfile } from "@/model/userProfile"
 import { userProfileService } from "@/services/userProfileService"
-import { UserKind } from "@/types/userKind"
-import type { ValidationMessage } from "@/validation/validationMessage"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import {
   GearIcon,
@@ -24,21 +22,24 @@ import type { ReservationProfileBook } from "@/model/reservationProfile"
 export default function Profile() {
   // const [errors, setErrors] = useState<ValidationMessage[]>([])
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
-  const [userOwnBooks, setUserOwnBooks] = useState<ReservationProfileBook[]>([])
   const [userReadBooksNumber, setUserReadBooksNumber] = useState<number>(0)
+  const [userLentBooksNumber, setUserLentBooksNumber] = useState<number>(0)
   const [shownBooks, setShownBooks] = useState<ReservationProfileBook[]>([])
   const [filter, setFilter] = useState<string>("Todos")
+  const [sort, setSort] = useState<string>("date_desc")
 
   // const onSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {}
 
-  const showAllBooks = () => {
-    setFilter("Todos")
-    setShownBooks(userOwnBooks)
+  const toggleTitleSort = () => {
+    sort == "title_asc"
+      ? setSort("title_desc")
+      : setSort("title_asc")
   }
 
-  const showFilteredBooks = (state: string) => {
-    setFilter(state)
-    setShownBooks(userOwnBooks.filter((book) => book.state == state))
+  const toggleDateSort = () => {
+    sort == "date_asc"
+      ? setSort("date_desc")
+      : setSort("date_asc")
   }
 
   const getUser = async () => {
@@ -51,10 +52,10 @@ export default function Profile() {
     }
   }
 
-  const getUserOwnBooks = async () => {
+  const getUserOwnBooks = async (filterCriteria: string, sortCriteria: string) => {
+    setFilter(filterCriteria)
     try {
-      const userOwnBooks = await reserveService.getUserOwnBooks()
-      setUserOwnBooks(userOwnBooks)
+      const userOwnBooks = await reserveService.getUserOwnBooks(filterCriteria, sortCriteria)
       setShownBooks(userOwnBooks)
 
     } catch (error) {
@@ -73,14 +74,26 @@ export default function Profile() {
     }
   }
 
-  const handleProfileLoad = async () => {
-    getUser()
-    getUserOwnBooks()
-    getUserReadBooksNumber()
-    showAllBooks()
+  const getUserLentBooksNumber = async () => {
+    try {
+      const userLentBooksNumber = await reserveService.getUserLentBooksNumber()
+      setUserLentBooksNumber(userLentBooksNumber)
+    } catch (error) {
+      // const errorMessage = getErrorMessage(error)
+      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
+    }
   }
 
-  useOnInit(() => handleProfileLoad())
+  const handleProfileLoad = async (filter: string, sortBy: string) => {
+    getUser()
+    getUserOwnBooks(filter, sortBy)
+    getUserReadBooksNumber()
+    getUserLentBooksNumber()
+  }
+
+  useOnInit(() => handleProfileLoad(filter, sort))
+
+  useEffect(() => { getUserOwnBooks(filter, sort) }, [sort])
 
   return (
     <div className="flex min-h-screen justify-center bg-gray-100 pt-12">
@@ -145,7 +158,7 @@ export default function Profile() {
 
             <section className="flex h-42 items-center justify-center gap-4 rounded-xl border border-gray-200 bg-red-100 p-5">
               <article className="flex w-28 flex-col items-center gap-1 rounded-xl bg-gray-50 p-2">
-                <p className="text-xl font-extrabold text-gray-800">{userOwnBooks.filter((book) => book.state == "Prestado").length}</p>
+                <p className="text-xl font-extrabold text-gray-800">{userLentBooksNumber}</p>
                 <p className="text-center text-sm text-gray-500">
                   Libros Prestados
                 </p>
@@ -171,27 +184,28 @@ export default function Profile() {
 
             <section className="flex h-102 flex-1 flex-col gap-1 rounded-xl border border-gray-200 bg-white">
               <section className="flex gap-2 p-4">
-                <Tag filterKind="Todos" filter={filter} text="Todos" buttonOnClickFunction={showAllBooks}></Tag>
-                <Tag filterKind="Disponible" filter={filter} text="Disponibles" buttonOnClickFunction={() => showFilteredBooks("Disponible")}></Tag>
-                <Tag filterKind="Prestado" filter={filter} text="Prestados" buttonOnClickFunction={() => showFilteredBooks("Prestado")}></Tag>
+                <Tag filterKind="Todos" filter={filter} text="Todos" buttonOnClickFunction={() => getUserOwnBooks("Todos", sort)}></Tag>
+                <Tag filterKind="Disponible" filter={filter} text="Disponibles" buttonOnClickFunction={() => getUserOwnBooks("Disponible", sort)}></Tag>
+                <Tag filterKind="Prestado" filter={filter} text="Prestados" buttonOnClickFunction={() => getUserOwnBooks("Prestado", sort)}></Tag>
               </section>
               <section className="flex gap-2 px-3">
                 <div className="flex w-3/5 items-center justify-between">
                   <p>Titulo y Autor</p>
                   <button className="hover:cursor-pointer">
-                    <ArrowsDownUpIcon size={15} />
+                    <ArrowsDownUpIcon size={15} onClick={() => { 
+                      toggleTitleSort()
+                      }}/>
                   </button>
                 </div>
                 <div className="flex items-center justify-center">
-                  <p>Disponible</p>
-                  <button className="hover:cursor-pointer">
-                    <ArrowsDownUpIcon size={15} />
-                  </button>
+                  <p>Disponibilidad</p>
                 </div>
                 <div className="flex items-center justify-center">
                   <p>Agregado</p>
                   <button className="hover:cursor-pointer">
-                    <ArrowsDownUpIcon size={15} />
+                    <ArrowsDownUpIcon size={15} onClick={() => {
+                      toggleDateSort()
+                    }}/>
                   </button>
                 </div>
                 <p>Acciones</p>
