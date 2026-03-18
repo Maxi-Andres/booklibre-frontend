@@ -18,6 +18,10 @@ import {
 // import { getErrorMessage } from "@/validation/errorHandler"
 import { reserveService } from "@/services/reserveService"
 import type { ReservationProfileBook } from "@/model/reservationProfile"
+import ProfileSettingsModal from "@/components/ProfileSettingsModal"
+import { getErrorMessage } from "@/validation/errorHandler"
+import { showToast } from "@/utils/toast"
+import type { ValidationMessage } from "@/validation/validationMessage"
 
 export default function Profile() {
   // const [errors, setErrors] = useState<ValidationMessage[]>([])
@@ -27,6 +31,7 @@ export default function Profile() {
   const [shownBooks, setShownBooks] = useState<ReservationProfileBook[]>([])
   const [filter, setFilter] = useState<string>("Todos")
   const [sort, setSort] = useState<string>("date_desc")
+  const [showModal, setShowModal] = useState<boolean>(false)
 
   // const onSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {}
 
@@ -47,8 +52,8 @@ export default function Profile() {
       const userProfile = await userProfileService.getProfile()
       setProfile(userProfile)
     } catch (error) {
-      // const errorMessage = getErrorMessage(error)
-      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
+      const errorMessage = getErrorMessage(error)
+      showToast.httpError('Error al traer su usuario. ' + errorMessage, 'error')
     }
   }
 
@@ -59,8 +64,8 @@ export default function Profile() {
       setShownBooks(userOwnBooks)
 
     } catch (error) {
-      // const errorMessage = getErrorMessage(error)
-      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
+      const errorMessage = getErrorMessage(error)
+      showToast.httpError('Error buscar sus libros. ' + errorMessage, 'error')
     }
   }
 
@@ -69,8 +74,8 @@ export default function Profile() {
       const userReadBooksNumber = await reserveService.getUserReadBooksNumber()
       setUserReadBooksNumber(userReadBooksNumber)
     } catch (error) {
-      // const errorMessage = getErrorMessage(error)
-      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
+      const errorMessage = getErrorMessage(error)
+      showToast.httpError('Error al contar sus libros leidos. ' + errorMessage, 'error')
     }
   }
 
@@ -79,9 +84,13 @@ export default function Profile() {
       const userLentBooksNumber = await reserveService.getUserLentBooksNumber()
       setUserLentBooksNumber(userLentBooksNumber)
     } catch (error) {
-      // const errorMessage = getErrorMessage(error)
-      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
+      const errorMessage = getErrorMessage(error)
+      showToast.httpError('Error al contar sus libros prestados. ' + errorMessage, 'error')
     }
+  }
+
+  const openProfileSettingsModal = () => {
+    setShowModal(true)
   }
 
   const handleProfileLoad = async (filter: string, sortBy: string) => {
@@ -123,11 +132,15 @@ export default function Profile() {
             </div>
           </div>
 
-          <button className="max-w-25 cursor-pointer rounded-lg bg-gray-200 text-sm hover:bg-gray-300">
+          <button className="max-w-25 cursor-pointer rounded-lg bg-gray-200 text-sm hover:bg-gray-300" onClick={() => openProfileSettingsModal}>
+            {showModal ? (
+              <ProfileSettingsModal profile={profile}/>
+            ) : (
             <div className="flex flex-row items-center p-2">
               <GearIcon size={20} />
               <p className="font-bold">Editar Perfil</p>
             </div>
+            )}
           </button>
         </section>
 
