@@ -19,7 +19,6 @@ export const Login = () => {
   const {login} = useAuth()
   const [user, setUser] = useState<UserJSONLoginRequest>({email:'',password:''})
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
-  const from = location.state?.from?.pathname || "/"
 
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
