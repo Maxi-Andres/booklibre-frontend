@@ -36,17 +36,45 @@ import { showToast } from "@/utils/toast"
   }
 
   const handleSubmit = async () => {
-    try{
-    if (isEditing) {
-      await bookService.updateBook(Number(id),book)
-      showToast.success('Libro actualizado con éxito')
-    } else {
-      await bookService.createBook(book)
-      showToast.success('Libro creado con éxito')
-    }}
-     catch (error) {
+    const bookInstance = Object.assign(new Book(), book)
+    book.validate()
+    console.log('title vacio?', !book.title?.trim())
+console.log('desc vacio?', !book.desc?.trim())
+console.log('imageSrc vacio?', !book.imageSrc?.trim())
+console.log('editorial vacio?', !book.editorial?.trim())
+console.log('errors:', book.errors.map(e => e.field))
+
+console.log('es instancia de Book?', book instanceof Book)
+console.log('tiene validate?', typeof book.validate)
+
+    if (book.errors.length > 0) {
+        setErrors([])  // ← limpia primero
+        requestAnimationFrame(() => {
+            setErrors([...book.errors])  // ← luego setea en el siguiente frame
+        })
+        showToast.error('Por favor completá todos los campos requeridos')
+        return
+    }
+
+    // if (book.errors.length > 0) {
+    //     setErrors([...book.errors])  // ← spread
+    //     showToast.error('Por favor completá todos los campos requeridos')
+    //     return
+    // }
+
+    try {
+        if (isEditing) {
+            await bookService.updateBook(Number(id), book)
+            showToast.success('Libro actualizado con éxito')
+        } else {
+            await bookService.createBook(book)
+            showToast.success('Libro creado con éxito')
+        }
+    } catch (error) {
         showToast.httpError(error, 'Error al guardar el libro')
-    }}
+    }
+}
+
 
   
 
@@ -96,7 +124,7 @@ import { showToast } from "@/utils/toast"
                        value={book.imageSrc}
                        onChange={(e) => updateBook('imageSrc', e.target.value)}
                 />
-                <ValidationField field="title" errors={errors} />
+                <ValidationField field="imageSrc" errors={errors} />
             </div>
             
             
@@ -238,7 +266,7 @@ import { showToast } from "@/utils/toast"
                        value={book.numPages}
                        onChange={(e) => updateBook('numPages', e.target.value)}
                       />
-                      <ValidationField field="pages" errors={errors} />
+                      <ValidationField field="numPages" errors={errors} />
                     </div>
                   </span>
                 </div>
@@ -253,7 +281,7 @@ import { showToast } from "@/utils/toast"
                         value={book.isbn}
                         onChange={(e) => updateBook('isbn', e.target.value)}
                       />
-                      <ValidationField field="ISBN" errors={errors} />
+                      <ValidationField field="isbn" errors={errors} />
                     </div>
                   </span>
                 </div>

@@ -1,7 +1,9 @@
 import { PencilIcon, TrashIcon } from "@phosphor-icons/react";
 import Tag from "./Tag";
+import { useNavigate } from "react-router";
 
-export default function ProfileBook({bookImg, bookName, bookAuthor, bookGender, bookState, additionDate}: {bookImg: string, bookName: string, bookAuthor: string, bookGender: string, bookState: string, additionDate: string}) {
+export default function ProfileBook({bookImg, bookName, bookAuthor, bookGender, bookState, additionDate, bookId}: {bookImg: string, bookName: string, bookAuthor: string, bookGender: string, bookState: string, additionDate: string, bookId:Number}) {
+  const navigate = useNavigate()
   return (
     <div className="flex h-25 gap-4 justify-center items-center pl-3">
       <img src={bookImg} alt="" className="w-16 h-23 rounded-lg"/>
@@ -17,7 +19,7 @@ export default function ProfileBook({bookImg, bookName, bookAuthor, bookGender, 
         {additionDate}
       </div>
       <div>
-        <button className="hover:cursor-pointer hover:text-gray-900 text-gray-500"><PencilIcon size={24} /></button>
+        <button className="hover:cursor-pointer hover:text-gray-900 text-gray-500"><PencilIcon size={24} onClick={() => navigate(`/editar-libro/${bookId}`)}/></button>
         <button className="hover:cursor-pointer hover:text-red-500 text-gray-500"><TrashIcon size={24} /></button>
       </div>
     </div>

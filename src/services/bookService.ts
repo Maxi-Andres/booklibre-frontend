@@ -4,7 +4,7 @@ import { Book } from "@/model/book";
 import type { BookFilters } from "@/types/bookFilters";
 import axios from "axios";
 import { getAxiosData } from "./common";
-import type { BookJSON } from "@/json/bookJSON";
+import { toBookCreateDTO, type BookJSON } from "@/json/bookJSON";
 import type { PageResponse } from "@/types/pageResponse";
 
 
@@ -14,48 +14,16 @@ class BookService {
     return  booksMOCK.find(book => book.id === id)
   }
 
-  async createBook(book: Book): Promise<Book> {
+  async createBook(book: Book): Promise<Book> { 
   const response = () => axios.post<Book>(
-    REST_SERVER_URL + `/crear-libro`,
-    {
-      title: book.title,
-      bookType: book.bookType,
-      desc: book.desc,
-      gender: book.gender,
-      authorName: book.author.name,
-      authorAvatarUrl: book.author.avatar,
-      numPages: book.numPages,
-      isbn: book.isbn,
-      language: book.language,
-      editorial: book.editorial,
-      publishDate: book.publishDate,
-      condition: book.condition,
-      imageSrc: book.imageSrc,
-      ownerId: Number(localStorage.getItem('id'))
-    }
+    REST_SERVER_URL + `/crear-libro`, toBookCreateDTO(book)
   )
   return (await getAxiosData(response))
 }
 
 async updateBook(id: number, book: Book): Promise<Book> {
   const response = () => axios.put<Book>(
-    REST_SERVER_URL + `/editar-libro/${id}`,
-    {
-      title: book.title,
-      bookType: book.bookType,
-      desc: book.desc,
-      gender: book.gender,
-      authorName: book.author.name,
-      authorAvatarUrl: book.author.avatar,
-      numPages: book.numPages,
-      isbn: book.isbn,
-      language: book.language,
-      editorial: book.editorial,
-      publishDate: book.publishDate,
-      condition: book.condition,
-      imageSrc: book.imageSrc,
-      ownerId: Number(localStorage.getItem('id'))
-    }
+    REST_SERVER_URL + `/editar-libro/${id}`, toBookCreateDTO(book)
   )
   return (await getAxiosData(response))
 }
