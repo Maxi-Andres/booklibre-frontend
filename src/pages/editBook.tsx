@@ -14,17 +14,16 @@ import { useParams } from 'react-router'
 import { Button } from "@headlessui/react"
 import { bookService } from "@/services/bookService"
 import { showToast } from "@/utils/toast"
-
+import {  TextareaField } from "@/components/Textarea"
 
 
  export default function EditBook() {
-  //const book = bookOne
-  
+
   const { id } = useParams()
   const isEditing = !!id
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
   const [book, setBook] = useState<Book>(isEditing ? bookOne : new Book())
-  
+
   useEffect(() => {
   if (isEditing) {
     bookService.getBookByID(Number(id)).then(found => {
@@ -75,10 +74,7 @@ import { showToast } from "@/utils/toast"
         }
     } catch (error) {
         showToast.httpError(error, 'Error al guardar el libro')
-    }
-
-
-    
+    } 
 }
 
 
@@ -294,13 +290,14 @@ import { showToast } from "@/utils/toast"
               </div> 
               {/* fin fila */}
               <div>
-                <InputField 
-                       label="Descripción"
-                       id="desc"
-                       type="desc"
-                       required
-                       value={book.desc}
-                       onChange={(e) => updateBook('desc', e.target.value)}
+                <TextareaField
+                label="Descripcion"
+                id="desc"
+                type="desc"
+                value={book.desc}
+                maxLength={500}
+                rows={10}
+                placeholder="Ingrese aqui la descripcion del libro"
                 />
                 <ValidationField field="desc" errors={errors} />
               </div>
