@@ -11,6 +11,7 @@ import { BookCondition } from "@/types/bookCondition"
 import { useParams } from 'react-router'
 import { Button } from "@headlessui/react"
 import { bookService } from "@/services/bookService"
+import { showToast } from "@/utils/toast"
 
 
 
@@ -35,12 +36,19 @@ import { bookService } from "@/services/bookService"
   }
 
   const handleSubmit = async () => {
+    try{
     if (isEditing) {
       await bookService.updateBook(Number(id),book)
+      showToast.success('Libro actualizado con éxito')
     } else {
       await bookService.createBook(book)
-    }
-  }
+      showToast.success('Libro creado con éxito')
+    }}
+     catch (error) {
+        showToast.httpError(error, 'Error al guardar el libro')
+    }}
+
+  
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -85,7 +93,7 @@ import { bookService } from "@/services/bookService"
                        id="imageSrc"
                        type="imageSrc"
                        required
-                       value={book.title}
+                       value={book.imageSrc}
                        onChange={(e) => updateBook('imageSrc', e.target.value)}
                 />
                 <ValidationField field="title" errors={errors} />

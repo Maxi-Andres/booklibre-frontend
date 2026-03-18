@@ -14,19 +14,65 @@ class BookService {
     return  booksMOCK.find(book => book.id === id)
   }
 
-  async createBook(book:Book): Promise<Book>{
-    const newBook = Object.assign(new Book (), book, {id:booksMOCK.length+1})
-    booksMOCK.push(newBook)
-    console.log(newBook)
-    return newBook
-  }
+  async createBook(book: Book): Promise<Book> {
+  const response = () => axios.post<Book>(
+    REST_SERVER_URL + `/crear-libro`,
+    {
+      title: book.title,
+      bookType: book.bookType,
+      desc: book.desc,
+      gender: book.gender,
+      authorName: book.author.name,
+      authorAvatarUrl: book.author.avatar,
+      numPages: book.numPages,
+      isbn: book.isbn,
+      language: book.language,
+      editorial: book.editorial,
+      publishDate: book.publishDate,
+      condition: book.condition,
+      imageSrc: book.imageSrc,
+      ownerId: Number(localStorage.getItem('id'))
+    }
+  )
+  return (await getAxiosData(response))
+}
 
-  async updateBook(id:number, book:Book): Promise<Book | undefined>{
-    const index = booksMOCK.findIndex(b => b.id === id)
-    if (index === -1) return undefined
-    booksMOCK[index] = Object.assign(new Book(), book)
-    return booksMOCK[index]
-  }
+async updateBook(id: number, book: Book): Promise<Book> {
+  const response = () => axios.put<Book>(
+    REST_SERVER_URL + `/editar-libro/${id}`,
+    {
+      title: book.title,
+      bookType: book.bookType,
+      desc: book.desc,
+      gender: book.gender,
+      authorName: book.author.name,
+      authorAvatarUrl: book.author.avatar,
+      numPages: book.numPages,
+      isbn: book.isbn,
+      language: book.language,
+      editorial: book.editorial,
+      publishDate: book.publishDate,
+      condition: book.condition,
+      imageSrc: book.imageSrc,
+      ownerId: Number(localStorage.getItem('id'))
+    }
+  )
+  return (await getAxiosData(response))
+}
+
+  // async createBook(book:Book): Promise<Book>{
+  //   const newBook = Object.assign(new Book (), book, {id:booksMOCK.length+1})
+  //   booksMOCK.push(newBook)
+  //   console.log(newBook)
+  //   return newBook
+  // }
+
+  // async updateBook(id:number, book:Book): Promise<Book | undefined>{
+  //   const index = booksMOCK.findIndex(b => b.id === id)
+  //   if (index === -1) return undefined
+  //   booksMOCK[index] = Object.assign(new Book(), book)
+  //   return booksMOCK[index]
+  // }
 
   async getAvailableBooks(filters: BookFilters): Promise<Book[]> {
     //TODO: backend call filteredBooks(), query body: filters (type/object?)
