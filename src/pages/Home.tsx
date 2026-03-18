@@ -155,7 +155,7 @@ export default function Home() {
   // }
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-gray-100">
       <div>
 {/* =============== MAIN ================ */}
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -351,7 +351,7 @@ export default function Home() {
           {/* ============ PRODUCT GRID ============== */}
                   <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8">
                     {filteredBooks.map((book: Book) => (
-                      <BookCardHome key={book.id} book={book} />
+                      <BookCardHome key={book.id} book={book} filters={filters} />
                     ))}
                   </div>
           

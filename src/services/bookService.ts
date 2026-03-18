@@ -1,4 +1,4 @@
-import { REST_SERVER_URL, sessionId } from "@/config/configuration";
+import { REST_SERVER_URL } from "@/config/configuration";
 import { booksMOCK } from "@/mocks/booksMOCK";
 import { Book } from "@/model/book";
 import type { BookFilters } from "@/types/bookFilters";
@@ -42,12 +42,6 @@ async updateBook(id: number, book: Book): Promise<Book> {
   //   return booksMOCK[index]
   // }
 
-  async getAvailableBooks(filters: BookFilters): Promise<Book[]> {
-    //TODO: backend call filteredBooks(), query body: filters (type/object?)
-    //! check how to send reservation because of DATES !!!"%#$¡
-    return booksMOCK
-  }
-
   // -- LIBROS FILTRADOS PARA PAGINACION EN HOME --
   async getFilteredBooksPage(filters: BookFilters): Promise<PageResponse<BookJSON>> {
     const response = () => axios.post<PageResponse<BookJSON>>(
@@ -58,13 +52,11 @@ async updateBook(id: number, book: Book): Promise<Book> {
     return data
   }
 
-  async getUserOwnBooks(): Promise<Book[]> {
-    const response = () => axios.get<Book[]>(
-      REST_SERVER_URL + `/userOwnBooks/${localStorage.getItem('id')}`
-    )
-    return (await getAxiosData(response))
+  async getBookDetail(id: number){
+    const queryById = () => axios.get<BookJSON>(REST_SERVER_URL + '/book-detail/' + id)
+    const bookJSON = await getAxiosData(queryById)
+    return Book.fromJSON(bookJSON)
   }
-
 }
 
 export const bookService = new BookService()

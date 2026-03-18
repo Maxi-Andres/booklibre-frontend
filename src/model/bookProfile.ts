@@ -4,7 +4,7 @@ export class ProfileBook {
   title: string
   authorName: string
   gender: string
-  timestamp: string
+  timestamp: Date
   imageSrc: string
 
   constructor(
@@ -12,7 +12,7 @@ export class ProfileBook {
     title: string = "",
     authorName: string = "",
     gender: string = "",
-    timestamp: string = "",
+    timestamp: Date = new Date(),
     imageSrc: string = ""
   ) {
   

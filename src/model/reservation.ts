@@ -3,8 +3,6 @@ import { Book } from "./book"
 import { UserProfile } from "./userProfile"
 import { BookReview } from "./review"
 import { ReservationState } from "@/types/reservationState"
-import { Author } from "./author"
-
 
 export class Reservation {
   id: number
@@ -22,7 +20,7 @@ export class Reservation {
     review: BookReview = new BookReview(),
     pickUpDate: Date = new Date(),
     dropOffDate: Date = new Date(),
-    state: ReservationState = ReservationState.AVAILABLE,
+    state: ReservationState = ReservationState.AVAILABLE
   ) {
     this.id = id
     this.book = book
@@ -37,7 +35,7 @@ export class Reservation {
   reservationDays(): number {
     return Math.floor((this.dropOffDate.getTime() - this.pickUpDate.getTime()) / (1000 * 60 * 60 * 24))
   }
-
+  
   static fromJSON(reservationJSON: ReservationJSON): Reservation {
     const book = Object.assign(new Book(), reservationJSON.book, {})
     const user = Object.assign(new UserProfile(), reservationJSON.user, {})

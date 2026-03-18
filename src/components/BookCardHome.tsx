@@ -1,9 +1,18 @@
 import type { Book } from "@/model/book"
+import type { BookFilters } from "@/types/bookFilters"
+import { useNavigate } from 'react-router'
 
-const BookCardHome = ({book} : {book : Book}) => {
+
+const BookCardHome = ({book, filters} : {book : Book, filters: BookFilters}) => {
+  const navigate = useNavigate()
   return (
-    <a key={book.id} href={`/detalle-de-libro`} 
-    className="group grid h-full grid-rows-[1fr_auto] bg-white rounded-2xl border border-gray-200">
+    <div key={book.id} 
+      onClick={() => navigate(`/book-detail/${book.id}`, { 
+        state: { pickUpDate: filters.pickUpDate, dropOffDate: filters.dropOffDate } 
+      })}
+      className="cursor-pointer group grid h-full grid-rows-[1fr_auto] bg-white rounded-2xl border border-gray-200"
+    >
+    <div className="group grid h-full grid-rows-[1fr_auto] bg-white rounded-2xl border border-gray-200">
       <img
         // alt={book.imageAlt}
         src={book.imageSrc ? book.imageSrc : "https://img.freepik.com/free-psd/blank-white-book-mockup-perfect-book-cover-designs-publishing-projects_191095-80351.jpg?semt=ais_hybrid&w=740&q=80"}
@@ -58,8 +67,8 @@ const BookCardHome = ({book} : {book : Book}) => {
           <p className="w-fit font-bold">@{book.owner.name}</p>
         </div>
       </div>
-
-    </a>
+      </div>
+    </div>
   )
 }
 

@@ -1,7 +1,7 @@
 import type { ReservationState } from "@/types/reservationState"
 import type { BookJSON, ProfileBookJSON } from "./bookJSON"
-import type { ReviewJSON } from "./ReviewJSON"
 import type { UserProfileJSON } from "./userProfileJSON"
+import type { ReviewJSON } from "./reviewJSON"
 
 export type ReservationJSON = {
   id: number

@@ -1,4 +1,4 @@
-import type { ReviewJSON } from "@/json/ReviewJSON"
+import type { ReviewJSON } from "@/json/reviewJSON"
 import { ValidationMessage } from "../validation/validationMessage"
 
 export class BookReview {
@@ -6,23 +6,23 @@ export class BookReview {
 
   errors: ValidationMessage[] = []
   id: number
-  rate: number
+  rating: number
   review: string
-  color: string
-  userName: string
+  reviewerName: string
+  timestamp: string
 
   constructor(
     id: number = 0,
-    rate: number = 0,
+    rating: number = 0,
     review: string = "",
-    color: string = "",
-    userName: string = "",
+    reviewerName: string = "",
+    timestamp: string = "",
   ) {
     this.id = id
-    this.rate = rate
+    this.rating = rating
     this.review = review
-    this.color = color
-    this.userName = userName
+    this.reviewerName = reviewerName
+    this.timestamp = timestamp
   }
 
   invalidReviewLength(): boolean {
@@ -31,6 +31,11 @@ export class BookReview {
 
   addError(field: string, message: string) {
     this.errors.push(new ValidationMessage(field, message))
+  }
+
+  static averageRating(reviews: BookReview[]): number {
+    if (reviews.length === 0) return 0
+    return reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
   }
 
   validate() {
