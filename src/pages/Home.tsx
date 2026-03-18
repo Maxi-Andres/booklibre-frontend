@@ -12,7 +12,7 @@ import {
 } from '@headlessui/react'
 // import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
-import { IconSearch } from '@tabler/icons-react';
+import { IconSearch } from '@tabler/icons-react'
 import { Book } from '@/model/book'
 import BookCardHome from '@/components/BookCardHome'
 import { BookGender } from '@/types/bookGender'
@@ -21,8 +21,8 @@ import MultiRangeSlider from '@/components/MultiRangeSlider/MultiRangeSlider'
 import { addDays } from '@/utils/addDays'
 import Pagination from '@/components/Pagination'
 import { bookService } from '@/services/bookService'
-import { SortByTitle, SortByAuthor, SortByOwner, type BookSortCriteria } from '@/model/bookSortCriteria';
-import OrderDirectionArrow from '@/components/OrderDirectionArrow/OrderDirectionArrow';
+import { SortByTitle, SortByAuthor, SortByOwner, type BookSortCriteria } from '@/model/bookSortCriteria'
+import OrderDirectionArrow from '@/components/OrderDirectionArrow/OrderDirectionArrow'
 
 const sortOptions = [
   { name: 'Título', value: new SortByTitle(), current: true },
@@ -139,23 +139,30 @@ export default function Home() {
   }, [page])
   //! RELOADS WHEN SORTING OPTION CHANGES ====
   useEffect(() => {
-    handleApplyFilters()
+    handleApplyFilters(filters)
   }, [filters.sortedBy, filters.ascending])
 
-   //* ==== APPLY & CLEAR FILTERS & RESTART PAGE ====
-  const handleApplyFilters = () => {
+   //* ==== APPLY FILTERS & RESTART PAGE ====
+  const handleApplyFilters = (filters: BookFilters) => {
     // console.log("Applying filters: ", filters)
     getFilteredBooksPage(filters)
+    setPage(0)
   }
-  
-  // const handleClearFilters = () => {
-  //   setFilters({...initialFilters})
-  //   setPage(0)
-  //   handleApplyFilters()
-  // }
+
+ //* ==== CLEAR FILTERS & RESTART PAGE ====
+  {/* Cuando key cambia, React desmonta y vuelve a montar el componente desde cero, 
+  reseteando su estado interno (minVal, maxVal) a los valores iniciales min y max. */}
+  const [filterKey, setFilterKey] = useState(0)
+
+  const handleClearFilters = () => {
+    setFilters(initialFilters)
+    setPage(0)
+    handleApplyFilters(initialFilters)
+    setFilterKey(prev => prev + 1) // fuerza el remount del slider
+  }
 
   return (
-    <div className="w-full bg-gray-100">
+    <div className="w-full">
       <div>
 {/* =============== MAIN ================ */}
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -230,6 +237,7 @@ export default function Home() {
                 <Disclosure key="numPageRangeFilter" as="div" className="border-b border-gray-200 py-6">
                   <label htmlFor="steps-range" className="block mb-2.5 text-sm font-medium text-heading">RANGO DE PÁGINAS</label>
                   <MultiRangeSlider
+                    key={filterKey}  // cuando cambia, React destruye y recrea el componente
                     min={0}
                     max={1500}
                     onChange={handleRangeChange} 
@@ -273,13 +281,16 @@ export default function Home() {
                 </Disclosure>
 
                 {/* ========== APPLY FILTERS ========== */}
-                <Disclosure key="applyFiltersBtn" as="div" className="border-b border-gray-200 py-6 flex justify-center gap-x-4">
-                  <button type='button' onClick={handleApplyFilters} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <Disclosure key="applyFiltersBtn" as="div" className="border-b border-gray-200 py-6 grid grid-cols-2 gap-x-4 justify-center">
+                  <button type='button' onClick={() => handleApplyFilters(filters)} 
+                  className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600">
                     Aplicar Filtros
                   </button>
-                  {/* <button type='button' onClick={handleClearFilters} className="bg-white hover:bg-blue-500 hover:text-white border border-blue-500 text-blue-500 font-bold py-2 px-4 rounded">
-                    Borrar Filtros
-                  </button> */}
+                  <button type='button' onClick={handleClearFilters} 
+                  className="mt-4 inline-block rounded-xl bg-white border border-blue-500 px-6 py-2.5 text-sm font-semibold text-blue-500 transition-all duration-150 ease-out 
+                  hover:scale-[1.08] hover:bg-blue-600 hover:text-white">
+                    Limpiar Filtros
+                  </button>
                 </Disclosure>
 
               </form>
@@ -298,7 +309,7 @@ export default function Home() {
                     className='py-2 px-4 text-sm bg-gray-100 text-gray-600 rounded focus:outline-none selected:bg-gray-100' 
                     value={filters.title}
                     onChange={(e) => updateSimpleFilter("title", e.target.value)} />
-                    <button onClick={handleApplyFilters} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
+                    <button onClick={() => handleApplyFilters(filters)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
                       Buscar
                     </button>
                   </div>
@@ -349,11 +360,25 @@ export default function Home() {
                 </div>
 
           {/* ============ PRODUCT GRID ============== */}
-                  <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8">
+                  <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8 justify-content-center items-center">
                     {filteredBooks.map((book: Book) => (
                       <BookCardHome key={book.id} book={book} filters={filters} />
                     ))}
                   </div>
+                  {filteredBooks.length === 0 && (
+                    <div className="w-full mt-10 rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center">
+                      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-2xl">
+                        <IconSearch size={26} className="text-blue-500" />
+                      </div>
+                      <h2 className="text-lg font-bold text-gray-800">
+                        Ups, nada por aquí. 
+                      </h2>
+                      <p className="mt-1 text-md text-gray-500">
+                        Cambiá los filtros o buscá algo distinto.
+                      </p>
+                    </div>
+                  )}
+                    
           
           {/* ============ PAGINACION============== */}
                   <div className="flex gap-2 mt-4 justify-center items-center">
