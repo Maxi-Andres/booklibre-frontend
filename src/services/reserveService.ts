@@ -13,16 +13,24 @@ class ReserveService {
     )
   }
 
-  async createReservation(bookId: number, pickUpDate: string, dropOffDate: string) {
-    return axios.post(REST_SERVER_URL + "/create-reservation", {bookId, sessionId, pickUpDate, dropOffDate})
+  async createReservation(
+    bookId: number,
+    pickUpDate: string,
+    dropOffDate: string,
+  ) {
+    return axios.post(REST_SERVER_URL + "/create-reservation", {
+      bookId,
+      sessionId,
+      pickUpDate,
+      dropOffDate,
+    })
   }
 
   async getReviews(bookId: number, page: number, pageSize: number) {
     return axios.get<BookReview[]>(
-        `${REST_SERVER_URL}/book-review/${bookId}?page=${page}&pageSize=${pageSize}`
+      `${REST_SERVER_URL}/book-review/${bookId}?page=${page}&pageSize=${pageSize}`,
     )
   }
-
 
   // async getFilteredBooksPage(filters: BookFilters): Promise<PageResponse<ReservationJSON>> {
   //   const response = () => axios.post<PageResponse<ReservationJSON>>(
@@ -32,8 +40,6 @@ class ReserveService {
   //   const data = (await response()).data
   //   return data
   // }
-
-
 
   // async getReservesByUserId(search: string): Promise<ReservationDTO[]> {
   //   return axios.get(
@@ -52,13 +58,29 @@ class ReserveService {
     const { data } = await axios.get(REST_SERVER_URL + "/lector/" + userId, {
       params: { search },
     })
+    // console.log(data)
     return data.map(mapReservation)
   }
 
-  async getUserOwnBooks(filterCriteria: string, sortCriteria: string): Promise<ReservationProfileBook[]> {
+  async getLoansMadeByUserId(
+    userId: string,
+    search: string,
+  ): Promise<ReservationDTO[]> {
+    const { data } = await axios.get(REST_SERVER_URL + "/owner/" + userId, {
+      params: { search },
+    })
+    // console.log(data)
+    return data.map(mapReservation)
+  }
+
+  async getUserOwnBooks(
+    filterCriteria: string,
+    sortCriteria: string,
+  ): Promise<ReservationProfileBook[]> {
     const response = () =>
       axios.get<ReservationProfileBookJSON[]>(
-        REST_SERVER_URL + `/userOwnBooks/${sessionId}?filterCriteria=${filterCriteria}&sortCriteria=${sortCriteria}`,
+        REST_SERVER_URL +
+          `/userOwnBooks/${sessionId}?filterCriteria=${filterCriteria}&sortCriteria=${sortCriteria}`,
       )
     return (await getAxiosData(response)).map(ReservationProfileBook.fromJSON)
   }
@@ -68,7 +90,6 @@ class ReserveService {
       axios.get<number>(REST_SERVER_URL + `/userLentBooks/${sessionId}`),
     )
   }
-  
 }
 
 export const reserveService = new ReserveService()

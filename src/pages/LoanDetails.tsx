@@ -17,6 +17,7 @@ import type { ReservationDTO } from "@/types/reservationType"
 //! fijate como vas a filtrar despeus igual te tienen que mostrar como implementar cache
 //! hace el modal para poner una review
 //! implemente lo de las tabs
+//! fijate lo de activo, perstado, vence pronto, todo eso como implelmentarlo
 
 //! NO BORRAR POR AHORA
 // const books = [
@@ -82,7 +83,7 @@ const statusLabels: Record<string, string> = {
   RETURNED: "DEVUELTO",
 }
 
-const DEFAULT_USER_ID = "1" //! esto es solo para MOCK
+//const DEFAULT_USER_ID = "1" //! esto es solo para MOCK
 
 export default function LoanDetails() {
   const [activeTab, setActiveTab] = useState<
@@ -93,9 +94,9 @@ export default function LoanDetails() {
   const [reserves, setReserves] = useState<ReservationDTO[]>([])
 
   // default userId = "1" si no hay nada en sessionStorage
-  const [userIDtest, setuserIDtest] = useState<string>(
-    sessionStorage.getItem("userIDtest") ?? DEFAULT_USER_ID,
-  )
+  // const [userIDtest, setuserIDtest] = useState<string>(
+  //   sessionStorage.getItem("userIDtest") ?? DEFAULT_USER_ID,
+  // )
   // console.log(sessionStorage.getItem("userIDtest"))
 
   // const filtered = books.filter(
@@ -106,15 +107,33 @@ export default function LoanDetails() {
 
   const handleStateChange = (newSearch: string) => {
     setSearch(newSearch)
-    getReservesByUserId(newSearch)
+    if (activeTab == "prestados-a-mi") {
+      getReservesByUserId(newSearch)
+    } else {
+      getLoansMadeByUserId(newSearch)
+    }
   }
 
   const getReservesByUserId = async (newSearch: string) => {
     setSearch(newSearch)
-    if (!userIDtest) return
+    if (!localStorage.getItem("id")!) return
     try {
       const reservesByUser = await reserveService.getReservesByUserId(
-        userIDtest,
+        localStorage.getItem("id")!, // le prometo que no es null
+        newSearch,
+      )
+      setReserves(reservesByUser)
+    } catch (error) {
+      showToast.httpError(error, "Error al cargar las reservas")
+    }
+  }
+
+  const getLoansMadeByUserId = async (newSearch: string) => {
+    setSearch(newSearch)
+    if (!localStorage.getItem("id")!) return
+    try {
+      const reservesByUser = await reserveService.getLoansMadeByUserId(
+        localStorage.getItem("id")!, // le prometo que no es null
         newSearch,
       )
       setReserves(reservesByUser)
@@ -142,7 +161,14 @@ export default function LoanDetails() {
           {(["prestados-a-mi", "prestados-por-mi"] as const).map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => {
+                setActiveTab(tab)
+                if (tab === "prestados-a-mi") {
+                  getReservesByUserId(search)
+                } else {
+                  getLoansMadeByUserId(search)
+                }
+              }}
               className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer ${
                 activeTab === tab
                   ? "border-b-3 border-blue-500 text-blue-500"
@@ -154,7 +180,7 @@ export default function LoanDetails() {
           ))}
         </div>
 
-        {/* =================== Search =================== */}
+        {/* =================== Search ===================
         <div className="mt-6 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
           <IconUser size={18} className="text-gray-400" />
 
@@ -165,7 +191,7 @@ export default function LoanDetails() {
             onChange={(e) => setuserIDtest(e.target.value)}
             className="w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
           />
-        </div>
+        </div> */}
 
         {/* =================== Search =================== */}
         <div className="mt-6 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
@@ -175,7 +201,7 @@ export default function LoanDetails() {
             type="text"
             placeholder="Buscar por título, autor..."
             value={search}
-            onChange={(e) => getReservesByUserId(e.target.value)}
+            onChange={(e) => handleStateChange(e.target.value)}
             className="w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
           />
         </div>

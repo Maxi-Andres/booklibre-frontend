@@ -26,9 +26,9 @@ export const mapReservation = (res: any): ReservationDTO => ({
   id: res.id,
   bookTitle: res.book.title,
   bookAuthor: res.book.author.name,
-  bookCover: res.book.cover ?? "",
+  bookCover: res.book.imageSrc ?? "",
   rating: res.review?.rating ?? 0,
-  loanedBy: res.user.name,
+  loanedBy: res.book.owner.name, // el nombre del usuario que tiene el libro es el que lo presta
   pickUpDate: res.pickUpDate,
   dropOffDate: res.dropOffDate,
   bibliokarmas: res.user.bibliokarmas,
