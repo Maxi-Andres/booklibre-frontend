@@ -15,6 +15,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate }:
   const [pickUpDate, setPickUpDate] = useState(initialPickUpDate ?? "")
   const [dropOffDate, setDropOffDate] = useState(initialDropOffDate ?? "")
   const [showPicker, setShowPicker] = useState(false)
+  const today = new Date().toISOString().split('T')[0]
 
   const calculateDays = () => {
     if (!pickUpDate || !dropOffDate) return 0
@@ -86,6 +87,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate }:
                 <input
                   type="date"
                   value={pickUpDate}
+                  min={today}
                   onChange={(e) => setPickUpDate(e.target.value)}
                   className="w-full text-xs px-2 py-1.5 border border-gray-200 rounded-md bg-gray-50"
                 />
@@ -95,6 +97,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate }:
                 <input
                   type="date"
                   value={dropOffDate}
+                  min={pickUpDate || today}
                   onChange={(e) => setDropOffDate(e.target.value)}
                   className="w-full text-xs px-2 py-1.5 border border-gray-200 rounded-md bg-gray-50"
                 />

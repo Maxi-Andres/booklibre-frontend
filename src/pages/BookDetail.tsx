@@ -52,7 +52,7 @@ export default function BookDetail() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* ================ Breadcrumb ================ */}
-      <div className="px-6 py-3">
+      <div className="px-6 py-5 pl-40">
         <ol className="flex items-center gap-1 text-sm text-gray-500">
           <li>
             <a href="/" className="hover:text-gray-700">
@@ -79,7 +79,7 @@ export default function BookDetail() {
       </div>
 
       {/* ================ Top Section ================ */}
-      <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-8">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-2">
         <div className="flex items-start gap-6">
           <div className="flex h-120 w-80 shrink-0 flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <img
@@ -140,7 +140,7 @@ export default function BookDetail() {
               <div className="grid grid-cols-6 gap-4 py-2">
                 <div className="col-start-1 col-end-3">
                   <p className="text-xs text-[#A3B0C2] uppercase">Tipo</p>
-                  <span className="inline-flex items-center gap-1 rounded bg-[#FFFBEB] px-2 py-0.5 text-xs font-medium text-[#C77F44]">
+                  <span className="inline-flex items-center gap-1 rounded bg-[#FFFBEB] px-2 py-0.5 text-base font-medium text-[#C77F44]">
                     {book!.bookType}
                   </span>
                 </div>
@@ -148,7 +148,7 @@ export default function BookDetail() {
                   <p className="text-xs text-[#A3B0C2] uppercase">
                     Bibliokarmas
                   </p>
-                  <span className="inline-block rounded bg-green-100 px-3 py-0.5 text-sm text-green-700">
+                  <span className="inline-block rounded bg-green-100 px-3 py-0.5 text-base text-green-700">
                     + {book!.bookBibliokarmas}
                   </span>
                 </div>
@@ -188,8 +188,8 @@ export default function BookDetail() {
                   <p className="text-base text-green-600">{book!.condition}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[#A3B0C2] uppercase">Ranking</p>
-                  {/* <p className="text-base text-gray-800">{book.reviews.find(r => r.rate)?.rate}</p> */}
+                  <p className="text-xs text-[#A3B0C2] uppercase">Rating</p>
+                  <p className="text-base text-gray-800">{`${BookReview.averageRating(reviews).toFixed(1)}`}</p>
                 </div>
               </div>
             </div>
