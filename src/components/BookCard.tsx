@@ -88,7 +88,7 @@ export default function BookCard({ book, onRated }: BookCardProps) {
           </div>
 
           {/* fijate cuales son los parametros para poder hacer review al libro */}
-          {book && (
+          {book.canRate && (
             <button
               onClick={() => setShowModal(true)}
               className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg border border-blue-50 bg-blue-100 py-1.5 text-xs font-semibold text-blue-500 transition-colors hover:cursor-pointer hover:bg-blue-200"

@@ -55,6 +55,7 @@ export const mapReservation = (res: any): ReservationDTO => {
     bibliokarmas: res.user.bibliokarmas,
     state,
     soonToEnd: res.soonToEnd,
-    canRate: res.state === "RETURNED" && res.review?.rating === 0,
+    canRate: state === "RETURNED",
+    // canRate: res.state === "RETURNED" && res.review?.rating === 0,
   }
 }
