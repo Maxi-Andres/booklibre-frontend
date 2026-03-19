@@ -88,7 +88,7 @@ export class Book {
     this.addError('desc', 'Debe ingresar una descripcion');
   } 
 
-  if (!this.imageSrc?.trim()) {
+  if (!this.imageSrc) {
     this.addError('imageSrc', 'Debe ingresar una imagen del libro');
   } 
 

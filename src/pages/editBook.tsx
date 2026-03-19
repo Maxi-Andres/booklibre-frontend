@@ -32,25 +32,10 @@ import {  TextareaField } from "@/components/Textarea"
   }
  }, [id])
 
+
  const updateBook = (key: keyof Book, value: unknown) => {
-    const updated = new Book(
-        key === 'id' ? Number(value) : book.id,
-        key === 'title' ? String(value) : book.title,
-        key === 'bookType' ? value as BookType : book.bookType,
-        key === 'desc' ? String(value) : book.desc,
-        key === 'gender' ? value as BookGender : book.gender,
-        key === 'author' ? value as Author : book.author,
-        key === 'numPages' ? Number(value) : book.numPages,
-        key === 'isbn' ? String(value) : book.isbn,
-        key === 'language' ? value as Languages : book.language,
-        key === 'editorial' ? String(value) : book.editorial,
-        key === 'publishDate' ? new Date(String(value)) : book.publishDate,
-        key === 'condition' ? value as BookCondition : book.condition,
-        key === 'imageSrc' ? String(value) : book.imageSrc,
-        book.owner,
-    )
-    setBook(updated)
-}
+    setBook(prev => Object.assign(new Book(), prev, { [key]: value }))
+ }
 
  
 
@@ -121,7 +106,7 @@ import {  TextareaField } from "@/components/Textarea"
               <InputField 
                        label="Portada"
                        id="imageSrc"
-                       type="imageSrc"
+                       type="text"
                        required
                        value={book.imageSrc}
                        onChange={(e) => updateBook('imageSrc', e.target.value)}
@@ -141,7 +126,7 @@ import {  TextareaField } from "@/components/Textarea"
                 <InputField 
                        label="Titulo"
                        id="title"
-                       type="title"
+                       type="text"
                        required
                        value={book.title}
                        onChange={(e) => updateBook('title', e.target.value)}
@@ -150,7 +135,7 @@ import {  TextareaField } from "@/components/Textarea"
                 <InputField 
                        label="Tipo"
                        id="bookType"
-                       type="bookType"
+                       type="text"
                        required
                        value={book.bookType}
                        onChange={(e) => updateBook('bookType', e.target.value)}
@@ -179,10 +164,10 @@ import {  TextareaField } from "@/components/Textarea"
                       <InputField 
                         label="Autor"
                         id="author"
-                        type="author"
+                        type="text"
                         required
                         value={book.author.name}
-                        onChange={(e) => updateBook('author', e.target.value)}
+                        onChange={(e) => updateBook('author', new Author(0, e.target.value, book.author.avatar))}
                       />
                       <ValidationField field="author" errors={errors} />
                     </div>
@@ -228,7 +213,7 @@ import {  TextareaField } from "@/components/Textarea"
                       <InputField 
                        label="Editorial"
                        id="editorial"
-                       type="editorial"
+                       type="text"
                        required
                        value={book.editorial}
                        onChange={(e) => updateBook('editorial', e.target.value)}
@@ -243,7 +228,7 @@ import {  TextareaField } from "@/components/Textarea"
                       <InputField 
                         label="Fecha de publicacion"
                         id="publishDate"
-                        type="publishDate"
+                        type="text"
                         required
                         // todo lo que sigue a ? es para transformar al tipo de fecha que acepta el inputfield
                         value={book.publishDate ? new Date(book.publishDate).toISOString().split('T')[0] : ''}
@@ -263,7 +248,7 @@ import {  TextareaField } from "@/components/Textarea"
                       <InputField 
                        label="Cantidad de páginas"
                        id="pages"
-                       type="pages"
+                       type="text"
                        required
                        value={book.numPages}
                        onChange={(e) => updateBook('numPages', e.target.value)}
@@ -278,7 +263,7 @@ import {  TextareaField } from "@/components/Textarea"
                       <InputField 
                         label="ISBN"
                         id="ISBN"
-                        type="ISBN"
+                        type="text"
                         required
                         value={book.isbn}
                         onChange={(e) => updateBook('isbn', e.target.value)}
@@ -293,11 +278,12 @@ import {  TextareaField } from "@/components/Textarea"
                 <TextareaField
                 label="Descripcion"
                 id="desc"
-                type="desc"
+                type="text"
                 value={book.desc}
                 maxLength={500}
                 rows={10}
                 placeholder="Ingrese aqui la descripcion del libro"
+                onChange={(e) => updateBook('desc', e.target.value)}
                 />
                 <ValidationField field="desc" errors={errors} />
               </div>
