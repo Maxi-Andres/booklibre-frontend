@@ -3,6 +3,8 @@ import { InputField } from "@/components/InputField"
 import  ValidationField  from "@/validation/ValidationField"
 import { ValidationMessage } from "@/validation/validationMessage"
 import { Book } from "@/model/book"
+import { BookType } from "@/types/bookType"
+import { Author } from "@/model/author"
 import { useEffect, useState } from "react"
 import { BookGender } from "@/types/bookGender"
 import { GenericCombobox } from "@/components/GenericComboBox"
@@ -11,6 +13,7 @@ import { BookCondition } from "@/types/bookCondition"
 import { useParams } from 'react-router'
 import { Button } from "@headlessui/react"
 import { bookService } from "@/services/bookService"
+import { showToast } from "@/utils/toast"
 
 
 
@@ -30,17 +33,56 @@ import { bookService } from "@/services/bookService"
   }
  }, [id])
 
-  const updateBook = (key: keyof Book, value: unknown) => {
-   setBook(prev => Object.assign(new Book(), prev, { [key]: value }))
-  }
+ const updateBook = (key: keyof Book, value: unknown) => {
+    const updated = new Book(
+        key === 'id' ? Number(value) : book.id,
+        key === 'title' ? String(value) : book.title,
+        key === 'bookType' ? value as BookType : book.bookType,
+        key === 'desc' ? String(value) : book.desc,
+        key === 'gender' ? value as BookGender : book.gender,
+        key === 'author' ? value as Author : book.author,
+        key === 'numPages' ? Number(value) : book.numPages,
+        key === 'isbn' ? String(value) : book.isbn,
+        key === 'language' ? value as Languages : book.language,
+        key === 'editorial' ? String(value) : book.editorial,
+        key === 'publishDate' ? new Date(String(value)) : book.publishDate,
+        key === 'condition' ? value as BookCondition : book.condition,
+        key === 'imageSrc' ? String(value) : book.imageSrc,
+        book.owner,
+    )
+    setBook(updated)
+}
+
+ 
 
   const handleSubmit = async () => {
-    if (isEditing) {
-      await bookService.updateBook(Number(id),book)
-    } else {
-      await bookService.createBook(book)
+    book.validate()
+    
+
+    if (book.errors.length > 0) {
+        setErrors(book.errors)
+        showToast.error('Por favor completá todos los campos requeridos')
+        return
     }
-  }
+
+    try {
+        if (isEditing) {
+            await bookService.updateBook(Number(id), book)
+            showToast.success('Libro actualizado con éxito')
+        } else {
+            await bookService.createBook(book)
+            showToast.success('Libro creado con éxito')
+        }
+    } catch (error) {
+        showToast.httpError(error, 'Error al guardar el libro')
+    }
+
+
+    
+}
+
+
+  
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -85,10 +127,10 @@ import { bookService } from "@/services/bookService"
                        id="imageSrc"
                        type="imageSrc"
                        required
-                       value={book.title}
+                       value={book.imageSrc}
                        onChange={(e) => updateBook('imageSrc', e.target.value)}
                 />
-                <ValidationField field="title" errors={errors} />
+                <ValidationField field="imageSrc" errors={errors} />
             </div>
             
             
@@ -230,7 +272,7 @@ import { bookService } from "@/services/bookService"
                        value={book.numPages}
                        onChange={(e) => updateBook('numPages', e.target.value)}
                       />
-                      <ValidationField field="pages" errors={errors} />
+                      <ValidationField field="numPages" errors={errors} />
                     </div>
                   </span>
                 </div>
@@ -245,7 +287,7 @@ import { bookService } from "@/services/bookService"
                         value={book.isbn}
                         onChange={(e) => updateBook('isbn', e.target.value)}
                       />
-                      <ValidationField field="ISBN" errors={errors} />
+                      <ValidationField field="isbn" errors={errors} />
                     </div>
                   </span>
                 </div>

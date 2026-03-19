@@ -210,6 +210,7 @@ export default function Profile() {
               <section className="pr-1">
                 {shownBooks.map((reserve) => (
                   <ProfileBook key={reserve.book.id} 
+                    bookId={reserve.book.id}
                     bookImg={reserve.book.imageSrc}
                     bookAuthor={reserve.book.authorName}
                     bookGender={reserve.book.gender}

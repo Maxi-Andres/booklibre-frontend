@@ -5,22 +5,26 @@ import { BookCondition } from "../types/bookCondition"
 import { Author } from "./author"
 import { UserProfile } from "./userProfile"
 import type { BookJSON } from "@/json/bookJSON"
+import { ValidationMessage } from "@/validation/validationMessage"
 
 export class Book {
-  id: number
-  title: string
-  bookType: BookType
-  desc: string
-  gender: BookGender
-  author: Author
-  numPages: number
-  isbn: string
-  language: Languages
-  editorial: string
-  publishDate: Date
-  condition: BookCondition
-  imageSrc: string
-  owner: UserProfile
+  errors: ValidationMessage[] = []
+
+  public id: number
+  public title: string
+  public bookType: BookType
+  public desc: string
+  public gender: BookGender
+  public author: Author
+  public numPages: number
+  public isbn: string
+  public language: Languages
+  public editorial: string
+  public publishDate: Date
+  public condition: BookCondition
+  public imageSrc: string
+  public owner: UserProfile
+  public bookBibliokarmas: number
 
   constructor(
     id: number = 0,
@@ -37,6 +41,7 @@ export class Book {
     condition: BookCondition = BookCondition.GOOD,
     imageSrc: string = "",
     owner: UserProfile = new UserProfile(),
+    bookBibliokarmas: number = 0
   ) {
     this.id = id
     this.title = title
@@ -52,6 +57,7 @@ export class Book {
     this.condition = condition
     this.imageSrc = imageSrc
     this.owner = owner
+    this.bookBibliokarmas = bookBibliokarmas
   }
 
   calculateBibliokarmas(): number {
@@ -69,4 +75,49 @@ export class Book {
     })
     return book
   }
+
+  addError(field: string, message: string) {
+      this.errors.push(new ValidationMessage(field, message))
+    }
+
+  validate() {
+  this.errors = [];
+
+  if (!this.title?.trim()) {
+    this.addError('title', 'Debe ingresar el titulo del libro');
+  } 
+
+  if (!this.desc?.trim()) {
+    this.addError('desc', 'Debe ingresar una descripcion');
+  } 
+
+  if (!this.imageSrc?.trim()) {
+    this.addError('imageSrc', 'Debe ingresar una imagen del libro');
+  } 
+
+
+  if (!this.author.name) {
+    this.addError('author', 'Debe ingresar el autor');
+  } 
+
+  if (!this.numPages || this.numPages <= 0) {
+    this.addError('numPages', 'Debe ingresar la cantidad de paginas');
+  } 
+
+  if (!this.isbn?.trim()) {
+    this.addError('isbn', 'Debe ingresar el ISBN');
+  } 
+
+  if (!this.editorial?.trim()) {
+    this.addError('editorial', 'Debe ingresar la editorial');
+  }
+
+  if (!this.publishDate) {
+    this.addError('publishDate', 'Debe ingresar la fecha de publicación');
+  }
+
+  return this.errors;
+}
+
+  
 }

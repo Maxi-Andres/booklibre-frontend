@@ -7,22 +7,12 @@ import {
 
 import './multiRangeSlider.css'
 
-// const valueCSS = {
-//     display: "flex",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     zIndex: 1,
-//     gap: "2px",
-//     paddingTop: "10px",
-// }
-
 const MultiRangeSlider = ({
     min,
     max,
     trackColor = "#cecece",
     onChange,
     rangeColor = "#ff0303",
-    // valueStyle = valueCSS,
     width = "300px",
 } : {
   min: number,
@@ -30,7 +20,6 @@ const MultiRangeSlider = ({
   trackColor: string,
   onChange: ({min, max} : { min: number, max: number }) => void,
   rangeColor: string,
-  // valueStyle: any,
   width: string,
 }) => {
 
@@ -74,6 +63,7 @@ const MultiRangeSlider = ({
             onChange({ min: minVal, max: maxVal })
             minValRef.current = minVal
             maxValRef.current = maxVal
+            // console.log({ min: minVal, max: maxVal })
         }
     }, [minVal, maxVal, onChange])
 
