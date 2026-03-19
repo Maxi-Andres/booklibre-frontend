@@ -6,7 +6,6 @@ import { userProfileService } from "@/services/userProfileService"
 import { useEffect, useState } from "react"
 
 import {
-  GearIcon,
   PlusCircleIcon,
   UserCircleIcon,
   CalendarBlankIcon,
@@ -18,6 +17,9 @@ import {
 // import { getErrorMessage } from "@/validation/errorHandler"
 import { reserveService } from "@/services/reserveService"
 import type { ReservationProfileBook } from "@/model/reservationProfile"
+import ProfileSettingsModal from "@/components/ProfileSettingsModal"
+import { getErrorMessage } from "@/validation/errorHandler"
+import { showToast } from "@/utils/toast"
 
 export default function Profile() {
   // const [errors, setErrors] = useState<ValidationMessage[]>([])
@@ -27,9 +29,7 @@ export default function Profile() {
   const [shownBooks, setShownBooks] = useState<ReservationProfileBook[]>([])
   const [filter, setFilter] = useState<string>("Todos")
   const [sort, setSort] = useState<string>("date_desc")
-
-  // const onSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {}
-
+  console.log(profile.img)
   const toggleTitleSort = () => {
     sort == "title_asc"
       ? setSort("title_desc")
@@ -47,8 +47,8 @@ export default function Profile() {
       const userProfile = await userProfileService.getProfile()
       setProfile(userProfile)
     } catch (error) {
-      // const errorMessage = getErrorMessage(error)
-      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
+      const errorMessage = getErrorMessage(error)
+      showToast.httpError('Error al traer su usuario. ' + errorMessage, 'error')
     }
   }
 
@@ -59,8 +59,8 @@ export default function Profile() {
       setShownBooks(userOwnBooks)
 
     } catch (error) {
-      // const errorMessage = getErrorMessage(error)
-      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
+      const errorMessage = getErrorMessage(error)
+      showToast.httpError('Error buscar sus libros. ' + errorMessage, 'error')
     }
   }
 
@@ -69,8 +69,8 @@ export default function Profile() {
       const userReadBooksNumber = await reserveService.getUserReadBooksNumber()
       setUserReadBooksNumber(userReadBooksNumber)
     } catch (error) {
-      // const errorMessage = getErrorMessage(error)
-      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
+      const errorMessage = getErrorMessage(error)
+      showToast.httpError('Error al contar sus libros leidos. ' + errorMessage, 'error')
     }
   }
 
@@ -79,8 +79,8 @@ export default function Profile() {
       const userLentBooksNumber = await reserveService.getUserLentBooksNumber()
       setUserLentBooksNumber(userLentBooksNumber)
     } catch (error) {
-      // const errorMessage = getErrorMessage(error)
-      // showToast('Error al traer el usuario. ' + errorMessage, 'error')
+      const errorMessage = getErrorMessage(error)
+      showToast.httpError('Error al contar sus libros prestados. ' + errorMessage, 'error')
     }
   }
 
@@ -93,7 +93,10 @@ export default function Profile() {
 
   useOnInit(() => handleProfileLoad(filter, sort))
 
-  useEffect(() => { getUserOwnBooks(filter, sort) }, [sort])
+  useEffect(() => { 
+    getUserOwnBooks(filter, sort) 
+
+  }, [sort])
 
   return (
     <div className="flex min-h-screen justify-center bg-gray-100 pt-12">
@@ -122,13 +125,7 @@ export default function Profile() {
               </p>
             </div>
           </div>
-
-          <button className="max-w-25 cursor-pointer rounded-lg bg-gray-200 text-sm hover:bg-gray-300">
-            <div className="flex flex-row items-center p-2">
-              <GearIcon size={20} />
-              <p className="font-bold">Editar Perfil</p>
-            </div>
-          </button>
+          <ProfileSettingsModal profile={profile} onProfileUpdated={setProfile}/>
         </section>
 
         <section className="flex gap-7">

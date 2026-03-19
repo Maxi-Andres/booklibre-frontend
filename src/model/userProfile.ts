@@ -8,7 +8,7 @@ export class UserProfile {
   img: string
   location: string
   timestamp: string
-  bibliokarmas: string
+  bibliokarmas: number
   email: string
   cel: string
   userType: UserKind
@@ -20,7 +20,7 @@ export class UserProfile {
     img: string = "",
     location: string = "",
     timestamp: string = "",
-    bibliokarmas: string = "",
+    bibliokarmas: number = 0,
     email: string = "",
     cel: string = "",
     userType: UserKind = UserKind.READER,
@@ -41,5 +41,21 @@ export class UserProfile {
   static fromJSON(userJSON: UserProfileJSON): UserProfile {
     const profile = Object.assign(new UserProfile(), userJSON, {})
     return profile
+  }
+
+  static toJSON(user: UserProfile): UserProfileJSON {
+    const userJSON: UserProfileJSON = {
+      id: user.id,
+      name: user.name,
+      description: user.description,
+      img: user.img,
+      location: user.location,
+      timestamp: user.timestamp,
+      bibliokarmas: user.bibliokarmas,
+      email: user.email,
+      cel: user.cel,
+      userType: user.userType,
+    }
+    return userJSON
   }
 }
