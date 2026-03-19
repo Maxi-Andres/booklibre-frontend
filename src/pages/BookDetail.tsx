@@ -1,5 +1,4 @@
-// import { BookReview } from "@/model/review"
-import { useLocation, useParams } from 'react-router'
+import { useLocation, useParams } from "react-router"
 import { bookService } from "@/services/bookService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { useState } from "react"
@@ -7,12 +6,12 @@ import { useState } from "react"
 import type { Book } from "@/model/book"
 // import DatePicker from "react-datepicker"
 // import { Disclosure } from "@headlessui/react"
-import { ReservationCard } from '@/components/ReservationDatePicker'
-import { reserveService } from '@/services/reserveService'
-import { BookReview } from '@/model/review'
-import { showToast } from '@/utils/toast'
+import { ReservationCard } from "@/components/ReservationDatePicker"
+import { reserveService } from "@/services/reserveService"
+import { BookReview } from "@/model/review"
+import { showToast } from "@/utils/toast"
 import ReviewsModal from "@/components/ReviewsModal"
-import { StarRating } from '@/components/ReviewsModal'
+import { StarRating } from "@/components/ReviewsModal"
 import { formatDate } from "@/utils/formatDate"
 
 export default function BookDetail() {
@@ -27,7 +26,7 @@ export default function BookDetail() {
       const bookResponse = await bookService.getBookDetail(Number(id))
       setBook(bookResponse)
     } catch (error) {
-      showToast.httpError(error,'Error al cargar libro')
+      showToast.httpError(error, "Error al cargar libro")
     } finally {
       setLoading(false)
     }
@@ -35,10 +34,10 @@ export default function BookDetail() {
 
   const getBookReviews = async () => {
     try {
-        const response = await reserveService.getReviews(Number(id), 0, 2)
-        setReviews(response.data)
+      const response = await reserveService.getReviews(Number(id), 0, 2)
+      setReviews(response.data)
     } catch (error) {
-        showToast.httpError(error, 'Error al cargar reseñas')
+      showToast.httpError(error, "Error al cargar reseñas")
     }
   }
 
@@ -56,7 +55,9 @@ export default function BookDetail() {
       <div className="px-6 py-3">
         <ol className="flex items-center gap-1 text-sm text-gray-500">
           <li>
-            <a href="/" className="hover:text-gray-700">Explorar</a>
+            <a href="/" className="hover:text-gray-700">
+              Explorar
+            </a>
           </li>
           <li>
             <svg
@@ -95,8 +96,8 @@ export default function BookDetail() {
                 {book!.bookType}
               </span>
               <div className="flex items-center gap-1.5">
-                <StarRating rating={(BookReview.averageRating(reviews))} />
-                <span className='text-gray-500 text-xs'>{`(${BookReview.averageRating(reviews).toFixed(1)})`}</span>
+                <StarRating rating={BookReview.averageRating(reviews)} />
+                <span className="text-xs text-gray-500">{`(${BookReview.averageRating(reviews).toFixed(1)})`}</span>
               </div>
             </div>
 
@@ -125,104 +126,120 @@ export default function BookDetail() {
 
         {/* ================ Reservation ================ */}
         <div className="flex items-start gap-6">
-        <ReservationCard
-          book={book}
-          initialPickUpDate={location.state?.pickUpDate}
-          initialDropOffDate={location.state?.dropOffDate}
-        />
+          <ReservationCard
+            book={book}
+            initialPickUpDate={location.state?.pickUpDate}
+            initialDropOffDate={location.state?.dropOffDate}
+          />
 
-        <div className="flex flex-1 flex-col gap-4">
-          <div className="gap-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-l border-b border-gray-100 font-bold text-gray-900">
-              Detalles del Libro
-            </h2>
-            <div className="grid grid-cols-6 gap-4 py-2">
-              <div className="col-start-1 col-end-3">
-                <p className="text-xs text-[#A3B0C2] uppercase">Tipo</p>
-                <span className="inline-flex items-center gap-1 rounded bg-[#FFFBEB] px-2 py-0.5 text-xs font-medium text-[#C77F44]">
-                  {book!.bookType}
-                </span>
+          <div className="flex flex-1 flex-col gap-4">
+            <div className="gap-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              <h2 className="text-l border-b border-gray-100 font-bold text-gray-900">
+                Detalles del Libro
+              </h2>
+              <div className="grid grid-cols-6 gap-4 py-2">
+                <div className="col-start-1 col-end-3">
+                  <p className="text-xs text-[#A3B0C2] uppercase">Tipo</p>
+                  <span className="inline-flex items-center gap-1 rounded bg-[#FFFBEB] px-2 py-0.5 text-xs font-medium text-[#C77F44]">
+                    {book!.bookType}
+                  </span>
+                </div>
+                <div className="col-span-2 col-end-7 text-center">
+                  <p className="text-xs text-[#A3B0C2] uppercase">
+                    Bibliokarmas
+                  </p>
+                  <span className="inline-block rounded bg-green-100 px-3 py-0.5 text-sm text-green-700">
+                    + {book!.bookBibliokarmas}
+                  </span>
+                </div>
               </div>
-              <div className="col-span-2 col-end-7 text-center">
-                <p className="text-xs text-[#A3B0C2] uppercase">
-                  Bibliokarmas
-                </p>
-                <span className="inline-block rounded bg-green-100 px-3 py-0.5 text-sm text-green-700">
-                  + {book!.bookBibliokarmas}
-                </span>
+
+              <div className="grid grid-cols-4 gap-x-6 gap-y-3 py-2">
+                <div className="pr-[<3>]">
+                  <p className="text-xs text-[#A3B0C2] uppercase">Género</p>
+                  <p className="text-base text-gray-800 lowercase">
+                    {book!.gender}
+                  </p>
+                </div>
+                <div className="pr-[<3>]">
+                  <p className="text-xs text-[#A3B0C2] uppercase">Páginas</p>
+                  <p className="text-base text-gray-800">{book!.numPages}</p>
+                </div>
+                <div className="pr-[<3>]">
+                  <p className="text-xs text-[#A3B0C2] uppercase">Idioma</p>
+                  <p className="text-base text-gray-800">{book!.language}</p>
+                </div>
+                <div className="pr-[<3>]">
+                  <p className="text-xs text-[#A3B0C2] uppercase">Editorial</p>
+                  <p className="text-base text-gray-800">{book!.editorial}</p>
+                </div>
+                <div className="pr-[<3>]">
+                  <p className="text-xs text-[#A3B0C2] uppercase">ISBN-13</p>
+                  <p className="text-base text-gray-800">{book!.isbn}</p>
+                </div>
+                <div className="pr-[<3>]">
+                  <p className="text-xs text-[#A3B0C2] uppercase">Publicado</p>
+                  <p className="text-base text-gray-800">
+                    {formatDate(book!.publishDate)}
+                  </p>
+                </div>
+                <div className="pr-[3]">
+                  <p className="text-xs text-[#A3B0C2] uppercase">Estado</p>
+                  <p className="text-base text-green-600">{book!.condition}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#A3B0C2] uppercase">Ranking</p>
+                  {/* <p className="text-base text-gray-800">{book.reviews.find(r => r.rate)?.rate}</p> */}
+                </div>
               </div>
             </div>
-
-            <div className="grid grid-cols-4 gap-x-6 gap-y-3 py-2">
-              <div className="pr-[<3>]">
-                <p className="text-xs text-[#A3B0C2] uppercase">Género</p>
-                <p className="text-base text-gray-800 lowercase">
-                  {book!.gender}
-                </p>
-              </div>
-              <div className="pr-[<3>]">
-                <p className="text-xs text-[#A3B0C2] uppercase">Páginas</p>
-                <p className="text-base text-gray-800">{book!.numPages}</p>
-              </div>
-              <div className="pr-[<3>]">
-                <p className="text-xs text-[#A3B0C2] uppercase">Idioma</p>
-                <p className="text-base text-gray-800">{book!.language}</p>
-              </div>
-              <div className="pr-[<3>]">
-                <p className="text-xs text-[#A3B0C2] uppercase">Editorial</p>
-                <p className="text-base text-gray-800">{book!.editorial}</p>
-              </div>
-              <div className="pr-[<3>]">
-                <p className="text-xs text-[#A3B0C2] uppercase">ISBN-13</p>
-                <p className="text-base text-gray-800">{book!.isbn}</p>
-              </div>
-              <div className="pr-[<3>]">
-                <p className="text-xs text-[#A3B0C2] uppercase">Publicado</p>
-                <p className="text-base text-gray-800">
-                  {formatDate(book!.publishDate)}
-                </p>
-              </div>
-              <div className="pr-[3]">
-                <p className="text-xs text-[#A3B0C2] uppercase">Estado</p>
-                <p className="text-base text-green-600">{book!.condition}</p>
-              </div>
-              <div>
-                <p className="text-xs text-[#A3B0C2] uppercase">Ranking</p>
-                {/* <p className="text-base text-gray-800">{book.reviews.find(r => r.rate)?.rate}</p> */}
-              </div>
-            </div>
-          </div>
 
             {/* ================ Community Reviews ================ */}
             <div className="mt-2 gap-2 p-2">
               <div className="flex items-center justify-between">
-                <h2 className="text-l border-b border-gray-100 font-bold text-gray-900">Reseñas de la Comunidad</h2>
+                <h2 className="text-l border-b border-gray-100 font-bold text-gray-900">
+                  Reseñas de la Comunidad
+                </h2>
                 {reviews.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">Este libro todavía no tiene reseñas.</p>
-                ):(reviews.length >= 2 && (<ReviewsModal bookId={book.id} bookTitle={book.title} />))}
+                  <p className="py-8 text-center text-gray-500">
+                    Este libro todavía no tiene reseñas.
+                  </p>
+                ) : (
+                  reviews.length >= 2 && (
+                    <ReviewsModal bookId={book.id} bookTitle={book.title} />
+                  )
+                )}
               </div>
 
-            {/* First two reviews */}
-            <div className="grid grid-cols-2 gap-4 mt-3">
-              {reviews.slice(0, 2).map((review, i) => (
-                <div key={`${review.id}-${i}`} className="flex flex-col gap-2 p-3 rounded-xl border border-gray-300">
-                  <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-[#E0E7FF] flex items-center justify-center font-bold text-[#6059E8] text-xs">
-                      {review.reviewerName.charAt(0)}{review.reviewerName.charAt(1)}
+              {/* First two reviews */}
+              <div className="mt-3 grid grid-cols-2 gap-4">
+                {reviews.slice(0, 2).map((review, i) => (
+                  <div
+                    key={`${review.id}-${i}`}
+                    className="flex flex-col gap-2 rounded-xl border border-gray-300 p-3"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E0E7FF] text-xs font-bold text-[#6059E8]">
+                        {review.reviewerName.charAt(0)}
+                        {review.reviewerName.charAt(1)}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">
+                          {review.reviewerName}
+                        </p>
+                        <StarRating rating={review.rating} />
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">{review.reviewerName}</p>
-                      <StarRating rating={review.rating} />
-                    </div>
+                    <p className="text-sm text-gray-600 italic">
+                      "{review.review}"
+                    </p>
                   </div>
-                  <p className="text-sm text-gray-600 italic">"{review.review}"</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-          </div>
           </div>
         </div>
       </div>
+    </div>
   )
 }
