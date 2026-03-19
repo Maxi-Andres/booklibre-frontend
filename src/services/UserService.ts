@@ -17,8 +17,6 @@ class UserService {
     const response = await axios.post<UserJSONResponse>(REST_SERVER_URL + '/login', userLogin)
     
     localStorage.setItem('id', response.data.id.toString())
-    localStorage.setItem('email', response.data.email)
-    localStorage.setItem('name',response.data.name)
 
     return UserType.fromJson(response.data)
   }
