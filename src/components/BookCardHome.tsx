@@ -47,7 +47,7 @@ const BookCardHome = ({book, filters} : {book : Book, filters: BookFilters}) => 
 
           <div className=''>
             <p className="mt-1 text-sm font-medium text-gray-400">BIBLIOKARMAS</p>
-            <p className="mt-1 text-sm font-medium text-gray-900">+{book.calculateBibliokarmas()}</p>
+            <p className="inline-block rounded px-3 py-0.5 text-md font-bold text-green-700">+{book.bookBibliokarmas}</p>
           </div>
 
           <div className=''>

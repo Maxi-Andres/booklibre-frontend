@@ -24,6 +24,7 @@ export class Book {
   public condition: BookCondition
   public imageSrc: string
   public owner: UserProfile
+  public bookBibliokarmas: number
 
   constructor(
     id: number = 0,
@@ -40,6 +41,7 @@ export class Book {
     condition: BookCondition = BookCondition.GOOD,
     imageSrc: string = "",
     owner: UserProfile = new UserProfile(),
+    bookBibliokarmas: number = 0
   ) {
     this.id = id
     this.title = title
@@ -55,6 +57,7 @@ export class Book {
     this.condition = condition
     this.imageSrc = imageSrc
     this.owner = owner
+    this.bookBibliokarmas = bookBibliokarmas
   }
 
   calculateBibliokarmas(): number {

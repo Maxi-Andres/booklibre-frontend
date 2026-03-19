@@ -148,7 +148,7 @@ export default function BookDetail() {
                   Bibliokarmas
                 </p>
                 <span className="inline-block rounded bg-green-100 px-3 py-0.5 text-sm text-green-700">
-                  {book!.calculateBibliokarmas()}
+                  + {book!.bookBibliokarmas}
                 </span>
               </div>
             </div>
