@@ -29,7 +29,6 @@ export default function Profile() {
   const [shownBooks, setShownBooks] = useState<ReservationProfileBook[]>([])
   const [filter, setFilter] = useState<string>("Todos")
   const [sort, setSort] = useState<string>("date_desc")
-  console.log(profile.img)
   const toggleTitleSort = () => {
     sort == "title_asc"
       ? setSort("title_desc")
@@ -48,7 +47,7 @@ export default function Profile() {
       setProfile(userProfile)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      showToast.httpError('Error al traer su usuario. ' + errorMessage, 'error')
+      showToast.httpError(error, 'Error al traer su usuario. ' + errorMessage)
     }
   }
 
@@ -60,7 +59,7 @@ export default function Profile() {
 
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      showToast.httpError('Error buscar sus libros. ' + errorMessage, 'error')
+      showToast.httpError(error, 'Error buscar sus libros. ' + errorMessage)
     }
   }
 
@@ -70,7 +69,7 @@ export default function Profile() {
       setUserReadBooksNumber(userReadBooksNumber)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      showToast.httpError('Error al contar sus libros leidos. ' + errorMessage, 'error')
+      showToast.httpError(error, 'Error al contar sus libros leidos. ' + errorMessage)
     }
   }
 
@@ -80,7 +79,7 @@ export default function Profile() {
       setUserLentBooksNumber(userLentBooksNumber)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      showToast.httpError('Error al contar sus libros prestados. ' + errorMessage, 'error')
+      showToast.httpError(error, 'Error al contar sus libros prestados. ' + errorMessage)
     }
   }
 
@@ -98,6 +97,7 @@ export default function Profile() {
 
   }, [sort])
 
+  console.log(profile)
   return (
     <div className="flex min-h-screen justify-center bg-gray-100 pt-12">
       <section className="flex w-245 flex-col gap-7">
@@ -142,7 +142,7 @@ export default function Profile() {
               <article className="border-b-2 border-gray-300 pb-2">
                 <p className="text-xs font-bold text-gray-500">TELÉFONO</p>
                 <p>
-                  {profile.cel.slice(0, 3) + ' (' + profile.cel.slice(4,6) + ') ' + profile.cel.slice(7)}
+                  {"+54" + ' (' + profile.cel.slice(0, 2) + ') ' + profile.cel.slice(3)}
                 </p>
               </article>
               <article>

@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useRef, useState } from "react"
 import {
   Dialog,
@@ -9,10 +7,11 @@ import {
 } from "@headlessui/react"
 import { UserProfile } from "@/model/userProfile"
 import { GearIcon, PencilIcon } from "@phosphor-icons/react"
-import { InputField } from "./InputField"
+import { InputField } from "@/components/InputField"
 import { getErrorMessage } from "@/validation/errorHandler"
 import { showToast } from "@/utils/toast"
 import { userProfileService } from "@/services/userProfileService"
+import { ValidationMessage } from "@/validation/validationMessage"
 
 type ProfileSettingsIntf = {
   profile: UserProfile
@@ -21,6 +20,7 @@ type ProfileSettingsIntf = {
 
 export default function ProfileSettingsModal({ profile, onProfileUpdated }: ProfileSettingsIntf) {
   const [open, setOpen] = useState(false)
+  const [errors, setErrors] = useState<ValidationMessage[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [previewImg, setPreviewImg] = useState<string>(
@@ -47,6 +47,7 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
 
   const handleSave = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
+
     const form = event.currentTarget
     const formData = new FormData(form)
 
@@ -62,6 +63,13 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
       (formData.get("celphone") as string) || profile.cel,
       (formData.get("userType") as string) || profile.userType,
     )
+    console.log(newProfileData)
+    setErrors([])
+    newProfileData.validate()
+    if (newProfileData.errors.length > 0) {
+      setErrors(newProfileData.errors)
+      return errors
+    }
 
     try {
       const updatedProfile = await userProfileService.updateProfile(newProfileData, selectedImageFile)
@@ -74,6 +82,8 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
         "error",
       )
       setOpen(false)
+    } finally {
+      setErrors([])
     }
   }
 
@@ -152,6 +162,8 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
                           label="Nombre"
                           placeholder={profile.name}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                          field="invalid-name"
+                          errors={errors}
                         />
                         <InputField
                           id="nameInputField"
@@ -159,6 +171,8 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
                           label="Descripcion"
                           placeholder={profile.description}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                          field="too-long-desc"
+                          errors={errors}
                         />
                         <InputField
                           id="nameInputField"
@@ -166,6 +180,8 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
                           label="Ubicacion"
                           placeholder={profile.location}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                          field="invalid-format-loc"
+                          errors={errors}
                         />
                         <InputField
                           id="nameInputField"
@@ -173,6 +189,8 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
                           label="Email"
                           placeholder={profile.email}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                          field="invalid-format-email"
+                          errors={errors}
                         />
                         <InputField
                           id="nameInputField"
@@ -180,6 +198,8 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
                           label="Teléfono"
                           placeholder={profile.cel}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                          field="invalid-format-cel"
+                          errors={errors}
                         />
                         <InputField
                           id="nameInputField"
@@ -187,6 +207,8 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
                           label="Tipo de perfil"
                           placeholder={profile.userType}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                          // field="invalid-name"
+                          // errors={errors}
                         />
                         <div className="mt-5 flex justify-end">
                           <button
