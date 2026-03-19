@@ -1,89 +1,19 @@
 import { useState } from "react"
 import { Link } from "react-router"
-import {
-  IconSearch,
-  IconUser,
-  IconCalendar,
-  IconBook,
-  IconStar,
-} from "@tabler/icons-react"
+import { IconSearch, IconBook } from "@tabler/icons-react"
 import { reserveService } from "@/services/reserveService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { showToast } from "@/utils/toast"
 import type { ReservationDTO } from "@/types/reservationType"
 
-//! poner los libros de mock en el boostrap
+import BookCard from "@/components/BookCard"
+
 //! fijate si se busca con debouncing o con enter
 //! fijate como vas a filtrar despeus igual te tienen que mostrar como implementar cache
-//! hace el modal para poner una review
-//! implemente lo de las tabs
 //! fijate lo de activo, perstado, vence pronto, todo eso como implelmentarlo
-
-//! NO BORRAR POR AHORA
-// const books = [
-//   {
-//     id: 1,
-//     title: "The Great Gatsby",
-//     author: "F. Scott Fitzgerald",
-//     rating: 4.8,
-//     loanedBy: "Juan Pérez",
-//     range: "01/10/23 - 15/10/23",
-//     karma: "+240",
-//     status: "ACTIVO",
-//     cover: "/assets/img/gatsby.png",
-//   },
-//   {
-//     id: 2,
-//     title: "1984",
-//     author: "George Orwell",
-//     rating: 4.9,
-//     loanedBy: "Ana Garcia",
-//     range: "05/10/23 - 20/10/23",
-//     karma: "+240",
-//     status: "PRÓXIMO A VENCER",
-//     cover: "/assets/img/1984.png",
-//   },
-//   {
-//     id: 3,
-//     title: "To Kill a Mockingbird",
-//     author: "Harper Lee",
-//     rating: 4.7,
-//     loanedBy: "Carlos Ruiz",
-//     range: "10/10/23 - 25/10/23",
-//     karma: "+240",
-//     status: "ACTIVO",
-//     cover: "/assets/img/killamock.png",
-//   },
-//   {
-//     id: 4,
-//     title: "The Catcher in the Rye",
-//     author: "J.D. Salinger",
-//     rating: 4.5,
-//     loanedBy: "Elena Beltran",
-//     range: "12/10/23 - 27/10/23",
-//     karma: "+240",
-//     status: "DEVUELTO",
-//     cover: "/assets/img/catcher.png",
-//     canRate: true,
-//   },
-// ]
-
-// Record<tipoDeClave, tipoDeValor>
-const statusStyles: Record<string, string> = {
-  AVAILABLE: "bg-blue-500 text-white",
-  BORROWED: "bg-green-500 text-white",
-  SOON_TO_END: "bg-orange-400 text-white",
-  RETURNED: "bg-red-400 text-white",
-}
-
-const statusLabels: Record<string, string> = {
-  AVAILABLE: "ACTIVO",
-  BORROWED: "PRESTADO",
-  SOON_TO_END: "PRÓXIMO A VENCER",
-  RETURNED: "DEVUELTO",
-}
-
-//const DEFAULT_USER_ID = "1" //! esto es solo para MOCK
+//! hace DTOs en el back bobo
+//! fijate porque pone cualquier fecha me parece
+//! cuando se califica se vuelve a llamar al back lo que esta mal
 
 export default function LoanDetails() {
   const [activeTab, setActiveTab] = useState<
@@ -92,18 +22,6 @@ export default function LoanDetails() {
   const [search, setSearch] = useState("")
   // cuando esto cambia se vuelve a renderizar el componente y se vuelve a llamar
   const [reserves, setReserves] = useState<ReservationDTO[]>([])
-
-  // default userId = "1" si no hay nada en sessionStorage
-  // const [userIDtest, setuserIDtest] = useState<string>(
-  //   sessionStorage.getItem("userIDtest") ?? DEFAULT_USER_ID,
-  // )
-  // console.log(sessionStorage.getItem("userIDtest"))
-
-  // const filtered = books.filter(
-  //   (b) =>
-  //     b.title.toLowerCase().includes(search.toLowerCase()) ||
-  //     b.author.toLowerCase().includes(search.toLowerCase()),
-  // )
 
   const handleStateChange = (newSearch: string) => {
     setSearch(newSearch)
@@ -180,19 +98,6 @@ export default function LoanDetails() {
           ))}
         </div>
 
-        {/* =================== Search ===================
-        <div className="mt-6 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
-          <IconUser size={18} className="text-gray-400" />
-
-          <input
-            type="text"
-            placeholder="ID de usuario (prueba)"
-            value={userIDtest}
-            onChange={(e) => setuserIDtest(e.target.value)}
-            className="w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
-          />
-        </div> */}
-
         {/* =================== Search =================== */}
         <div className="mt-6 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
           <IconSearch size={18} className="text-gray-400" />
@@ -209,79 +114,11 @@ export default function LoanDetails() {
         {/* =================== Cards =================== */}
         <div className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
           {reserves.map((book) => (
-            <div
+            <BookCard
               key={book.id}
-              className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.03] hover:shadow-xl hover:shadow-gray-300/60"
-            >
-              {/* =================== Status badge =================== */}
-              <span
-                className={`absolute top-1 right-2 z-10 rounded-full px-2 py-0.5 text-xs font-semibold ${statusStyles[book.state]}`}
-              >
-                {statusLabels[book.state] ?? book.state}
-              </span>
-
-              {/* =================== Cover =================== */}
-              <img
-                src={book.bookCover}
-                alt={book.bookTitle}
-                className="h-68 object-cover transition duration-300 group-hover:scale-103"
-              />
-
-              {/* =================== Info =================== */}
-              <div className="flex flex-col gap-2 p-3">
-                <div className="flex items-start justify-between gap-1">
-                  <p className="text-sm leading-tight font-bold text-gray-800">
-                    {book.bookTitle}
-                  </p>
-                  <span className="flex items-center gap-1 text-xs font-bold whitespace-nowrap text-gray-500">
-                    <IconStar
-                      size={12}
-                      fill="currentColor"
-                      className="text-yellow-500"
-                    />
-                    {book.rating}
-                  </span>
-                </div>
-                <p className="text-xs font-bold text-gray-400">
-                  {book.bookAuthor}
-                </p>
-
-                <div className="border-b border-gray-100"></div>
-
-                <div className="mt-1 space-y-1 text-xs text-gray-500">
-                  <p className="flex items-center gap-1">
-                    <IconUser size={14} />
-                    Prestado por:
-                    <span className="font-medium text-gray-700">
-                      {book.loanedBy}
-                    </span>
-                  </p>
-
-                  <p className="flex items-center gap-1">
-                    <IconCalendar size={14} />
-                    Rango:
-                    <span className="font-medium text-gray-700">
-                      {book.pickUpDate} - {book.dropOffDate}
-                    </span>
-                  </p>
-
-                  <div className="flex items-center gap-1">
-                    <IconBook size={14} className="text-blue-400" />
-                    <p className="font-semibold text-blue-400">BIBLOKARMA</p>
-                    <p className="font-semibold text-gray-700">
-                      +{book.bibliokarmas}
-                    </p>
-                  </div>
-                </div>
-
-                {book.canRate && (
-                  <button className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg border border-blue-50 bg-blue-100 py-1.5 text-xs font-semibold text-blue-500 transition-colors hover:cursor-pointer hover:bg-blue-200">
-                    <IconStar size={12} />
-                    Calificar
-                  </button>
-                )}
-              </div>
-            </div>
+              book={book}
+              onRated={() => handleStateChange(search)}
+            />
           ))}
         </div>
 
@@ -314,9 +151,9 @@ export default function LoanDetails() {
             Explora la biblioteca y solicita libros en préstamo de otros
             lectores de la comunidad.
           </p>
-          {/* no se a donde por ahora */}
+          {/* creo que va a home */}
           <Link
-            to="/catalogo"
+            to="/"
             className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600"
           >
             Explorar Catálogo

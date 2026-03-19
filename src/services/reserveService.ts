@@ -58,7 +58,6 @@ class ReserveService {
     const { data } = await axios.get(REST_SERVER_URL + "/lector/" + userId, {
       params: { search },
     })
-    // console.log(data)
     return data.map(mapReservation)
   }
 
@@ -69,8 +68,28 @@ class ReserveService {
     const { data } = await axios.get(REST_SERVER_URL + "/owner/" + userId, {
       params: { search },
     })
-    // console.log(data)
     return data.map(mapReservation)
+  }
+
+  async rateLoan(
+    reservationId: number,
+    body: { rate: number; review: string },
+  ) {
+    const { data } = await axios.patch(
+      REST_SERVER_URL + "/" + reservationId + "/calificar",
+      {
+        id: 0,
+        reviewerName: "", // el back lo resuelve con el userId
+        rating: body.rate,
+        review: body.review,
+        timestamp: new Date().toISOString().split("T")[0], // "2024-03-19"
+      },
+      {
+        params: { userId: localStorage.getItem("id") }, // esto es por lo que pusieron en el back en el model de review no se como funciona
+      },
+    )
+    console.log(data)
+    return data
   }
 
   async getUserOwnBooks(
