@@ -17,6 +17,9 @@ const statusLabels: Record<string, string> = {
   SOON_TO_END: "PRÓXIMO A VENCER",
   RETURNED: "DEVUELTO",
 }
+// YA ME ACORDE ES PARA CUANDO LO RESERVASTE PERO TODAVIA NO ES LA FECHA
+// no se de donde saque prestado la verdad, osea la cosa es asi,
+// activo es cuando lo tenes, proximo a vencer es cuando lo tenes que devolver en 2 dias, devuelto es cuando se termino tu tiempo con el libro
 
 interface BookCardProps {
   book: ReservationDTO

@@ -14,6 +14,7 @@ import BookCard from "@/components/BookCard"
 //! hace DTOs en el back bobo
 //! fijate porque pone cualquier fecha me parece
 //! cuando se califica se vuelve a llamar al back lo que esta mal
+//! el tema es que la reserva tiene estados, pero son otros que usa nico para su pagina, no coinciden igual el DTO los tiene despues fijate de hacer que el back te de los estados y mejor
 
 export default function LoanDetails() {
   const [activeTab, setActiveTab] = useState<

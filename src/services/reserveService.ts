@@ -58,6 +58,7 @@ class ReserveService {
     const { data } = await axios.get(REST_SERVER_URL + "/lector/" + userId, {
       params: { search },
     })
+    console.log(data, "del user")
     return data.map(mapReservation)
   }
 
@@ -68,6 +69,7 @@ class ReserveService {
     const { data } = await axios.get(REST_SERVER_URL + "/owner/" + userId, {
       params: { search },
     })
+    console.log(data, "que le hicieron al user")
     return data.map(mapReservation)
   }
 
@@ -88,7 +90,7 @@ class ReserveService {
         params: { userId: localStorage.getItem("id") }, // esto es por lo que pusieron en el back en el model de review no se como funciona
       },
     )
-    console.log(data)
+    console.log(data) // no se que onda esto
     return data
   }
 
