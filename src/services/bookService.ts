@@ -49,6 +49,7 @@ async updateBook(id: number, book: Book): Promise<Book> {
       filters
     )
     const data = (await response()).data
+    // console.log(data)
     return data
   }
 

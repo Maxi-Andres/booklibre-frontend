@@ -1,7 +1,7 @@
 export const BookType = {
-  Common: "COMUN",
-  WithADedication: "CON DEDICATORIA",
-  Collectible: "COLECCIONABLE",
+  Common: "common",
+  WithADedication: "with-a-dedication",
+  Collectible: "collectible",
 }
 
 export type BookType = (typeof BookType)[keyof typeof BookType]
