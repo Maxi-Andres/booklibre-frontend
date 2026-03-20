@@ -1,4 +1,4 @@
-import { bookOne } from "../mocks/booksMOCK"
+
 import { InputField } from "@/components/InputField"
 import  ValidationField  from "@/validation/ValidationField"
 import { ValidationMessage } from "@/validation/validationMessage"
@@ -22,15 +22,16 @@ import {  TextareaField } from "@/components/Textarea"
   const { id } = useParams()
   const isEditing = !!id
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
-  const [book, setBook] = useState<Book>(isEditing ? bookOne : new Book())
+  const [book, setBook] = useState<Book>( new Book())
 
   useEffect(() => {
   if (isEditing) {
-    bookService.getBookByID(Number(id)).then(found => {
+    bookService.getBookDetail(Number(id)).then(found => {
       if (found) setBook(found)
     })
   }
- }, [id])
+}, [id])
+
 
 
  const updateBook = (key: keyof Book, value: unknown) => {
