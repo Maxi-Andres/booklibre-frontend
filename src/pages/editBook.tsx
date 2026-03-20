@@ -3,14 +3,13 @@ import { InputField } from "@/components/InputField"
 import  ValidationField  from "@/validation/ValidationField"
 import { ValidationMessage } from "@/validation/validationMessage"
 import { Book } from "@/model/book"
-import { BookType } from "@/types/bookType"
 import { Author } from "@/model/author"
 import { useEffect, useState } from "react"
 import { BookGender } from "@/types/bookGender"
 import { GenericCombobox } from "@/components/GenericComboBox"
 import { Languages } from "@/types/languages"
 import { BookCondition } from "@/types/bookCondition"
-import { useParams } from 'react-router'
+import { useParams, useNavigate } from 'react-router'
 import { Button } from "@headlessui/react"
 import { bookService } from "@/services/bookService"
 import { showToast } from "@/utils/toast"
@@ -23,14 +22,22 @@ import {  TextareaField } from "@/components/Textarea"
   const isEditing = !!id
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
   const [book, setBook] = useState<Book>( new Book())
+  const navigate = useNavigate()
 
   useEffect(() => {
-  if (isEditing) {
-    bookService.getBookDetail(Number(id)).then(found => {
+  if (!isEditing) return
+
+  const fetchBook = async () => {
+    try {
+      const found = await bookService.getBookDetail(Number(id))
       if (found) setBook(found)
-    })
+    } catch (error) {
+      showToast.httpError(error, 'Error al cargar el libro')
+    }
   }
-}, [id])
+
+  fetchBook()
+ }, [id])
 
 
 
@@ -288,10 +295,17 @@ import {  TextareaField } from "@/components/Textarea"
                 />
                 <ValidationField field="desc" errors={errors} />
               </div>
-              <div>
+              <div >
+                <span style={{marginRight:5}}>
                 <Button onClick={handleSubmit} className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600">
                 {isEditing ? 'Guardar cambios' : 'Crear'}
                 </Button>
+                </span>
+                <span style={{marginLeft:5}}>
+                <Button onClick={() => navigate(-1)} className="mt-4 inline-block rounded-xl bg-blue-300 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600">
+                {isEditing ? 'Descartar cambios' : 'Descartar'}
+                </Button>
+                </span>
               </div>
           </div>
           </div>
