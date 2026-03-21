@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import {
   Disclosure,
   DisclosureButton,
@@ -21,13 +21,13 @@ import MultiRangeSlider from '@/components/MultiRangeSlider/MultiRangeSlider'
 import { addDays } from '@/utils/addDays'
 import Pagination from '@/components/Pagination'
 import { bookService } from '@/services/bookService'
-import { SortByTitle, SortByAuthor, SortByOwner, type BookSortCriteria } from '@/model/bookSortCriteria'
 import OrderDirectionArrow from '@/components/OrderDirectionArrow/OrderDirectionArrow'
+import { useOnInit } from '@/hooks/UseOnInit'
 
 const sortOptions = [
-  { name: 'Título', value: new SortByTitle(), current: true },
-  { name: 'Autor', value: new SortByAuthor(), current: false },
-  { name: 'Dueño', value: new SortByOwner(), current: false },
+  { name: 'Título', value: "title", current: true },
+  { name: 'Autor', value: "author", current: false },
+  { name: 'Dueño', value: "owner", current: false },
 ]
 
 const genderFilters = {
@@ -52,10 +52,6 @@ const initialFilters: BookFilters = {
   dropOffDate: addDays(new Date(), 1).toISOString().split("T")[0], // 1 dia despues
   isbn: "",
   ownersName: "",
-  sortedBy: new SortByTitle(),
-  ascending: true,
-  page: 0,
-  pageSize: 6
 }
 
 // Esto le pone las clases a las opciones del Select de Ordenar por.
@@ -66,18 +62,21 @@ function classNames(...classes : string[]) {
 
 export default function Home() {
 
-  const isInitializedRef = useRef(false)
+  // const isInitializedRef = useRef(false)
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
   const [filters, setFilters] = useState<BookFilters>(initialFilters)
+  const [sort, setSort] = useState<string>("title") // por defecto ordeno por titulo
+  const [ascending, setAscending] = useState<boolean>(true)
   const [page, setPage] = useState(0)
-  // const pageSize = 6
+  const pageSize = 6
   const [totalPages, setTotalPages] = useState(0)
 
   //* ==== GET DATA ====
-  const getFilteredBooksPage = async (newFilters: BookFilters) => {
-    const response = await bookService.getFilteredBooksPage(newFilters)
+  const getFilteredBooksPage = async (newFilters: BookFilters, page: number, pageSize: number, sortedBy: string, ascending: boolean) => {
+    console.log("Filters: ", filters)
+    const response = await bookService.getFilteredBooksPage(newFilters, page, pageSize, sortedBy, ascending)
     const filtered = response.content.map(book => Book.fromJSON(book))
-    // console.log("page: ", response)
+    console.log("books: ", filtered)
     setFilteredBooks(filtered)
     setTotalPages(response.totalPages)
   }
@@ -113,41 +112,30 @@ export default function Home() {
   };
 
   //* ==== SORTING ====
-  const updateSortOptions = (selectedOption: BookSortCriteria) => {
+  const updateSortOptions = (selectedOption: string) => {
     // console.log("Selected sort option: ", selectedOption)
-    updateSimpleFilter("sortedBy", selectedOption)
-    sortOptions.forEach(option => option.current = option.value.type === selectedOption.type)
+    setSort(selectedOption)
+    getFilteredBooksPage(filters, page, pageSize, selectedOption, ascending)
+    sortOptions.forEach(option => option.current = option.value === selectedOption)
   }
   
   const toggleSortDirection = () => {
-    setFilters(prev => ({
-      ...prev,
-      ["ascending"]: !filters.ascending
-    }))
+    setAscending(prev => !prev)
+    getFilteredBooksPage(filters, page, pageSize, sort, !ascending)
+  }
+  
+  //* ==== PAGE CHANGE ====
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+    getFilteredBooksPage(filters, newPage, pageSize, sort, ascending)
   }
 
-   //* ==== INITIALIZE FILTERS ====
-  if(!isInitializedRef.current) {
-    getFilteredBooksPage(initialFilters)
-    // console.log("Initial filters: ", filters)
-    isInitializedRef.current = true
-  }
-
-  //! RELOADS WHEN PAGE CHANGES ====
-  useEffect(() => {
-    getFilteredBooksPage({...filters, page: page})
-  }, [page])
-  //! RELOADS WHEN SORTING OPTION CHANGES ====
-  useEffect(() => {
-    handleApplyFilters(filters)
-  }, [filters.sortedBy, filters.ascending])
-
-   //* ==== APPLY FILTERS & RESTART PAGE ====
-  const handleApplyFilters = (filters: BookFilters) => {
-    // console.log("Applying filters: ", filters)
-    getFilteredBooksPage(filters)
-    setPage(0)
-  }
+  //* ==== APPLY FILTERS & RESTART PAGE ====
+ const handleApplyFilters = (filters: BookFilters, pageSize: number, sort: string, ascending: boolean) => {
+  //  console.log("Applying filters: ", filters)
+   getFilteredBooksPage(filters, 0, pageSize, sort, ascending)
+   setPage(0)
+ }
 
  //* ==== CLEAR FILTERS & RESTART PAGE ====
   {/* Cuando key cambia, React desmonta y vuelve a montar el componente desde cero, 
@@ -157,9 +145,15 @@ export default function Home() {
   const handleClearFilters = () => {
     setFilters(initialFilters)
     setPage(0)
-    handleApplyFilters(initialFilters)
+    handleApplyFilters(initialFilters, pageSize, sort, ascending)
     setFilterKey(prev => prev + 1) // fuerza el remount del slider
   }
+
+  useOnInit(async () => {
+    getFilteredBooksPage(initialFilters, page, pageSize, sort, ascending)
+    const genders = await bookService.getBookGenders()
+    console.log("genders: ", genders)
+  })
 
   return (
     <div className="w-full">
@@ -282,7 +276,7 @@ export default function Home() {
 
                 {/* ========== APPLY FILTERS ========== */}
                 <Disclosure key="applyFiltersBtn" as="div" className="border-b border-gray-200 py-6 grid grid-cols-2 gap-x-4 justify-center">
-                  <button type='button' onClick={() => handleApplyFilters(filters)} 
+                  <button type='button' onClick={() => handleApplyFilters(filters, pageSize, sort, ascending)} 
                   className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600">
                     Aplicar Filtros
                   </button>
@@ -309,7 +303,7 @@ export default function Home() {
                     className='py-2 px-4 text-sm bg-gray-100 text-gray-600 rounded focus:outline-none selected:bg-gray-100' 
                     value={filters.title}
                     onChange={(e) => updateSimpleFilter("title", e.target.value)} />
-                    <button onClick={() => handleApplyFilters(filters)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
+                    <button onClick={() => handleApplyFilters(filters, pageSize, sort, ascending)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
                       Buscar
                     </button>
                   </div>
@@ -354,7 +348,7 @@ export default function Home() {
                     </Menu>
 
                     {/* ========== CAMBIAR DIRECCION DE ORDEN ========== */}
-                    <OrderDirectionArrow onClick={toggleSortDirection} ascending={filters.ascending} />
+                    <OrderDirectionArrow onClick={toggleSortDirection} ascending={ascending} />
 
                   </div>
                 </div>
@@ -385,7 +379,7 @@ export default function Home() {
                     <Pagination
                         currentPage={page}
                         totalPages={totalPages}
-                        onPageChange={setPage}
+                        onPageChange={handlePageChange}
                       />
                   </div>
 
