@@ -13,6 +13,7 @@ export interface ReservationDTO {
   bookCover: string
   rating: number
   loanedBy: string
+  loanedTo: string
   pickUpDate: string
   dropOffDate: string
   bibliokarmas: number
@@ -50,6 +51,7 @@ export const mapReservation = (res: any): ReservationDTO => {
     bookCover: res.book.imageSrc ?? "",
     rating: res.review?.rating ?? 0,
     loanedBy: res.book.owner.name,
+    loanedTo: res.user.name,
     pickUpDate: res.pickUpDate,
     dropOffDate: res.dropOffDate,
     bibliokarmas: res.user.bibliokarmas,
