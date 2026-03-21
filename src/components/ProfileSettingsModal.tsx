@@ -18,11 +18,14 @@ type ProfileSettingsIntf = {
   onProfileUpdated: (updatedProfile: UserProfile) => void
 }
 
-export default function ProfileSettingsModal({ profile, onProfileUpdated }: ProfileSettingsIntf) {
+export default function ProfileSettingsModal({
+  profile,
+  onProfileUpdated,
+}: ProfileSettingsIntf) {
   const [open, setOpen] = useState(false)
   const [errors, setErrors] = useState<ValidationMessage[]>([])
+  const [key, setKey] = useState<number>(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
   const [previewImg, setPreviewImg] = useState<string>(
     `http://localhost:9000/${profile.img}`,
   )
@@ -42,6 +45,7 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
   const handleCancel = () => {
     setPreviewImg(`http://localhost:9000/${profile.img}`)
     setSelectedImageFile(null)
+    setKey(key + 1)
     setOpen(false)
   }
 
@@ -51,7 +55,7 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
     const form = event.currentTarget
     const formData = new FormData(form)
 
-    const newProfileData: UserProfile = new UserProfile(
+    var newProfileData: UserProfile = new UserProfile(
       profile.id,
       (formData.get("name") as string) || profile.name,
       (formData.get("description") as string) || profile.description,
@@ -63,17 +67,20 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
       (formData.get("celphone") as string) || profile.cel,
       (formData.get("userType") as string) || profile.userType,
     )
-    console.log(newProfileData)
+
     setErrors([])
     newProfileData.validate()
     if (newProfileData.errors.length > 0) {
       setErrors(newProfileData.errors)
       return errors
     }
-
     try {
-      const updatedProfile = await userProfileService.updateProfile(newProfileData, selectedImageFile)
+      const updatedProfile = await userProfileService.updateProfile(
+        newProfileData,
+        selectedImageFile,
+      )
       onProfileUpdated(updatedProfile)
+      setKey(key + 1)
       setOpen(false)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
@@ -81,6 +88,7 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
         "Error al guardar los cambios. " + errorMessage,
         "error",
       )
+      setKey(key + 1)
       setOpen(false)
     } finally {
       setErrors([])
@@ -102,7 +110,7 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
         <GearIcon size={20} />
         <p className="font-bold">Editar Perfil</p>
       </button>
-      <Dialog open={open} onClose={setOpen} className="relative z-10">
+      <Dialog open={open} onClose={handleCancel} className="relative z-10">
         <DialogBackdrop
           transition
           className="fixed inset-0 bg-gray-900/50 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
@@ -160,52 +168,52 @@ export default function ProfileSettingsModal({ profile, onProfileUpdated }: Prof
                           id="nameInputField"
                           name="name"
                           label="Nombre"
-                          placeholder={profile.name}
+                          defaultValue={profile.name}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
                           field="invalid-name"
                           errors={errors}
                         />
                         <InputField
-                          id="nameInputField"
+                          id="descInputField"
                           name="description"
                           label="Descripcion"
-                          placeholder={profile.description}
+                          defaultValue={profile.description}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
                           field="too-long-desc"
                           errors={errors}
                         />
                         <InputField
-                          id="nameInputField"
+                          id="locInputField"
                           name="location"
                           label="Ubicacion"
-                          placeholder={profile.location}
+                          defaultValue={profile.location}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
                           field="invalid-format-loc"
                           errors={errors}
                         />
                         <InputField
-                          id="nameInputField"
+                          id="emailInputField"
                           name="email"
                           label="Email"
-                          placeholder={profile.email}
+                          defaultValue={profile.email}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
                           field="invalid-format-email"
                           errors={errors}
                         />
                         <InputField
-                          id="nameInputField"
+                          id="celInputField"
                           name="celphone"
                           label="Teléfono"
-                          placeholder={profile.cel}
+                          defaultValue={profile.cel}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
                           field="invalid-format-cel"
                           errors={errors}
                         />
                         <InputField
-                          id="nameInputField"
+                          id="userTypeInputField"
                           name="userType"
                           label="Tipo de perfil"
-                          placeholder={profile.userType}
+                          defaultValue={profile.userType}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
                           // field="invalid-name"
                           // errors={errors}

@@ -10,7 +10,7 @@ class ReserveService {
   async getUserReadBooksNumber(): Promise<number> {
     const sessionId = localStorage.getItem("id")
     return getAxiosData<number>(() =>
-      axios.get<number>(REST_SERVER_URL + `/userReadBooks/${sessionId}`),
+      axios.get<number>(REST_SERVER_URL + `/userReadBooks/${localStorage.getItem("id")}`),
     )
   }
 
@@ -104,7 +104,7 @@ class ReserveService {
     const response = () =>
       axios.get<ReservationProfileBookJSON[]>(
         REST_SERVER_URL +
-          `/userOwnBooks/${sessionId}?filterCriteria=${filterCriteria}&sortCriteria=${sortCriteria}`,
+          `/userOwnBooks/${localStorage.getItem("id")}?filterCriteria=${filterCriteria}&sortCriteria=${sortCriteria}`,
       )
     return (await getAxiosData(response)).map(ReservationProfileBook.fromJSON)
   }
@@ -112,7 +112,7 @@ class ReserveService {
   async getUserLentBooksNumber(): Promise<number> {
     const sessionId = localStorage.getItem("id")
     return getAxiosData<number>(() =>
-      axios.get<number>(REST_SERVER_URL + `/userLentBooks/${sessionId}`),
+      axios.get<number>(REST_SERVER_URL + `/userLentBooks/${localStorage.getItem("id")}`),
     )
   }
 }

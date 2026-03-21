@@ -21,11 +21,11 @@ const ValidationField = ({
     const newMessage = errorsFrom(errors, field)
     setErrorMessage(newMessage)
 
-    // const timer = setTimeout(() => {
-    //   setErrorMessage("")
-    // }, 4000)
+    const timer = setTimeout(() => {
+      setErrorMessage("")
+    }, 3000)
 
-    // return () => clearTimeout(timer)
+    return () => clearTimeout(timer)
   }, [errors])
 
   return (

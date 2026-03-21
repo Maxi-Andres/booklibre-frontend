@@ -3,7 +3,7 @@ import { UserKind } from "../types/userKind"
 import type { UserProfileJSON } from "@/json/userProfileJSON"
 
 export class UserProfile {
-  DESC_MAX_CHARACTERS: number = 35
+  DESC_MAX_CHARACTERS: number = 45
   NAME_MAX_CHARACTERS: number = 15
   errors: ValidationMessage[] = []
 
@@ -30,7 +30,6 @@ export class UserProfile {
     cel: string = "",
     userType: UserKind = UserKind.READER,
   ) {
-
     this.id = id
     this.name = name
     this.description = description
@@ -64,42 +63,60 @@ export class UserProfile {
     return userJSON
   }
 
-  addError(field: string, message: string) { 
+  addError(field: string, message: string) {
     this.errors.push(new ValidationMessage(field, message))
   }
 
   validateName() {
     if (this.name.length > this.NAME_MAX_CHARACTERS) {
-      this.addError("invalid-name", "El nombre no puede ser mayor a 15 caracteres")
+      this.addError(
+        "invalid-name",
+        "El nombre no puede ser mayor a 15 caracteres",
+      )
     } else if (this.name.length <= 1) {
-      this.addError("invalid-name", "El nombre no puede estar vacio, ni ser menor a 2 caracteres")
+      this.addError(
+        "invalid-name",
+        "El nombre no puede estar vacio, ni ser menor a 2 caracteres",
+      )
     }
   }
 
   validateDescription() {
     if (this.description.length > this.DESC_MAX_CHARACTERS) {
-      this.addError("too-long-desc", "La descripcion no puede contener mas de 35 caracteres")
+      this.addError(
+        "too-long-desc",
+        "La descripcion no puede contener mas de 35 caracteres",
+      )
     }
   }
 
   validateLocation() {
     const regex = /^[A-Za-z0-9._%+-\s]+,\s[A-Z]{1,3}$/
     if (!regex.test(this.location)) {
-      this.addError("invalid-format-loc", "Ingrese una ubicacion en formato valido: \'PROVINCIA, ARG\' ")
+      this.addError(
+        "invalid-format-loc",
+        "Ingrese una ubicacion en formato valido: \'PROVINCIA, ARG\' ",
+      )
     }
   }
 
   validateEmail() {
     const regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
     if (!regex.test(this.email)) {
-      this.addError("invalid-format-email", "Ingrese un mail en formato valido: example@example.com")
+      this.addError(
+        "invalid-format-email",
+        "Ingrese un mail en formato valido: example@example.com",
+      )
     }
   }
 
   validateCel() {
     const regex = /^11\d{8}$/
     if (!regex.test(this.cel)) {
-      this.addError("invalid-format-cel", "Ingrese un telefono en formato valido: 1177889966")
+      this.addError(
+        "invalid-format-cel",
+        "Ingrese un telefono en formato valido: 1177889966",
+      )
     }
   }
 
