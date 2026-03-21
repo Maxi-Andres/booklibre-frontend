@@ -50,7 +50,7 @@ function classNames(...classes : string[]) {
 
 export default function Home() {
 
-  // const isInitializedRef = useRef(false)
+  // FILTERING, SORTING AND PAGINATION STATES
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
   const [filters, setFilters] = useState<BookFilters>(initialFilters)
   const [sort, setSort] = useState<string>("title") // por defecto ordeno por titulo
@@ -91,6 +91,21 @@ export default function Home() {
           : [...prev.genders, gender]
       }
     })
+  }
+
+  //* ==== DATES MAINTENANCE ====
+  const today = new Date().toISOString().split('T')[0]
+  const handlePickUpDate = (pickUpDateStr: string) => {
+    // Actualizo la fecha de inicio
+    updateSimpleFilter("pickUpDate", pickUpDateStr)
+    // Valido si es despues de la fecha de fin
+    const pickUpDate = new Date(pickUpDateStr)
+    const dropOffDate = new Date(filters.dropOffDate)
+    if (pickUpDate.getTime() > dropOffDate.getTime()) {
+      // Si lo es, modifico la fecha de fin para que se despues de la de inicio
+      pickUpDate.setDate(pickUpDate.getDate() + 1) // Le sumo un dia
+      updateSimpleFilter("dropOffDate", pickUpDate.toISOString().split('T')[0])
+    }
   }
 
   //* ==== PAGE RANGE VALUES ====
@@ -246,10 +261,12 @@ export default function Home() {
                     <input type='date' name="" id="date-from" 
                     className='py-2 px-2 text-sm focus:outline-none bg-gray-100 border border-gray-200 text-gray-500 rounded' 
                     value={filters.pickUpDate}
-                    onChange={(e) => updateSimpleFilter("pickUpDate", e.target.value)} />
+                    min={today}
+                    onChange={(e) => handlePickUpDate(e.target.value)} />
                     <input type='date' name="" id="date-to" 
                     className='py-2 px-2 text-sm focus:outline-none bg-gray-100 border border-gray-200 text-gray-500 rounded' 
                     value={filters.dropOffDate}
+                    min={filters.pickUpDate || today}
                     onChange={(e) => updateSimpleFilter("dropOffDate", e.target.value)} />
                   </div>
                 </Disclosure>
