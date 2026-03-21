@@ -14,10 +14,11 @@ import { Button } from "@headlessui/react"
 import { bookService } from "@/services/bookService"
 import { showToast } from "@/utils/toast"
 import {  TextareaField } from "@/components/Textarea"
+import { BookType, BookTypeLabels } from "@/types/bookType"
 
 
  export default function EditBook() {
-
+  const defaultImage = 'https://media.istockphoto.com/id/1021471354/vector/image-upload-icon.jpg?s=612x612&w=0&k=20&c=TBKGW7vES1EtPcaxIvCAKxXL0W9EGd5FPBWHhtC2kFg='
   const { id } = useParams()
   const isEditing = !!id
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
@@ -71,8 +72,6 @@ import {  TextareaField } from "@/components/Textarea"
 }
 
 
-  
-
   return (
     <div className="min-h-screen bg-gray-100">
       {/* ================ Breadcrumb ================ */}
@@ -108,7 +107,7 @@ import {  TextareaField } from "@/components/Textarea"
           <div className="flex w-64 shrink-0 flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <div>
               <img
-              src={book.imageSrc || 'https://static.vecteezy.com/system/resources/previews/024/152/745/original/upload-photo-icon-editable-vector.jpg'}
+              src={book.imageSrc || defaultImage}
               className="h-78 w-64 rounded-xl object-cover shadow-md"
             />
               <InputField 
@@ -140,15 +139,14 @@ import {  TextareaField } from "@/components/Textarea"
                        onChange={(e) => updateBook('title', e.target.value)}
                 />
                 <ValidationField field="title" errors={errors} />
-                <InputField 
-                       label="Tipo"
-                       id="bookType"
-                       type="text"
-                       required
-                       value={book.bookType}
-                       onChange={(e) => updateBook('bookType', e.target.value)}
-                      />
-                      <ValidationField field="bookType" errors={errors} />
+                <GenericCombobox
+                  options={Object.values(BookType)}
+                  value={book.bookType}
+                  onChange={(v: BookType | null) => updateBook('bookType', v)}
+                  placeholder="Buscar tipo..."
+                 label="Tipo"
+                 getLabel={(v) => BookTypeLabels[v]}
+                />
               </div>
               {/* dos columnas   */}
               {/* fila 1 genero - autor   */}

@@ -17,11 +17,13 @@ class BookService {
 }
 
 async updateBook(id: number, book: Book): Promise<Book> {
+  const dto = toBookCreateDTO(book)
   const response = () => axios.put<Book>(
-    REST_SERVER_URL + `/editar-libro/${id}`, toBookCreateDTO(book)
+    REST_SERVER_URL + `/editar-libro/${id}`, dto
   )
   return (await getAxiosData(response))
 }
+
 
 
   // -- LIBROS FILTRADOS PARA PAGINACION EN HOME --
