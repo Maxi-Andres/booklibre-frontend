@@ -1,36 +1,45 @@
-import { bookOne } from "../mocks/booksMOCK"
+
 import { InputField } from "@/components/InputField"
 import  ValidationField  from "@/validation/ValidationField"
 import { ValidationMessage } from "@/validation/validationMessage"
 import { Book } from "@/model/book"
-import { BookType } from "@/types/bookType"
 import { Author } from "@/model/author"
 import { useEffect, useState } from "react"
 import { BookGender } from "@/types/bookGender"
 import { GenericCombobox } from "@/components/GenericComboBox"
 import { Languages } from "@/types/languages"
 import { BookCondition } from "@/types/bookCondition"
-import { useParams } from 'react-router'
+import { useParams, useNavigate } from 'react-router'
 import { Button } from "@headlessui/react"
 import { bookService } from "@/services/bookService"
 import { showToast } from "@/utils/toast"
 import {  TextareaField } from "@/components/Textarea"
+import { BookType, BookTypeLabels } from "@/types/bookType"
 
 
  export default function EditBook() {
-
+  const defaultImage = 'https://media.istockphoto.com/id/1021471354/vector/image-upload-icon.jpg?s=612x612&w=0&k=20&c=TBKGW7vES1EtPcaxIvCAKxXL0W9EGd5FPBWHhtC2kFg='
   const { id } = useParams()
   const isEditing = !!id
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
-  const [book, setBook] = useState<Book>(isEditing ? bookOne : new Book())
+  const [book, setBook] = useState<Book>( new Book())
+  const navigate = useNavigate()
 
   useEffect(() => {
-  if (isEditing) {
-    bookService.getBookByID(Number(id)).then(found => {
+  if (!isEditing) return
+
+  const fetchBook = async () => {
+    try {
+      const found = await bookService.getBookDetail(Number(id))
       if (found) setBook(found)
-    })
+    } catch (error) {
+      showToast.httpError(error, 'Error al cargar el libro')
+    }
   }
+
+  fetchBook()
  }, [id])
+
 
 
  const updateBook = (key: keyof Book, value: unknown) => {
@@ -62,8 +71,6 @@ import {  TextareaField } from "@/components/Textarea"
     } 
 }
 
-
-  
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -100,7 +107,7 @@ import {  TextareaField } from "@/components/Textarea"
           <div className="flex w-64 shrink-0 flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <div>
               <img
-              src={book.imageSrc || 'https://static.vecteezy.com/system/resources/previews/024/152/745/original/upload-photo-icon-editable-vector.jpg'}
+              src={book.imageSrc || defaultImage}
               className="h-78 w-64 rounded-xl object-cover shadow-md"
             />
               <InputField 
@@ -132,15 +139,14 @@ import {  TextareaField } from "@/components/Textarea"
                        onChange={(e) => updateBook('title', e.target.value)}
                 />
                 <ValidationField field="title" errors={errors} />
-                <InputField 
-                       label="Tipo"
-                       id="bookType"
-                       type="text"
-                       required
-                       value={book.bookType}
-                       onChange={(e) => updateBook('bookType', e.target.value)}
-                      />
-                      <ValidationField field="bookType" errors={errors} />
+                <GenericCombobox
+                  options={Object.values(BookType)}
+                  value={book.bookType}
+                  onChange={(v: BookType | null) => updateBook('bookType', v)}
+                  placeholder="Buscar tipo..."
+                 label="Tipo"
+                 getLabel={(v) => BookTypeLabels[v]}
+                />
               </div>
               {/* dos columnas   */}
               {/* fila 1 genero - autor   */}
@@ -287,10 +293,17 @@ import {  TextareaField } from "@/components/Textarea"
                 />
                 <ValidationField field="desc" errors={errors} />
               </div>
-              <div>
+              <div >
+                <span style={{marginRight:5}}>
                 <Button onClick={handleSubmit} className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600">
                 {isEditing ? 'Guardar cambios' : 'Crear'}
                 </Button>
+                </span>
+                <span style={{marginLeft:5}}>
+                <Button onClick={() => navigate(-1)} className="mt-4 inline-block rounded-xl bg-blue-300 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600">
+                {isEditing ? 'Descartar cambios' : 'Descartar'}
+                </Button>
+                </span>
               </div>
           </div>
           </div>

@@ -8,14 +8,16 @@ interface GenericComboboxProps<T extends string> {
   onChange: (value: T | null) => void
   placeholder?: string
   label?:string
+  getLabel?: (value: T) => string
 }
 
-export function GenericCombobox<T extends string>({ options, value, onChange, placeholder = 'Buscar...', label }: GenericComboboxProps<T>) {
+export function GenericCombobox<T extends string>({ options, value, onChange, placeholder = 'Buscar...', label, getLabel }: GenericComboboxProps<T>) {
   const [query, setQuery] = useState('')
 
   const filtered = query === ''
     ? options
-    : options.filter(o => o.toLowerCase().includes(query.toLowerCase()))
+    : options.filter(o => (getLabel ? getLabel(o) : o).toLowerCase().includes(query.toLowerCase()))
+
 
   return (
     <div className="relative">
@@ -26,10 +28,15 @@ export function GenericCombobox<T extends string>({ options, value, onChange, pl
         <div className="relative">
           <ComboboxInput
             placeholder={placeholder}
+            displayValue={(v: T) => {
+            return v ? (getLabel ? getLabel(v) : v) : ''
+          }}
+
             onChange={(e) => setQuery(e.target.value)}
-            displayValue={(v: T) => v ?? ''}
+            
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm pr-8"
           />
+          
           <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
             <ChevronDownIcon className="h-4 w-4 text-gray-400" />
           </ComboboxButton>
@@ -41,7 +48,8 @@ export function GenericCombobox<T extends string>({ options, value, onChange, pl
               value={option}
               className="cursor-pointer px-4 py-2 text-sm hover:bg-indigo-50 data-focus:bg-indigo-100"
             >
-              {option}
+              {/* {option} */}
+              {getLabel ? getLabel(option) : option}
             </ComboboxOption>
           ))}
         </ComboboxOptions>
