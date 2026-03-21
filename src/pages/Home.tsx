@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Disclosure,
   DisclosureButton,
@@ -74,10 +74,10 @@ export default function Home() {
 
   //* ==== GET DATA ====
   const getFilteredBooksPage = async (newFilters: BookFilters, page: number, pageSize: number, sortedBy: string, ascending: boolean) => {
-    console.log("Filters: ", filters)
+    // console.log("Filters: ", filters)
     const response = await bookService.getFilteredBooksPage(newFilters, page, pageSize, sortedBy, ascending)
     const filtered = response.content.map(book => Book.fromJSON(book))
-    console.log("books: ", filtered)
+    // console.log("books: ", filtered)
     setFilteredBooks(filtered)
     setTotalPages(response.totalPages)
   }
@@ -155,6 +155,17 @@ export default function Home() {
     const genders = await bookService.getBookGenders()
     console.log("genders: ", genders)
   })
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleApplyFilters(filters, pageSize, sort, ascending)
+        }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+}, [filters, sort, ascending])
 
   return (
     <div className="w-full">
