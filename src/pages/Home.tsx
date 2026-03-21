@@ -30,19 +30,6 @@ const sortOptions = [
   { name: 'Dueño', value: "owner", current: false },
 ]
 
-const genderFilters = {
-    id: 'genero',
-    name: 'Genero',
-    options: [
-      { value: 'DRAMA', label: 'Drama', checked: false },
-      { value: 'SCIENCE_FICTION', label: 'Ciencia Ficción', checked: false },
-      { value: 'ROMANCE', label: 'Romance', checked: false },
-      { value: 'SELF_HELP', label: 'Autoayuda', checked: false },
-      { value: 'DESIGN', label: 'Diseño', checked: false },
-      { value: 'CLASSIC_LITERATURE', label: 'Literatura Clásica', checked: false },
-    ],
-  }
-
 const initialFilters: BookFilters = {
   userId: Number(localStorage.getItem("id")!),
   title: "",
@@ -150,10 +137,12 @@ export default function Home() {
     setFilterKey(prev => prev + 1) // fuerza el remount del slider
   }
 
+  const [genderFilters, setGendersFilters] = useState<{ value: string; label: string; checked: boolean }[]>([])
   useOnInit(async () => {
     getFilteredBooksPage(initialFilters, page, pageSize, sort, ascending)
-    const genders = await bookService.getBookGenders()
-    console.log("genders: ", genders)
+    const genderOptions = await bookService.getBookGenders()
+    setGendersFilters(genderOptions)
+    // console.log("genders: ", genders)
   })
 
   useEffect(() => {
@@ -162,7 +151,7 @@ export default function Home() {
             handleApplyFilters(filters, pageSize, sort, ascending)
         }
     }
-
+    // console.log("Filters changed: ", filters)
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
 }, [filters, sort, ascending])
@@ -183,10 +172,10 @@ export default function Home() {
     {/* ========== FILTERS ========== */}
               <form className="hidden lg:flex flex flex-col bg-white p-5 rounded-2xl border border-gray-200 h-max">
                   {/* ========== GENDER FILTERS ========== */}
-                  <Disclosure key={genderFilters.id} as="div" className="border-b border-gray-200 py-6">
+                  <Disclosure key="gender-filter" as="div" className="border-b border-gray-200 py-6">
                     <h3 className="-my-3 flow-root">
                       <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                        <span className="font-medium text-gray-900">{genderFilters.name.toUpperCase()}</span>
+                        <span className="font-medium text-gray-900">GENERO</span>
                         <span className="ml-6 flex items-center">
                           <PlusIcon aria-hidden="true" className="size-5 group-data-open:hidden" />
                           <MinusIcon aria-hidden="true" className="size-5 group-not-data-open:hidden" />
@@ -195,15 +184,15 @@ export default function Home() {
                     </h3>
                     <DisclosurePanel className="pt-6">
                       <div className="space-y-4">
-                        {genderFilters.options.map((option, optionIdx) => (
-                          <div key={option.value} className="flex gap-3">
+                        {genderFilters.map((option, optionIdx) => (
+                          <div key={`${option.value}-${filterKey}`} className="flex gap-3">
                             <div className="flex h-5 shrink-0 items-center">
                               <div className="group grid size-4 grid-cols-1">
                                 <input
                                   defaultValue={option.value}
                                   defaultChecked={option.checked}
-                                  id={`filter-${genderFilters.id}-${optionIdx}`}
-                                  name={`${genderFilters.id}[]`}
+                                  id={`gender-filter-${optionIdx}`}
+                                  name={`gender-filter[]`}
                                   type="checkbox"
                                   className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
                                   onClick={() => toggleGenderFilter(option.value as BookGender)}
@@ -230,7 +219,7 @@ export default function Home() {
                                 </svg>
                               </div>
                             </div>
-                            <label htmlFor={`filter-${genderFilters.id}-${optionIdx}`} className="text-sm text-gray-600">
+                            <label htmlFor={`gender-filter-${optionIdx}`} className="text-sm text-gray-600">
                               {option.label}
                             </label>
                           </div>
@@ -243,7 +232,7 @@ export default function Home() {
                 <Disclosure key="numPageRangeFilter" as="div" className="border-b border-gray-200 py-6">
                   <label htmlFor="steps-range" className="block mb-2.5 text-sm font-medium text-heading">RANGO DE PÁGINAS</label>
                   <MultiRangeSlider
-                    key={filterKey}  // cuando cambia, React destruye y recrea el componente
+                    key={`numPageRangeFilter-${filterKey}`} // cuando cambia, React destruye y recrea el componente
                     min={0}
                     max={1500}
                     onChange={handleRangeChange} 

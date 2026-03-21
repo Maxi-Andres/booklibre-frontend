@@ -6,6 +6,7 @@ import { getAxiosData } from "./common";
 import { toBookCreateDTO, type BookJSON } from "@/json/bookJSON";
 import type { PageResponse } from "@/types/pageResponse";
 import customAxios from "@/config/customAxios";
+import { BookGender } from "@/types/bookGender";
 
 
 class BookService {
@@ -52,9 +53,19 @@ class BookService {
     return Book.fromJSON(bookJSON)
   }
 
-  async getBookGenders(): Promise<string[]> {
+  async getBookGenders() {
     const response = () => axios.get<string[]>(REST_SERVER_URL + `/book-genders`)
-    return (await getAxiosData(response))
+    const data = (await getAxiosData(response))
+    
+    const genderFilters = data.map ((gender) => {
+      return {
+        value: gender,
+        label: BookGender[gender as keyof typeof BookGender],
+        checked: false
+      }
+    })
+
+    return genderFilters;
   }
 }
 
