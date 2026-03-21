@@ -44,6 +44,7 @@ const genderFilters = {
   }
 
 const initialFilters: BookFilters = {
+  userId: Number(localStorage.getItem("id")!),
   title: "",
   genders: [], //! debe ser value de keyof enum BookGender
   pagesRangeMin: 0,

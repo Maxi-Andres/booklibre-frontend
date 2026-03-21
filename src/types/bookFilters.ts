@@ -2,6 +2,7 @@ import type { BookGender } from "./bookGender"
 
 
 export type BookFilters = {
+  userId: number,
   title: string,
   genders: BookGender[],
   pagesRangeMin: number,
