@@ -1,4 +1,4 @@
-import { REST_SERVER_URL, sessionId } from "@/config/configuration"
+import { REST_SERVER_URL } from "@/config/configuration"
 import axios from "axios"
 import { getAxiosData } from "./common"
 import { mapReservation, type ReservationDTO } from "@/types/reservationType"
@@ -9,7 +9,7 @@ import type { BookReview } from "@/model/review"
 class ReserveService {
   async getUserReadBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
-      axios.get<number>(REST_SERVER_URL + `/userReadBooks/${sessionId}`),
+      axios.get<number>(REST_SERVER_URL + `/userReadBooks/${localStorage.getItem("id")}`),
     )
   }
 
@@ -18,6 +18,7 @@ class ReserveService {
     pickUpDate: string,
     dropOffDate: string,
   ) {
+    const sessionId = localStorage.getItem("id")
     return axios.post(REST_SERVER_URL + "/create-reservation", {
       bookId,
       sessionId,
@@ -101,14 +102,14 @@ class ReserveService {
     const response = () =>
       axios.get<ReservationProfileBookJSON[]>(
         REST_SERVER_URL +
-          `/userOwnBooks/${sessionId}?filterCriteria=${filterCriteria}&sortCriteria=${sortCriteria}`,
+          `/userOwnBooks/${localStorage.getItem("id")}?filterCriteria=${filterCriteria}&sortCriteria=${sortCriteria}`,
       )
     return (await getAxiosData(response)).map(ReservationProfileBook.fromJSON)
   }
 
   async getUserLentBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
-      axios.get<number>(REST_SERVER_URL + `/userLentBooks/${sessionId}`),
+      axios.get<number>(REST_SERVER_URL + `/userLentBooks/${localStorage.getItem("id")}`),
     )
   }
 }

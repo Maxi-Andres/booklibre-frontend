@@ -97,7 +97,6 @@ export default function Profile() {
 
   }, [sort])
 
-  console.log(profile)
   return (
     <div className="flex min-h-screen justify-center bg-gray-100 pt-12">
       <section className="flex w-245 flex-col gap-7">
