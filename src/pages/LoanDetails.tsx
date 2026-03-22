@@ -8,13 +8,8 @@ import type { ReservationDTO } from "@/types/reservationType"
 
 import BookCard from "@/components/BookCard"
 
-//! fijate como vas a filtrar despeus igual te tienen que mostrar como implementar cache
-// cuando se califica se vuelve a llamar al back lo que esta mal (no esta mal porque luego te lo trae devuelta y no te deja calificarlo)
-//! tambien solo de puede calificar una vez por reserva, va a tener que haber un bool en el back que diga si ya lo califico
-//! hace DTOs en el back bobo
-//! el tema es que la reserva tiene estados, pero son otros que usa nico para su pagina, no coinciden igual el DTO los tiene despues fijate de hacer que el back te de los estados y mejor
-//! que el bakc te diga el estado de la reserva,
 //! hace TESTS
+//! arregla lo de los bibliokarmas
 
 export default function LoanDetails() {
   const [activeTab, setActiveTab] = useState<
