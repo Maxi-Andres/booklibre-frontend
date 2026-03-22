@@ -20,9 +20,10 @@ import type { ReservationProfileBook } from "@/model/reservationProfile"
 import ProfileSettingsModal from "@/components/ProfileSettingsModal"
 import { getErrorMessage } from "@/validation/errorHandler"
 import { showToast } from "@/utils/toast"
+import type { ProfilePagination } from "@/components/PaginationButtons"
+import PaginationButtons from "@/components/PaginationButtons"
 
 export default function Profile() {
-  // const [errors, setErrors] = useState<ValidationMessage[]>([])
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
   const [userReadBooksNumber, setUserReadBooksNumber] = useState<number>(0)
   const [userLentBooksNumber, setUserLentBooksNumber] = useState<number>(0)
@@ -206,19 +207,22 @@ export default function Profile() {
                 </div>
                 <p>Acciones</p>
               </section>
-              <section className="pr-1">
-                {shownBooks.map((reserve) => (
-                  <ProfileBook key={reserve.book.id} 
-                    bookId={reserve.book.id}
-                    bookImg={reserve.book.imageSrc}
-                    bookAuthor={reserve.book.authorName}
-                    bookGender={reserve.book.gender}
-                    bookName={reserve.book.title}
-                    bookState={reserve.state}
-                    additionDate={reserve.book.timestamp}
-                  />
-                ))}
-              </section>
+              <div>
+                <section className="pr-1">
+                  {shownBooks.map((reserve) => (
+                    <ProfileBook key={reserve.book.id} 
+                      bookId={reserve.book.id}
+                      bookImg={reserve.book.imageSrc}
+                      bookAuthor={reserve.book.authorName}
+                      bookGender={reserve.book.gender}
+                      bookName={reserve.book.title}
+                      bookState={reserve.state}
+                      additionDate={reserve.book.timestamp}
+                    />
+                  ))}
+                </section>
+                <PaginationButtons />
+              </div>
             </section>
           </div>
         </section>

@@ -24,7 +24,6 @@ export default function ProfileSettingsModal({
 }: ProfileSettingsIntf) {
   const [open, setOpen] = useState(false)
   const [errors, setErrors] = useState<ValidationMessage[]>([])
-  const [key, setKey] = useState<number>(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previewImg, setPreviewImg] = useState<string>(
     `http://localhost:9000/${profile.img}`,
@@ -37,15 +36,18 @@ export default function ProfileSettingsModal({
     setPreviewImg(URL.createObjectURL(file))
     setSelectedImageFile(file)
   }
+  const handleOpen = () => {
+    setOpen(true)
+  }
 
   const handleImageClick = () => {
     fileInputRef.current?.click()
   }
-
+  
   const handleCancel = () => {
     setPreviewImg(`http://localhost:9000/${profile.img}`)
     setSelectedImageFile(null)
-    setKey(key + 1)
+    setErrors([])
     setOpen(false)
   }
 
@@ -80,7 +82,6 @@ export default function ProfileSettingsModal({
         selectedImageFile,
       )
       onProfileUpdated(updatedProfile)
-      setKey(key + 1)
       setOpen(false)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
@@ -88,8 +89,6 @@ export default function ProfileSettingsModal({
         "Error al guardar los cambios. " + errorMessage,
         "error",
       )
-      setKey(key + 1)
-      setOpen(false)
     } finally {
       setErrors([])
     }
@@ -104,7 +103,7 @@ export default function ProfileSettingsModal({
   return (
     <div>
       <button
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
         className="flex gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold inset-ring hover:bg-gray-200"
       >
         <GearIcon size={20} />
