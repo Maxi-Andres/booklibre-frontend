@@ -28,18 +28,18 @@ export default function Profile() {
   const [userReadBooksNumber, setUserReadBooksNumber] = useState<number>(0)
   const [userLentBooksNumber, setUserLentBooksNumber] = useState<number>(0)
   const [shownBooks, setShownBooks] = useState<ReservationProfileBook[]>([])
-  const [filter, setFilter] = useState<string>("Todos")
-  const [sort, setSort] = useState<string>("date_desc")
+  const [filter, setFilter] = useState<string>("ALL")
+  const [sort, setSort] = useState<string>("DATE_DESC")
   const toggleTitleSort = () => {
-    sort == "title_asc"
-      ? setSort("title_desc")
-      : setSort("title_asc")
+    sort == "ALPHABETICAL_ASC"
+      ? setSort("ALPHABETICAL_DESC")
+      : setSort("ALPHABETICAL_ASC")
   }
 
   const toggleDateSort = () => {
-    sort == "date_asc"
-      ? setSort("date_desc")
-      : setSort("date_asc")
+    sort == "DATE_ASC"
+      ? setSort("DATE_DESC")
+      : setSort("DATE_ASC")
   }
 
   const getUser = async () => {
@@ -181,9 +181,9 @@ export default function Profile() {
 
             <section className="flex h-102 flex-1 flex-col gap-1 rounded-xl border border-gray-200 bg-white">
               <section className="flex gap-2 p-4">
-                <Tag filterKind="Todos" filter={filter} text="Todos" buttonOnClickFunction={() => getUserOwnBooks("Todos", sort)}></Tag>
-                <Tag filterKind="Disponible" filter={filter} text="Disponibles" buttonOnClickFunction={() => getUserOwnBooks("Disponible", sort)}></Tag>
-                <Tag filterKind="Prestado" filter={filter} text="Prestados" buttonOnClickFunction={() => getUserOwnBooks("Prestado", sort)}></Tag>
+                <Tag filterKind="Todos" filter={filter} text="Todos" buttonOnClickFunction={() => getUserOwnBooks("ALL", sort)}></Tag>
+                <Tag filterKind="Disponible" filter={filter} text="Disponibles" buttonOnClickFunction={() => getUserOwnBooks("AVAILABLE", sort)}></Tag>
+                <Tag filterKind="Prestado" filter={filter} text="Prestados" buttonOnClickFunction={() => getUserOwnBooks("BORROWED", sort)}></Tag>
               </section>
               <section className="flex gap-2 px-3">
                 <div className="flex w-3/5 items-center justify-between">
@@ -221,7 +221,7 @@ export default function Profile() {
                     />
                   ))}
                 </section>
-                <PaginationButtons />
+                {/* <PaginationButtons /> */}
               </div>
             </section>
           </div>
