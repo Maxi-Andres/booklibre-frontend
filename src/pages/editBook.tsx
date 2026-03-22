@@ -50,7 +50,6 @@ import { BookType, BookTypeLabels } from "@/types/bookType"
 
   const handleSubmit = async () => {
     book.validate()
-    
 
     if (book.errors.length > 0) {
         setErrors(book.errors)

@@ -1,22 +1,15 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "react-router"
 import { IconSearch, IconBook } from "@tabler/icons-react"
 import { reserveService } from "@/services/reserveService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { showToast } from "@/utils/toast"
-import type { ReservationDTO } from "@/types/reservationType"
+import { mapReservation, type ReservationDTO } from "@/types/reservationType"
 
 import BookCard from "@/components/BookCard"
 
-//! fijate si se busca con debouncing o con enter
-//! fijate como vas a filtrar despeus igual te tienen que mostrar como implementar cache
-//! fijate lo de activo, perstado, vence pronto, todo eso como implelmentarlo
-//! hace DTOs en el back bobo
-//! fijate porque pone cualquier fecha me parece
-//! cuando se califica se vuelve a llamar al back lo que esta mal
-//! el tema es que la reserva tiene estados, pero son otros que usa nico para su pagina, no coinciden igual el DTO los tiene despues fijate de hacer que el back te de los estados y mejor
-// ! tambien solo de puede calificar una vez por reserva, va a tener que haber un bool en el back que diga si ya lo califico
-// ! En "prestados-por-mi" que diga "Prestado a:" en la card
+//! hace TESTS
+//! arregla lo de los bibliokarmas
 
 export default function LoanDetails() {
   const [activeTab, setActiveTab] = useState<
@@ -25,45 +18,59 @@ export default function LoanDetails() {
   const [search, setSearch] = useState("")
   // cuando esto cambia se vuelve a renderizar el componente y se vuelve a llamar
   const [reserves, setReserves] = useState<ReservationDTO[]>([])
+  const [activePage, setActivePage] = useState<number>(0)
+  const [totalPages, setTotalPages] = useState(1)
 
-  const handleStateChange = (newSearch: string) => {
-    setSearch(newSearch)
+  const pageSizeLoanBooks = 4
+
+  const handleSearch = () => {
     if (activeTab == "prestados-a-mi") {
-      getReservesByUserId(newSearch)
+      getReservesByUserId()
     } else {
-      getLoansMadeByUserId(newSearch)
+      getLoansMadeByUserId()
     }
   }
 
-  const getReservesByUserId = async (newSearch: string) => {
-    setSearch(newSearch)
+  const getReservesByUserId = async () => {
     if (!localStorage.getItem("id")!) return
     try {
-      const reservesByUser = await reserveService.getReservesByUserId(
+      const backResponse = await reserveService.getReservesByUserId(
         localStorage.getItem("id")!, // le prometo que no es null
-        newSearch,
+        search,
+        activePage,
+        pageSizeLoanBooks,
       )
+      const reservesByUser = backResponse.items.map(mapReservation)
       setReserves(reservesByUser)
+      setTotalPages(backResponse.totalPages)
     } catch (error) {
       showToast.httpError(error, "Error al cargar las reservas")
     }
   }
 
-  const getLoansMadeByUserId = async (newSearch: string) => {
-    setSearch(newSearch)
+  const getLoansMadeByUserId = async () => {
     if (!localStorage.getItem("id")!) return
     try {
-      const reservesByUser = await reserveService.getLoansMadeByUserId(
+      const backResponse = await reserveService.getLoansMadeByUserId(
         localStorage.getItem("id")!, // le prometo que no es null
-        newSearch,
+        search,
+        activePage,
+        pageSizeLoanBooks,
       )
+      const reservesByUser = backResponse.items.map(mapReservation)
       setReserves(reservesByUser)
+      setTotalPages(backResponse.totalPages)
     } catch (error) {
       showToast.httpError(error, "Error al cargar las reservas")
     }
   }
 
-  useOnInit(() => handleStateChange(search)) // la primera busqueda es vacia
+  useEffect(() => {
+    handleSearch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePage])
+
+  useOnInit(() => handleSearch()) // la primera busqueda es vacia
 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-10 font-sans">
@@ -85,9 +92,9 @@ export default function LoanDetails() {
               onClick={() => {
                 setActiveTab(tab)
                 if (tab === "prestados-a-mi") {
-                  getReservesByUserId(search)
+                  getReservesByUserId()
                 } else {
-                  getLoansMadeByUserId(search)
+                  getLoansMadeByUserId()
                 }
               }}
               className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer ${
@@ -103,24 +110,31 @@ export default function LoanDetails() {
 
         {/* =================== Search =================== */}
         <div className="mt-6 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
-          <IconSearch size={18} className="text-gray-400" />
+          <button onClick={handleSearch} className="group">
+            <IconSearch
+              size={18}
+              className="cursor-pointer text-gray-400 transition-all duration-300 group-hover:scale-115 group-hover:text-blue-500"
+            />
+          </button>
 
           <input
             type="text"
             placeholder="Buscar por título, autor..."
             value={search}
-            onChange={(e) => handleStateChange(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             className="w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
           />
         </div>
 
         {/* =================== Cards =================== */}
-        <div className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-6 grid min-h-[465px] grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
           {reserves.map((book) => (
             <BookCard
               key={book.id}
               book={book}
-              onRated={() => handleStateChange(search)}
+              activeTab={activeTab}
+              onRated={() => handleSearch()}
             />
           ))}
         </div>
@@ -128,16 +142,33 @@ export default function LoanDetails() {
         {/* =================== Pagination =================== */}
         {/* no te tiene que dejas tocar ni los bordes ni el que esta seleccionado */}
         <div className="mt-8 flex items-center justify-center gap-1.5">
-          <button className="h-8 w-8 rounded-lg border border-gray-200 text-sm text-gray-400 transition-all duration-150 ease-out hover:scale-[1.08] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60">
+          <button
+            onClick={() => setActivePage((prev) => prev - 1)}
+            disabled={activePage === 0}
+            className="h-9 w-9 cursor-pointer rounded-lg border border-gray-200 text-sm font-bold text-gray-400 transition-all duration-150 ease-out hover:scale-[1.09] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60 disabled:pointer-events-none disabled:opacity-40"
+          >
             ‹
           </button>
-          <button className="h-8 w-8 rounded-lg bg-blue-500 text-sm font-semibold text-white shadow-sm shadow-blue-200">
-            1
-          </button>
-          <button className="h-8 w-8 rounded-lg border border-gray-200 text-sm text-gray-400 transition-all duration-150 ease-out hover:scale-[1.08] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60">
-            2
-          </button>
-          <button className="h-8 w-8 rounded-lg border border-gray-200 text-sm text-gray-400 transition-all duration-150 ease-out hover:scale-[1.08] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60">
+
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setActivePage(i)}
+              className={`h-9 w-9 cursor-pointer rounded-lg text-sm transition-all duration-150 ease-out hover:scale-[1.09] hover:shadow-xl hover:shadow-gray-300/60 ${
+                activePage === i
+                  ? "bg-blue-500 font-bold text-white shadow-sm shadow-blue-200"
+                  : "border border-gray-200 font-semibold text-gray-400 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setActivePage((prev) => prev + 1)}
+            disabled={activePage === totalPages - 1}
+            className="h-9 w-9 cursor-pointer rounded-lg border border-gray-200 text-sm font-bold text-gray-400 transition-all duration-150 ease-out hover:scale-[1.09] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60 disabled:pointer-events-none disabled:opacity-40"
+          >
             ›
           </button>
         </div>

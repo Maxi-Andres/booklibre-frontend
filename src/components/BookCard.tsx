@@ -23,10 +23,11 @@ const statusLabels: Record<string, string> = {
 
 interface BookCardProps {
   book: ReservationDTO
+  activeTab: string
   onRated: () => void // para recargar la lista tras calificar
 }
 
-export default function BookCard({ book, onRated }: BookCardProps) {
+export default function BookCard({ book, activeTab, onRated }: BookCardProps) {
   const [showModal, setShowModal] = useState(false)
 
   return (
@@ -66,11 +67,24 @@ export default function BookCard({ book, onRated }: BookCardProps) {
           <div className="border-b border-gray-100" />
 
           <div className="mt-1 space-y-1 text-xs text-gray-500">
-            <p className="flex items-center gap-1">
+            <div className="flex items-center gap-1">
               <IconUser size={14} />
-              Prestado por:
-              <span className="font-medium text-gray-700">{book.loanedBy}</span>
-            </p>
+              {activeTab == "prestados-a-mi" ? (
+                <>
+                  <p className="">Prestado por:</p>
+                  <span className="font-medium text-gray-700">
+                    {book.loanedBy}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <p className="">Prestado a:</p>
+                  <span className="font-medium text-gray-700">
+                    {book.loanedTo}
+                  </span>
+                </>
+              )}
+            </div>
             <p className="flex items-center gap-1">
               <IconCalendar size={14} />
               Rango:

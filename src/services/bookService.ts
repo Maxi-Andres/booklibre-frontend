@@ -24,6 +24,11 @@ async updateBook(id: number, book: Book): Promise<Book> {
   return (await getAxiosData(response))
 }
 
+async deleteBook(id: number): Promise<void> {
+  const response = () => axios.delete(REST_SERVER_URL + `/eliminar-libro/${id}`)
+  return (await getAxiosData(response))
+}
+
 
 
   // -- LIBROS FILTRADOS PARA PAGINACION EN HOME --
