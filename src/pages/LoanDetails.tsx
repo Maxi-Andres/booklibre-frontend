@@ -8,14 +8,11 @@ import type { ReservationDTO } from "@/types/reservationType"
 
 import BookCard from "@/components/BookCard"
 
-//! fijate si se busca con debouncing o con enter
 //! fijate como vas a filtrar despeus igual te tienen que mostrar como implementar cache
-//! fijate lo de activo, perstado, vence pronto, todo eso como implelmentarlo
-//! hace DTOs en el back bobo
-//! fijate porque pone cualquier fecha me parece
-//! cuando se califica se vuelve a llamar al back lo que esta mal
-//! el tema es que la reserva tiene estados, pero son otros que usa nico para su pagina, no coinciden igual el DTO los tiene despues fijate de hacer que el back te de los estados y mejor
+// cuando se califica se vuelve a llamar al back lo que esta mal (no esta mal porque luego te lo trae devuelta y no te deja calificarlo)
 //! tambien solo de puede calificar una vez por reserva, va a tener que haber un bool en el back que diga si ya lo califico
+//! hace DTOs en el back bobo
+//! el tema es que la reserva tiene estados, pero son otros que usa nico para su pagina, no coinciden igual el DTO los tiene despues fijate de hacer que el back te de los estados y mejor
 //! que el bakc te diga el estado de la reserva,
 //! hace TESTS
 
@@ -27,22 +24,20 @@ export default function LoanDetails() {
   // cuando esto cambia se vuelve a renderizar el componente y se vuelve a llamar
   const [reserves, setReserves] = useState<ReservationDTO[]>([])
 
-  const handleStateChange = (newSearch: string) => {
-    setSearch(newSearch)
+  const handleSearch = () => {
     if (activeTab == "prestados-a-mi") {
-      getReservesByUserId(newSearch)
+      getReservesByUserId()
     } else {
-      getLoansMadeByUserId(newSearch)
+      getLoansMadeByUserId()
     }
   }
 
-  const getReservesByUserId = async (newSearch: string) => {
-    setSearch(newSearch)
+  const getReservesByUserId = async () => {
     if (!localStorage.getItem("id")!) return
     try {
       const reservesByUser = await reserveService.getReservesByUserId(
         localStorage.getItem("id")!, // le prometo que no es null
-        newSearch,
+        search,
       )
       setReserves(reservesByUser)
     } catch (error) {
@@ -50,13 +45,12 @@ export default function LoanDetails() {
     }
   }
 
-  const getLoansMadeByUserId = async (newSearch: string) => {
-    setSearch(newSearch)
+  const getLoansMadeByUserId = async () => {
     if (!localStorage.getItem("id")!) return
     try {
       const reservesByUser = await reserveService.getLoansMadeByUserId(
         localStorage.getItem("id")!, // le prometo que no es null
-        newSearch,
+        search,
       )
       setReserves(reservesByUser)
     } catch (error) {
@@ -64,7 +58,7 @@ export default function LoanDetails() {
     }
   }
 
-  useOnInit(() => handleStateChange(search)) // la primera busqueda es vacia
+  useOnInit(() => handleSearch()) // la primera busqueda es vacia
 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-10 font-sans">
@@ -86,9 +80,9 @@ export default function LoanDetails() {
               onClick={() => {
                 setActiveTab(tab)
                 if (tab === "prestados-a-mi") {
-                  getReservesByUserId(search)
+                  getReservesByUserId()
                 } else {
-                  getLoansMadeByUserId(search)
+                  getLoansMadeByUserId()
                 }
               }}
               className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer ${
@@ -104,13 +98,19 @@ export default function LoanDetails() {
 
         {/* =================== Search =================== */}
         <div className="mt-6 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
-          <IconSearch size={18} className="text-gray-400" />
+          <button onClick={handleSearch} className="group">
+            <IconSearch
+              size={18}
+              className="cursor-pointer text-gray-400 transition-all duration-300 group-hover:scale-115 group-hover:text-blue-500"
+            />
+          </button>
 
           <input
             type="text"
             placeholder="Buscar por título, autor..."
             value={search}
-            onChange={(e) => handleStateChange(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             className="w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
           />
         </div>
@@ -122,7 +122,7 @@ export default function LoanDetails() {
               key={book.id}
               book={book}
               activeTab={activeTab}
-              onRated={() => handleStateChange(search)}
+              onRated={() => handleSearch()}
             />
           ))}
         </div>
