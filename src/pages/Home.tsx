@@ -23,12 +23,18 @@ import Pagination from '@/components/Pagination'
 import { bookService } from '@/services/bookService'
 import OrderDirectionArrow from '@/components/OrderDirectionArrow/OrderDirectionArrow'
 import { useOnInit } from '@/hooks/UseOnInit'
+import { showToast } from '@/utils/toast'
 
 const sortOptions = [
   { name: 'Título', value: "title", current: true },
   { name: 'Autor', value: "author", current: false },
   { name: 'Dueño', value: "owner", current: false },
 ]
+// Esto le pone las clases a las opciones del Select de Ordenar por.
+// Si está seleccionado, bold o no (active)
+function classNames(...classes : string[]) {
+  return classes.filter(Boolean).join(' ')
+}
 
 const initialFilters: BookFilters = {
   userId: Number(localStorage.getItem("id")!),
@@ -40,12 +46,6 @@ const initialFilters: BookFilters = {
   dropOffDate: addDays(new Date(), 1).toISOString().split("T")[0], // 1 dia despues
   isbn: "",
   ownersName: "",
-}
-
-// Esto le pone las clases a las opciones del Select de Ordenar por.
-// Si está seleccionado, bold o no (active)
-function classNames(...classes : string[]) {
-  return classes.filter(Boolean).join(' ')
 }
 
 export default function Home() {
@@ -62,11 +62,20 @@ export default function Home() {
   //* ==== GET DATA ====
   const getFilteredBooksPage = async (newFilters: BookFilters, page: number, pageSize: number, sortedBy: string, ascending: boolean) => {
     // console.log("Filters: ", filters)
-    const response = await bookService.getFilteredBooksPage(newFilters, page, pageSize, sortedBy, ascending)
-    const filtered = response.content.map(book => Book.fromJSON(book))
-    // console.log("books: ", filtered)
-    setFilteredBooks(filtered)
-    setTotalPages(response.totalPages)
+    // console.log("Page: ", page, " PageSize: ", pageSize, " Sort: ", sortedBy, " Ascending: ", ascending)
+    try {
+      const response = await bookService.getFilteredBooksPage(newFilters, page, pageSize, sortedBy, ascending)
+      const filtered = response.content.map(book => Book.fromJSON(book))
+      // console.log("books: ", filtered)
+      setFilteredBooks(filtered)
+      setTotalPages(response.totalPages)
+    } catch (error) {
+      // console.error("Error fetching filtered books: ", error)
+      showToast.httpError(
+        error,
+        "Error al realizar la busqueda: ",
+      )
+    }
   }
 
   //* ==== FILTERS UPDATE ====
@@ -152,6 +161,7 @@ export default function Home() {
     setFilterKey(prev => prev + 1) // fuerza el remount del slider
   }
 
+  //! ==== ON INIT ====
   const [genderFilters, setGendersFilters] = useState<{ value: string; label: string; checked: boolean }[]>([])
   useOnInit(async () => {
     getFilteredBooksPage(initialFilters, page, pageSize, sort, ascending)
@@ -160,6 +170,7 @@ export default function Home() {
     // console.log("genders: ", genders)
   })
 
+  //! ==== ON KEY PRESS ====
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Enter') {
@@ -169,7 +180,7 @@ export default function Home() {
     // console.log("Filters changed: ", filters)
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-}, [filters, sort, ascending])
+  }, [filters, sort, ascending])
 
   return (
     <div className="w-full">
