@@ -1,7 +1,7 @@
 import { REST_SERVER_URL } from "@/config/configuration"
 import axios from "axios"
 import { getAxiosData } from "./common"
-import { mapReservation, type ReservationDTO } from "@/types/reservationType"
+// import { mapReservation, type ReservationDTO } from "@/types/reservationType"
 import type { ReservationProfileBookJSON } from "@/json/reservationJSON"
 import { ReservationProfileBook } from "@/model/reservationProfile"
 import type { BookReview } from "@/model/review"
@@ -38,23 +38,29 @@ class ReserveService {
   async getReservesByUserId(
     userId: string,
     search: string,
-  ): Promise<ReservationDTO[]> {
+    page: number,
+    pageSize: number,
+  ) {
+    // ): Promise<ReservationDTO[]> {
     const { data } = await axios.get(REST_SERVER_URL + "/lector/" + userId, {
-      params: { search },
+      params: { search, page, pageSize },
     })
     console.log(data, "del user")
-    return data.map(mapReservation)
+    return data
   }
 
   async getLoansMadeByUserId(
     userId: string,
     search: string,
-  ): Promise<ReservationDTO[]> {
+    page: number,
+    pageSize: number,
+  ) {
+    // ): Promise<ReservationDTO[]> {
     const { data } = await axios.get(REST_SERVER_URL + "/owner/" + userId, {
-      params: { search },
+      params: { search, page, pageSize },
     })
     console.log(data, "que le hicieron al user")
-    return data.map(mapReservation)
+    return data
   }
 
   async rateLoan(

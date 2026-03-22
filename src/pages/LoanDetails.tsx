@@ -1,10 +1,10 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "react-router"
 import { IconSearch, IconBook } from "@tabler/icons-react"
 import { reserveService } from "@/services/reserveService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { showToast } from "@/utils/toast"
-import type { ReservationDTO } from "@/types/reservationType"
+import { mapReservation, type ReservationDTO } from "@/types/reservationType"
 
 import BookCard from "@/components/BookCard"
 
@@ -18,6 +18,10 @@ export default function LoanDetails() {
   const [search, setSearch] = useState("")
   // cuando esto cambia se vuelve a renderizar el componente y se vuelve a llamar
   const [reserves, setReserves] = useState<ReservationDTO[]>([])
+  const [activePage, setActivePage] = useState<number>(0)
+  const [totalPages, setTotalPages] = useState(1)
+
+  const pageSizeLoanBooks = 4
 
   const handleSearch = () => {
     if (activeTab == "prestados-a-mi") {
@@ -30,11 +34,15 @@ export default function LoanDetails() {
   const getReservesByUserId = async () => {
     if (!localStorage.getItem("id")!) return
     try {
-      const reservesByUser = await reserveService.getReservesByUserId(
+      const backResponse = await reserveService.getReservesByUserId(
         localStorage.getItem("id")!, // le prometo que no es null
         search,
+        activePage,
+        pageSizeLoanBooks,
       )
+      const reservesByUser = backResponse.items.map(mapReservation)
       setReserves(reservesByUser)
+      setTotalPages(backResponse.totalPages)
     } catch (error) {
       showToast.httpError(error, "Error al cargar las reservas")
     }
@@ -43,15 +51,24 @@ export default function LoanDetails() {
   const getLoansMadeByUserId = async () => {
     if (!localStorage.getItem("id")!) return
     try {
-      const reservesByUser = await reserveService.getLoansMadeByUserId(
+      const backResponse = await reserveService.getLoansMadeByUserId(
         localStorage.getItem("id")!, // le prometo que no es null
         search,
+        activePage,
+        pageSizeLoanBooks,
       )
+      const reservesByUser = backResponse.items.map(mapReservation)
       setReserves(reservesByUser)
+      setTotalPages(backResponse.totalPages)
     } catch (error) {
       showToast.httpError(error, "Error al cargar las reservas")
     }
   }
+
+  useEffect(() => {
+    handleSearch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePage])
 
   useOnInit(() => handleSearch()) // la primera busqueda es vacia
 
@@ -111,7 +128,7 @@ export default function LoanDetails() {
         </div>
 
         {/* =================== Cards =================== */}
-        <div className="mt-6 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-6 grid min-h-[465px] grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
           {reserves.map((book) => (
             <BookCard
               key={book.id}
@@ -125,16 +142,33 @@ export default function LoanDetails() {
         {/* =================== Pagination =================== */}
         {/* no te tiene que dejas tocar ni los bordes ni el que esta seleccionado */}
         <div className="mt-8 flex items-center justify-center gap-1.5">
-          <button className="h-8 w-8 rounded-lg border border-gray-200 text-sm text-gray-400 transition-all duration-150 ease-out hover:scale-[1.08] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60">
+          <button
+            onClick={() => setActivePage((prev) => prev - 1)}
+            disabled={activePage === 0}
+            className="h-9 w-9 cursor-pointer rounded-lg border border-gray-200 text-sm font-bold text-gray-400 transition-all duration-150 ease-out hover:scale-[1.09] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60 disabled:pointer-events-none disabled:opacity-40"
+          >
             ‹
           </button>
-          <button className="h-8 w-8 rounded-lg bg-blue-500 text-sm font-semibold text-white shadow-sm shadow-blue-200">
-            1
-          </button>
-          <button className="h-8 w-8 rounded-lg border border-gray-200 text-sm text-gray-400 transition-all duration-150 ease-out hover:scale-[1.08] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60">
-            2
-          </button>
-          <button className="h-8 w-8 rounded-lg border border-gray-200 text-sm text-gray-400 transition-all duration-150 ease-out hover:scale-[1.08] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60">
+
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setActivePage(i)}
+              className={`h-9 w-9 cursor-pointer rounded-lg text-sm transition-all duration-150 ease-out hover:scale-[1.09] hover:shadow-xl hover:shadow-gray-300/60 ${
+                activePage === i
+                  ? "bg-blue-500 font-bold text-white shadow-sm shadow-blue-200"
+                  : "border border-gray-200 font-semibold text-gray-400 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setActivePage((prev) => prev + 1)}
+            disabled={activePage === totalPages - 1}
+            className="h-9 w-9 cursor-pointer rounded-lg border border-gray-200 text-sm font-bold text-gray-400 transition-all duration-150 ease-out hover:scale-[1.09] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60 disabled:pointer-events-none disabled:opacity-40"
+          >
             ›
           </button>
         </div>
