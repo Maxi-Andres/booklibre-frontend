@@ -11,8 +11,8 @@ export class UserProfile {
   name: string
   description: string
   img: string
-  location: string
-  timestamp: string
+  location: string = "Buenos Aires, ARG"
+  timestamp: string 
   bibliokarmas: number
   email: string
   cel: string
@@ -43,8 +43,10 @@ export class UserProfile {
   }
 
   static fromJSON(userJSON: UserProfileJSON): UserProfile {
-    const profile = Object.assign(new UserProfile(), userJSON, {})
-    return profile
+    return Object.assign(new UserProfile(), {
+    ...userJSON,
+    location: userJSON.location || "Buenos Aires, ARG",
+  })
   }
 
   static toJSON(user: UserProfile): UserProfileJSON {
