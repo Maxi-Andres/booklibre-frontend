@@ -7,6 +7,7 @@ import { showToast } from "@/utils/toast"
 import { mapReservation, type ReservationDTO } from "@/types/reservationType"
 
 import BookCard from "@/components/BookCard"
+import { getId } from "@/context/AuthContext"
 
 //! hace TESTS
 //! arregla lo de los bibliokarmas
@@ -22,6 +23,7 @@ export default function LoanDetails() {
   const [totalPages, setTotalPages] = useState(1)
 
   const pageSizeLoanBooks = 4
+  const id = getId()
 
   const handleSearch = () => {
     if (activeTab == "prestados-a-mi") {
@@ -32,10 +34,10 @@ export default function LoanDetails() {
   }
 
   const getReservesByUserId = async () => {
-    if (!localStorage.getItem("id")!) return
+    if (!id) return
     try {
       const backResponse = await reserveService.getReservesByUserId(
-        localStorage.getItem("id")!, // le prometo que no es null
+        id, // le prometo que no es null
         search,
         activePage,
         pageSizeLoanBooks,
@@ -49,10 +51,10 @@ export default function LoanDetails() {
   }
 
   const getLoansMadeByUserId = async () => {
-    if (!localStorage.getItem("id")!) return
+    if (!id) return
     try {
       const backResponse = await reserveService.getLoansMadeByUserId(
-        localStorage.getItem("id")!, // le prometo que no es null
+        id, // le prometo que no es null
         search,
         activePage,
         pageSizeLoanBooks,

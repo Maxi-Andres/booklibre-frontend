@@ -10,13 +10,13 @@ class UserService {
 
     const response = await axios.post<UserJSONResponse>(REST_SERVER_URL + '/login', userLogin)
     
-    localStorage.setItem('id', response.data.id.toString())
+    //localStorage.setItem('id', response.data.id.toString())
 
     return UserType.fromJson(response.data)
   }
 
   async createUser(user: UserType): Promise<void> {
-    const user: UserJSONRegisterRequest = {
+    const userRegister: UserJSONRegisterRequest = {
       name: user.name,
       email: user.email,
       password: user.password,
@@ -25,7 +25,7 @@ class UserService {
 
     await axios.post<UserJSONResponse>(
       REST_SERVER_URL + '/register', 
-      user
+      userRegister
     )
   }
 }

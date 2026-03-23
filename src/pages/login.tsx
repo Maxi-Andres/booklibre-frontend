@@ -1,3 +1,4 @@
+import '@/css/checkbox.css'
 import { Link, useNavigate, useLocation } from "react-router"
 import type { UserJSONLoginRequest } from "@/model/user"
 import { UserType } from "@/model/user"
@@ -19,11 +20,11 @@ export const Login = () => {
   const {login} = useAuth()
   const [user, setUser] = useState<UserJSONLoginRequest>({email:'',password:''})
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
+  const [rememberMe, setRememberMe] = useState(false);
 
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
     ev.preventDefault()
-    console.log('submit ejecutado')
 
     const userLogin = new UserType(user.email, user.password,'')
 
@@ -38,7 +39,7 @@ export const Login = () => {
       const validation = await userService.login(user.email, user.password)
 
       if (validation) {
-        login(validation)
+        login(validation, rememberMe)
         navigate('/', { replace: true })
       }
     } catch (error) {
@@ -91,6 +92,24 @@ export const Login = () => {
               <ValidationField field="password" errors={errors} />
             </div>
           </div>
+        {/* Remember checkbox */}
+
+          <div className="flex items-center gap-2">
+            <div className="cntr">
+              <input 
+                type="checkbox" 
+                id="cbx" 
+                className="hidden-xs-up"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+            <label htmlFor="cbx" className="cbx"></label>
+          </div>
+          <label htmlFor="cbx" className="text-sm text-gray-800 cursor-pointer">
+           Recuérdame
+          </label>
+        </div>
+          
 
           {/* Submit Button */}
           <button
