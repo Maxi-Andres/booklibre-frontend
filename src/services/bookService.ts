@@ -29,16 +29,12 @@ class BookService {
 
 
   // -- LIBROS FILTRADOS PARA PAGINACION EN HOME --
-  async getFilteredBooksPage(filters: BookFilters, page: number, pageSize: number, sortedBy: string, ascending: boolean): Promise<PageResponse<BookJSON>> {
+  async getFilteredBooksPage(filters: BookFilters): Promise<PageResponse<BookJSON>> {
     const response = () => customAxios.get<PageResponse<BookJSON>>(
       REST_SERVER_URL + `/filtered-books`,
       {
         params: { // hace que axios los serialice como query string
-            ...filters,
-            page,
-            size: pageSize, //! el backend espera "size" no "pageSize"
-            sortBy: sortedBy,
-            ascending
+            ...filters
         }
       }
     )

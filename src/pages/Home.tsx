@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Disclosure,
   DisclosureButton,
@@ -25,7 +25,7 @@ import OrderDirectionArrow from '@/components/OrderDirectionArrow/OrderDirection
 import { useOnInit } from '@/hooks/UseOnInit'
 import { showToast } from '@/utils/toast'
 
-const sortOptions = [
+const initialSortOptions = [
   { name: 'Título', value: "title", current: true },
   { name: 'Autor', value: "author", current: false },
   { name: 'Dueño', value: "owner", current: false },
@@ -46,6 +46,10 @@ const initialFilters: BookFilters = {
   dropOffDate: addDays(new Date(), 1).toISOString().split("T")[0], // 1 dia despues
   isbn: "",
   ownersName: "",
+  page: 0,
+  pageSize: 6,
+  sortBy: "title",
+  ascending: true,
 }
 
 export default function Home() {
@@ -53,18 +57,19 @@ export default function Home() {
   // FILTERING, SORTING AND PAGINATION STATES
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
   const [filters, setFilters] = useState<BookFilters>(initialFilters)
-  const [sort, setSort] = useState<string>("title") // por defecto ordeno por titulo
-  const [ascending, setAscending] = useState<boolean>(true)
+  const [sortingOptions, setSortingOptions] = useState(initialSortOptions)
+  // const [sort, setSort] = useState<string>("title") // por defecto ordeno por titulo
+  // const [ascending, setAscending] = useState<boolean>(true)
   const [page, setPage] = useState(0)
-  const pageSize = 6
+  // const pageSize = 6
   const [totalPages, setTotalPages] = useState(0)
 
   //* ==== GET DATA ====
-  const getFilteredBooksPage = async (newFilters: BookFilters, page: number, pageSize: number, sortedBy: string, ascending: boolean) => {
+  const getFilteredBooksPage = async (newFilters: BookFilters) => {
     // console.log("Filters: ", filters)
     // console.log("Page: ", page, " PageSize: ", pageSize, " Sort: ", sortedBy, " Ascending: ", ascending)
     try {
-      const response = await bookService.getFilteredBooksPage(newFilters, page, pageSize, sortedBy, ascending)
+      const response = await bookService.getFilteredBooksPage(newFilters)
       const filtered = response.content.map(book => Book.fromJSON(book))
       // console.log("books: ", filtered)
       setFilteredBooks(filtered)
@@ -126,27 +131,34 @@ export default function Home() {
   //* ==== SORTING ====
   const updateSortOptions = (selectedOption: string) => {
     // console.log("Selected sort option: ", selectedOption)
-    setSort(selectedOption)
-    getFilteredBooksPage(filters, page, pageSize, selectedOption, ascending)
-    sortOptions.forEach(option => option.current = option.value === selectedOption)
+    // setSort(selectedOption)
+    setSortingOptions(prev => prev.map(option => ({
+      ...option,
+      current: option.value === selectedOption
+    })))
+    updateSimpleFilter("sortBy", selectedOption)
+    // getFilteredBooksPage({...filters, sortBy: selectedOption})
   }
   
   const toggleSortDirection = () => {
-    setAscending(prev => !prev)
-    getFilteredBooksPage(filters, page, pageSize, sort, !ascending)
+    // setAscending(prev => !prev)
+    //! POR QUE CAMBIA LA PAGINA??? SE PONE EN 0
+    updateSimpleFilter("ascending", !filters.ascending)
+    // getFilteredBooksPage({...filters, ascending: !filters.ascending})
   }
   
   //* ==== PAGE CHANGE ====
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
-    getFilteredBooksPage(filters, newPage, pageSize, sort, ascending)
+    updateSimpleFilter("page", newPage)
+    // getFilteredBooksPage({ ...filters, page: newPage })
   }
 
   //* ==== APPLY FILTERS & RESTART PAGE ====
- const handleApplyFilters = (filters: BookFilters, pageSize: number, sort: string, ascending: boolean) => {
+ const handleApplyFilters = (filters: BookFilters) => {
   //  console.log("Applying filters: ", filters)
-   getFilteredBooksPage(filters, 0, pageSize, sort, ascending)
-   setPage(0)
+  // setPage(0)
+  getFilteredBooksPage(filters)
  }
 
  //* ==== CLEAR FILTERS & RESTART PAGE ====
@@ -157,30 +169,42 @@ export default function Home() {
   const handleClearFilters = () => {
     setFilters(initialFilters)
     setPage(0)
-    handleApplyFilters(initialFilters, pageSize, sort, ascending)
+    handleApplyFilters(initialFilters)
     setFilterKey(prev => prev + 1) // fuerza el remount del slider
   }
 
   //! ==== ON INIT ====
   const [genderFilters, setGendersFilters] = useState<{ value: string; label: string; checked: boolean }[]>([])
   useOnInit(async () => {
-    getFilteredBooksPage(initialFilters, page, pageSize, sort, ascending)
+    getFilteredBooksPage(initialFilters,)
     const genderOptions = await bookService.getBookGenders()
     setGendersFilters(genderOptions)
     // console.log("genders: ", genders)
   })
 
+  const filtersRef = useRef(filters)
+  useEffect(() => {
+    filtersRef.current = filters
+  }, [filters]) // este useEffect solo actualiza la ref
+  // filters es lo que actualizo constantemente, filtersRef es el que uso para enviar al back
+
   //! ==== ON KEY PRESS ====
   useEffect(() => {
+    // console.log("Filters changed: ", filtersRef.current)
     const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Enter') {
-            handleApplyFilters(filters, pageSize, sort, ascending)
+            handleApplyFilters(filtersRef.current) // uso la ref para asegurarme de enviar los filtros mas actualizados, aunque el usuario haya apretado enter antes de que se actualizara el estado "filters"
         }
     }
     // console.log("Filters changed: ", filters)
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [filters, sort, ascending])
+  }, [filters])
+
+  //! ==== ON PAGE, SORT CHANGE ====
+  useEffect(() => {
+    handleApplyFilters(filtersRef.current)
+  }, [page, filters.sortBy, filters.ascending])
 
   return (
     <div className="w-full">
@@ -305,7 +329,7 @@ export default function Home() {
 
                 {/* ========== APPLY FILTERS ========== */}
                 <Disclosure key="applyFiltersBtn" as="div" className="border-b border-gray-200 py-6 grid grid-cols-2 gap-x-4 justify-center">
-                  <button type='button' onClick={() => handleApplyFilters(filters, pageSize, sort, ascending)} 
+                  <button type='button' onClick={() => handleApplyFilters(filters)} 
                   className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600">
                     Aplicar Filtros
                   </button>
@@ -332,7 +356,7 @@ export default function Home() {
                     className='py-2 px-4 text-sm bg-gray-100 text-gray-600 rounded focus:outline-none selected:bg-gray-100' 
                     value={filters.title}
                     onChange={(e) => updateSimpleFilter("title", e.target.value)} />
-                    <button onClick={() => handleApplyFilters(filters, pageSize, sort, ascending)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
+                    <button onClick={() => handleApplyFilters(filters)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
                       Buscar
                     </button>
                   </div>
@@ -347,7 +371,7 @@ export default function Home() {
                     <Menu as="div" className="relative inline-block text-left">
                       <MenuButton className="group inline-flex justify-center text-md font-medium text-gray-700 hover:text-gray-900">
                         Ordenar por: 
-                        <span className='pl-2 text-blue-400 text-md'>{sortOptions.find((o) => o.current)?.name}</span>
+                        <span className='pl-2 text-blue-400 text-md'>{sortingOptions.find((o) => o.current)?.name}</span>
                         <ChevronDownIcon
                           aria-hidden="true"
                           className="-mr-1 ml-1 size-5 shrink-0 text-gray-400 group-hover:text-gray-500"
@@ -359,7 +383,7 @@ export default function Home() {
                         className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                         >
                         <div className="py-1">
-                          {sortOptions.map((option) => (
+                          {sortingOptions.map((option) => (
                             <MenuItem key={option.name}>
                               <a
                                 onClick={() => {updateSortOptions(option.value)}}
@@ -377,7 +401,7 @@ export default function Home() {
                     </Menu>
 
                     {/* ========== CAMBIAR DIRECCION DE ORDEN ========== */}
-                    <OrderDirectionArrow onClick={toggleSortDirection} ascending={ascending} />
+                    <OrderDirectionArrow onClick={toggleSortDirection} ascending={filters.ascending} />
 
                   </div>
                 </div>

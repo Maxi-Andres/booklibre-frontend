@@ -11,4 +11,8 @@ export type BookFilters = {
   dropOffDate: string, //! ISO string
   isbn: string,
   ownersName: string,
+  page: number,
+  pageSize: number,
+  sortBy: string,
+  ascending: boolean,
 }
