@@ -216,6 +216,8 @@ export default function Profile() {
                     bookName={reserve.book.title}
                     bookState={reserve.state}
                     additionDate={reserve.book.timestamp}
+                    //le paso esta funcion como parametro para actualizar el id recargar el render cuando hago delete
+                    onDelete={() => setShownBooks(prev => prev.filter(r => r.book.id !== reserve.book.id))}
                   />
                 ))}
               </section>

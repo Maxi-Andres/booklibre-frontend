@@ -18,7 +18,7 @@ import { BookType, BookTypeLabels } from "@/types/bookType"
 
 
  export default function EditBook() {
-  const defaultImage = 'https://media.istockphoto.com/id/1021471354/vector/image-upload-icon.jpg?s=612x612&w=0&k=20&c=TBKGW7vES1EtPcaxIvCAKxXL0W9EGd5FPBWHhtC2kFg='
+  const defaultImage = '/assets/default-book.jpg'
   const { id } = useParams()
   const isEditing = !!id
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
@@ -60,10 +60,17 @@ import { BookType, BookTypeLabels } from "@/types/bookType"
     try {
         if (isEditing) {
             await bookService.updateBook(Number(id), book)
-            showToast.success('Libro actualizado con éxito')
+            showToast.success('Libro actualizado con éxito, redirigiendote a tu perfil')
+            setTimeout(() => {
+              navigate(-1)
+            }, 3000)
+            
         } else {
             await bookService.createBook(book)
-            showToast.success('Libro creado con éxito')
+            showToast.success('Libro creado con éxito, redirigiendote a tu perfil')
+            setTimeout(() => {
+              navigate(-1)
+            }, 3000)
         }
     } catch (error) {
         showToast.httpError(error, 'Error al guardar el libro')
