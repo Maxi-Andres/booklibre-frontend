@@ -102,7 +102,7 @@ export default function Profile() {
       <section className="flex w-245 flex-col gap-7">
         <section className="col-span-3 flex h-42 items-center gap-4 rounded-xl border border-gray-200 bg-white p-4">
           <img
-            src={`http://localhost:9000/${profile.img}`}
+            src={profile.img ? `http://localhost:9000/${profile.img}` : '/assets/default-img.png'}
             alt="Profile Image"
             className="h-26 w-26 rounded-full object-cover"
           />
@@ -112,7 +112,7 @@ export default function Profile() {
             <div className="flex gap-1 text-sm text-gray-400">
               <p>
                 <CalendarBlankIcon size={15} className="inline" /> Se unio en
-                {" " + profile.timestamp.slice(6)} ·
+                {" " + (profile.timestamp.slice(6) ? new Date(profile.timestamp).getFullYear() : new Date().getFullYear())} ·
               </p>
               <p>
                 <MapPinIcon size={15} className="inline" />{" "}
@@ -141,7 +141,7 @@ export default function Profile() {
               <article className="border-b-2 border-gray-300 pb-2">
                 <p className="text-xs font-bold text-gray-500">TELÉFONO</p>
                 <p>
-                  {"+54" + ' (' + profile.cel.slice(0, 2) + ') ' + profile.cel.slice(3)}
+                  {profile.cel ? "+54" + ' (' + profile.cel.slice(0, 2) + ') ' + profile.cel.slice(3) : 'Aun no registrado'}
                 </p>
               </article>
               <article>

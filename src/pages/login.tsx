@@ -9,7 +9,7 @@ import { getErrorMessage } from "@/validation/errorHandler"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { InputField } from "@/components/InputField"
 import { useAuth } from '@/context/AuthContext'
-
+import { showToast } from "@/utils/toast"
 
 
 
@@ -23,10 +23,11 @@ export const Login = () => {
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
     ev.preventDefault()
+    console.log('submit ejecutado')
 
     const userLogin = new UserType(user.email, user.password,'')
 
-    userLogin.validate()
+    userLogin.validateLogin()
 
     if (userLogin.errors.length > 0) {
       setErrors(userLogin.errors)
@@ -37,14 +38,12 @@ export const Login = () => {
       const validation = await userService.login(user.email, user.password)
 
       if (validation) {
-        // Guardar en localStorage
-        //localStorage.setItem("user", JSON.stringify(validation))
         login(validation)
         navigate('/', { replace: true })
       }
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      // aca va a ir el toast
+      showToast.httpError(errorMessage, 'Error al iniciar sesion, contactese con el administrador')
     } 
   }
 

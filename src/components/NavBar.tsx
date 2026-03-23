@@ -80,7 +80,7 @@ export default function NavBar() {
             <Link to={"/profile"}>
               <img
                 alt="User avatar"
-                src={`http://localhost:9000/${user.img}`}
+                src={user.img ? `http://localhost:9000/${user.img}` : '/assets/default-img.png'}
                 className="size-8 rounded-full object-cover ring-2 ring-gray-100"
               />
             </Link>
