@@ -6,7 +6,7 @@ import { formatDate } from "@/utils/formatDate";
 import { bookService } from "@/services/bookService"
 import { showToast } from "@/utils/toast"
 
-export default function ProfileBook({bookImg, bookName, bookAuthor, bookGender, bookState, additionDate, bookId}: {bookImg: string, bookName: string, bookAuthor: string, bookGender: string, bookState: string, additionDate: Date, bookId:Number}) {
+export default function ProfileBook({bookImg, bookName, bookAuthor, bookGender, bookState, additionDate, bookId, onDelete}: {bookImg: string, bookName: string, bookAuthor: string, bookGender: string, bookState: string, additionDate: Date, bookId:Number, onDelete: () => void}) {
   const navigate = useNavigate()
   const [showConfirm, setShowConfirm] = useState(false)
 
@@ -17,6 +17,7 @@ export default function ProfileBook({bookImg, bookName, bookAuthor, bookGender, 
       await bookService.deleteBook(Number(bookId))
       showToast.success('Libro eliminado con éxito')
       setShowConfirm(false)
+      onDelete()
     } catch (error) {
       showToast.httpError(error, 'Error al eliminar el libro')
     }

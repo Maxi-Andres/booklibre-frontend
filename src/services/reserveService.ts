@@ -5,12 +5,18 @@ import { getAxiosData } from "./common"
 import type { ReservationProfileBookJSON } from "@/json/reservationJSON"
 import { ReservationProfileBook } from "@/model/reservationProfile"
 import type { BookReview } from "@/model/review"
+import { getId } from "@/context/AuthContext"
+
 
 class ReserveService {
+  get id() {
+    return getId() 
+  }
+  
   async getUserReadBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
       axios.get<number>(
-        REST_SERVER_URL + `/userReadBooks/${localStorage.getItem("id")}`,
+        REST_SERVER_URL + `/userReadBooks/${this.id}`,
       ),
     )
   }
@@ -20,7 +26,7 @@ class ReserveService {
     pickUpDate: string,
     dropOffDate: string,
   ) {
-    const sessionId = localStorage.getItem("id")
+    const sessionId = this.id
     return axios.post(REST_SERVER_URL + "/create-reservation", {
       bookId,
       sessionId,
@@ -77,7 +83,7 @@ class ReserveService {
         timestamp: new Date().toISOString().split("T")[0], // "2024-03-19"
       },
       {
-        params: { userId: localStorage.getItem("id") }, // esto es por lo que pusieron en el back en el model de review no se como funciona
+        params: { userId: this.id }, // esto es por lo que pusieron en el back en el model de review no se como funciona
       },
     )
     console.log(data) // no se que onda esto
@@ -103,7 +109,7 @@ class ReserveService {
   async getUserLentBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
       axios.get<number>(
-        REST_SERVER_URL + `/userLentBooks/${localStorage.getItem("id")}`,
+        REST_SERVER_URL + `/userLentBooks/${this.id}`,
       ),
     )
   }

@@ -26,8 +26,8 @@ export default function ProfileSettingsModal({
   const [errors, setErrors] = useState<ValidationMessage[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previewImg, setPreviewImg] = useState<string>(
-    `http://localhost:9000/${profile.img}`,
-  )
+  profile.img ? `http://localhost:9000/${profile.img}` : '/assets/default-img.png'
+)
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null)
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +45,7 @@ export default function ProfileSettingsModal({
   }
   
   const handleCancel = () => {
-    setPreviewImg(`http://localhost:9000/${profile.img}`)
+    setPreviewImg(profile.img ? `http://localhost:9000/${profile.img}` : '/assets/default-img.png')
     setSelectedImageFile(null)
     setErrors([])
     setOpen(false)
@@ -95,11 +95,10 @@ export default function ProfileSettingsModal({
     }
   }
 
-  useEffect(() => {
-    if (profile.img) {
-      setPreviewImg(`http://localhost:9000/${profile.img}`)
-    }
-  }, [profile.img])
+  
+useEffect(() => {
+  setPreviewImg(profile.img ? `http://localhost:9000/${profile.img}` : '/default-img.png')
+}, [profile.img])
 
   return (
     <div>

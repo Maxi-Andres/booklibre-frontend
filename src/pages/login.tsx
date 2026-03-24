@@ -1,3 +1,4 @@
+import '@/css/checkbox.css'
 import { Link, useNavigate, useLocation } from "react-router"
 import type { UserJSONLoginRequest } from "@/model/user"
 import { UserType } from "@/model/user"
@@ -9,7 +10,7 @@ import { getErrorMessage } from "@/validation/errorHandler"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { InputField } from "@/components/InputField"
 import { useAuth } from '@/context/AuthContext'
-
+import { showToast } from "@/utils/toast"
 
 
 
@@ -19,6 +20,7 @@ export const Login = () => {
   const {login} = useAuth()
   const [user, setUser] = useState<UserJSONLoginRequest>({email:'',password:''})
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
+  const [rememberMe, setRememberMe] = useState(false);
 
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
@@ -26,7 +28,7 @@ export const Login = () => {
 
     const userLogin = new UserType(user.email, user.password,'')
 
-    userLogin.validate()
+    userLogin.validateLogin()
 
     if (userLogin.errors.length > 0) {
       setErrors(userLogin.errors)
@@ -37,14 +39,12 @@ export const Login = () => {
       const validation = await userService.login(user.email, user.password)
 
       if (validation) {
-        // Guardar en localStorage
-        //localStorage.setItem("user", JSON.stringify(validation))
-        login(validation)
+        login(validation, rememberMe)
         navigate('/', { replace: true })
       }
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      // aca va a ir el toast
+      showToast.httpError(errorMessage, 'Error al iniciar sesion, contactese con el administrador')
     } 
   }
 
@@ -92,6 +92,24 @@ export const Login = () => {
               <ValidationField field="password" errors={errors} />
             </div>
           </div>
+        {/* Remember checkbox */}
+
+          <div className="flex items-center gap-2">
+            <div className="cntr">
+              <input 
+                type="checkbox" 
+                id="cbx" 
+                className="hidden-xs-up"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+            <label htmlFor="cbx" className="cbx"></label>
+          </div>
+          <label htmlFor="cbx" className="text-sm text-gray-800 cursor-pointer">
+           Recuérdame
+          </label>
+        </div>
+          
 
           {/* Submit Button */}
           <button

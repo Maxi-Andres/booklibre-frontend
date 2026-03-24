@@ -5,13 +5,14 @@ export type UserJSONLoginRequest = {
   password: string
 }
 
+
 export interface UserJSONResponse {
   email:string
   name:string
   id:number
 }
 
-export interface UserJSONRoginRequest {
+export interface UserJSONRegisterRequest {
   name:string
   email:string
   password:string
@@ -40,6 +41,25 @@ export class UserType {
     this.errors.push(new ValidationMessage(field, message))
   }
 
+  validateLogin() {
+  this.errors = []
+  
+  if (!this.email?.trim()) {
+    this.addError('email', 'Debe ingresar un email')
+  } else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(this.email)) {
+      this.addError('email', 'El formato del email no es válido')
+    }
+  }
+
+  if (!this.password) {
+    this.addError('password', 'Debe ingresar una contraseña')
+  }
+
+  return this.errors
+}
+
   validate() {
   this.errors = [];
 
@@ -57,9 +77,10 @@ export class UserType {
     this.addError('password', 'Debe ingresar una contraseña');
   } 
 
-  // if(!this.name){
-  //   this.addError('name','Debe ingresar un nombre')
-  // }
+
+   if(!this.name){
+     this.addError('name','Debe ingresar un nombre')
+   }
   return this.errors;
 }
 }

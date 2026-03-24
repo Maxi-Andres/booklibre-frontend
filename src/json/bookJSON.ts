@@ -3,6 +3,7 @@ import type { BookType } from "@/types/bookType"
 import type { Languages } from "@/types/languages"
 import type { UserProfileJSON } from "./userProfileJSON"
 import { Book } from "@/model/book"
+import { getId } from '@/context/AuthContext'
 
 
 export type BookJSON = {
@@ -68,5 +69,6 @@ export const toBookCreateDTO = (book: Book): BookCreateDTO => ({
   publishDate: book.publishDate ? new Date(book.publishDate).toISOString().split('T')[0] : '',
   condition: book.condition,
   imageSrc: book.imageSrc,
-  ownerId: Number(localStorage.getItem('id'))
+  ownerId: Number(getId())
+  //ownerId: Number(localStorage.getItem('id'))
 })
