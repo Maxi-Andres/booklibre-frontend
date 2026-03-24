@@ -7,6 +7,7 @@ import { toBookCreateDTO, type BookJSON } from "@/json/bookJSON";
 import type { PageResponse } from "@/types/pageResponse";
 import customAxios from "@/config/customAxios";
 import { BookGender } from "@/types/bookGender";
+import { getId } from "@/context/AuthContext";
 
 
 class BookService {
@@ -39,6 +40,7 @@ async deleteBook(id: number): Promise<void> {
       REST_SERVER_URL + `/filtered-books`,
       {
         params: { // hace que axios los serialice como query string
+          userId: getId(),
             ...filters
         }
       }

@@ -97,7 +97,7 @@ class ReserveService {
   ) {
     const { data } = await axios.get(
         REST_SERVER_URL +
-        `/userOwnBooks/${localStorage.getItem("id")}`,
+        `/userOwnBooks/${this.id}`,
         { params: { filterCriteria, sortCriteria, page, pageSize } }
       )
 

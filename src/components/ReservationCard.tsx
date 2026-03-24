@@ -9,6 +9,7 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { useNavigate } from 'react-router'
 import { useOnInit } from "@/hooks/UseOnInit"
+import { getId } from "@/context/AuthContext"
 
 type Props = {
   book: Book
@@ -46,7 +47,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
   }
 
   const recalculateBibliokarmas = async (pickup: string, dropoff: string) => {
-    const userId = Number(localStorage.getItem("id"))
+    const userId = getId()
     const res = await reserveService.getBibliokarmas(book.id, userId,pickup, dropoff)
     onBibliokarmasChange(res.data)  // ← notificás al padre
   }

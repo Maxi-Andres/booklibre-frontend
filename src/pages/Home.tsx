@@ -37,7 +37,6 @@ function classNames(...classes : string[]) {
 }
 
 const initialFilters: BookFilters = {
-  userId: Number(localStorage.getItem("id")!),
   title: "",
   genders: [], //! debe ser value de keyof enum BookGender
   pagesRangeMin: 0,
@@ -176,7 +175,7 @@ export default function Home() {
   //! ==== ON INIT ====
   const [genderFilters, setGendersFilters] = useState<{ value: string; label: string; checked: boolean }[]>([])
   useOnInit(async () => {
-    getFilteredBooksPage(initialFilters,)
+    getFilteredBooksPage(initialFilters)
     const genderOptions = await bookService.getBookGenders()
     setGendersFilters(genderOptions)
     // console.log("genders: ", genders)
