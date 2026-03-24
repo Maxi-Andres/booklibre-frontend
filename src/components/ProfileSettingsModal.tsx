@@ -82,6 +82,7 @@ export default function ProfileSettingsModal({
         selectedImageFile,
       )
       onProfileUpdated(updatedProfile)
+      showToast.success('Cambios guardados')
       setOpen(false)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
@@ -208,15 +209,18 @@ export default function ProfileSettingsModal({
                           field="invalid-format-cel"
                           errors={errors}
                         />
-                        <InputField
-                          id="userTypeInputField"
-                          name="userType"
-                          label="Tipo de perfil"
-                          defaultValue={profile.userType}
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
-                          // field="invalid-name"
-                          // errors={errors}
-                        />
+                        <div className="flex flex-col">
+                          <label className="text-sm text-gray-700">Tipo de perfil</label>
+                          <select
+                            name="userType"
+                            defaultValue={profile.userType}
+                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                          >
+                            <option value="Publicador">Publicador</option>
+                            <option value="Lector">Lector</option>
+                            <option value="Lector / Publicador">Lector / Publicador</option>
+                          </select>
+                        </div>
                         <div className="mt-5 flex justify-end">
                           <button
                             type="button"
