@@ -46,6 +46,7 @@ export default function LoanDetails() {
       setReserves(reservesByUser)
     } catch (error) {
       showToast.httpError(error, "Error al cargar las reservas")
+      console.error(error)
     }
   }
 

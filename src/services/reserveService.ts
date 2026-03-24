@@ -5,6 +5,7 @@ import { mapReservation, type ReservationDTO } from "@/types/reservationType"
 import type { ReservationProfileBookJSON } from "@/json/reservationJSON"
 import { ReservationProfileBook } from "@/model/reservationProfile"
 import type { BookReview } from "@/model/review"
+import type { ReservationDates } from "@/types/reservationDates"
 
 class ReserveService {
   async getUserReadBooksNumber(): Promise<number> {
@@ -113,6 +114,23 @@ class ReserveService {
     const sessionId = localStorage.getItem("id")
     return getAxiosData<number>(() =>
       axios.get<number>(REST_SERVER_URL + `/userLentBooks/${sessionId}`),
+    )
+  }
+
+  async getReservedDates(bookId: number) {
+    return axios.get<ReservationDates[]>(`${REST_SERVER_URL}/reservations/book/${bookId}/dates`)
+  }
+
+  async getBibliokarmas(bookId: number, userId: number, pickUpDate: string, dropOffDate: string) {
+    return axios.get<number>(
+      `${REST_SERVER_URL}/book-detail/${bookId}/bibliokarmas`,
+    {
+      params: {
+        userId,
+        pickUpDate,
+        dropOffDate
+      }
+    }
     )
   }
 }

@@ -6,13 +6,14 @@ import { useState } from "react"
 import type { Book } from "@/model/book"
 // import DatePicker from "react-datepicker"
 // import { Disclosure } from "@headlessui/react"
-import { ReservationCard } from "@/components/ReservationDatePicker"
+import { ReservationCard } from "@/components/ReservationCard"
 import { reserveService } from "@/services/reserveService"
 import { BookReview } from "@/model/review"
 import { showToast } from "@/utils/toast"
 import ReviewsModal from "@/components/ReviewsModal"
 import { StarRating } from "@/components/ReviewsModal"
 import { formatDate } from "@/utils/formatDate"
+import type { ReservationDates } from "@/types/reservationDates"
 
 export default function BookDetail() {
   const { id } = useParams()
@@ -20,11 +21,20 @@ export default function BookDetail() {
   const [reviews, setReviews] = useState<BookReview[]>([])
   const [loading, setLoading] = useState(true)
   const location = useLocation()
+  const [reservedDates, setReservedDates] = useState<ReservationDates[]>([])
+  const [bibliokarmas, setBibliokarmas] = useState(0)
+
+
+  const getReservedDates = async () => {
+      const res = await reserveService.getReservedDates(Number(id))
+      setReservedDates(res.data)
+  }
 
   const getBook = async () => {
     try {
       const bookResponse = await bookService.getBookDetail(Number(id))
       setBook(bookResponse)
+      setBibliokarmas(bookResponse.calculateBibliokarmas())
     } catch (error) {
       showToast.httpError(error, "Error al cargar libro")
     } finally {
@@ -44,6 +54,7 @@ export default function BookDetail() {
   useOnInit(() => {
     getBook()
     getBookReviews()
+    getReservedDates()
   })
 
   if (loading) return <div>Cargando...</div>
@@ -128,8 +139,10 @@ export default function BookDetail() {
         <div className="flex items-start gap-6">
           <ReservationCard
             book={book}
+            reservedDates={reservedDates}
             initialPickUpDate={location.state?.pickUpDate}
             initialDropOffDate={location.state?.dropOffDate}
+            onBibliokarmasChange={setBibliokarmas}
           />
 
           <div className="flex flex-1 flex-col gap-4">
@@ -149,7 +162,7 @@ export default function BookDetail() {
                     Bibliokarmas
                   </p>
                   <span className="inline-block rounded bg-green-100 px-3 py-0.5 text-base text-green-700">
-                    + {book!.bookBibliokarmas}
+                    + {bibliokarmas}
                   </span>
                 </div>
               </div>
