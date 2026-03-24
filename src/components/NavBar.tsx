@@ -1,11 +1,10 @@
 import logo from "@/assets/logo.svg"
-import userAvatar from "@/assets/user-avatar.jpg"
 import { Link, useLocation } from "react-router"
 import { useAuth } from '@/context/AuthContext'
 import { useNavigate } from 'react-router'
 import { useOnInit } from "@/hooks/UseOnInit"
 import { userProfileService } from "@/services/userProfileService"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { UserProfile } from "@/model/userProfile"
 
 
@@ -36,6 +35,10 @@ export default function NavBar() {
 
     }
   }
+  
+  useEffect(() => {
+    handleFetch()
+  }, [user])
 
   useOnInit(handleFetch)
 
