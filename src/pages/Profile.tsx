@@ -30,6 +30,7 @@ export default function Profile() {
   const [shownBooks, setShownBooks] = useState<ReservationProfileBook[]>([])
   const [filter, setFilter] = useState<string>("ALL")
   const [sort, setSort] = useState<string>("DATE_DESC")
+  var allUserBooksNumber: number = 0
   const toggleTitleSort = () => {
     sort == "ALPHABETICAL_ASC"
       ? setSort("ALPHABETICAL_DESC")
@@ -55,6 +56,7 @@ export default function Profile() {
   const getUserOwnBooks = async (filterCriteria: string, sortCriteria: string) => {
     setFilter(filterCriteria)
     try {
+    // -> devolver tambien el largo total de la lista de libros de un usuario
       const userOwnBooks = await reserveService.getUserOwnBooks(filterCriteria, sortCriteria)
       setShownBooks(userOwnBooks)
 
@@ -221,7 +223,13 @@ export default function Profile() {
                     />
                   ))}
                 </section>
-                {/* <PaginationButtons /> */}
+                <PaginationButtons 
+                  page={1}
+                  hasMore={true}
+                  init={true}
+                  fetchAnotherPage={() => {}}
+                  filteredBooksLength={allUserBooksNumber}
+                />
               </div>
             </section>
           </div>
