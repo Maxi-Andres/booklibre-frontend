@@ -21,29 +21,23 @@ import MultiRangeSlider from '@/components/MultiRangeSlider/MultiRangeSlider'
 import { addDays } from '@/utils/addDays'
 import Pagination from '@/components/Pagination'
 import { bookService } from '@/services/bookService'
-import { SortByTitle, SortByAuthor, SortByOwner, type BookSortCriteria } from '@/model/bookSortCriteria'
 import OrderDirectionArrow from '@/components/OrderDirectionArrow/OrderDirectionArrow'
+import { useOnInit } from '@/hooks/UseOnInit'
+import { showToast } from '@/utils/toast'
 
-const sortOptions = [
-  { name: 'Título', value: new SortByTitle(), current: true },
-  { name: 'Autor', value: new SortByAuthor(), current: false },
-  { name: 'Dueño', value: new SortByOwner(), current: false },
+const initialSortOptions = [
+  { name: 'Título', value: "title", current: true },
+  { name: 'Autor', value: "author", current: false },
+  { name: 'Dueño', value: "owner", current: false },
 ]
-
-const genderFilters = {
-    id: 'genero',
-    name: 'Genero',
-    options: [
-      { value: 'DRAMA', label: 'Drama', checked: false },
-      { value: 'SCIENCE_FICTION', label: 'Ciencia Ficción', checked: false },
-      { value: 'ROMANCE', label: 'Romance', checked: false },
-      { value: 'SELF_HELP', label: 'Autoayuda', checked: false },
-      { value: 'DESIGN', label: 'Diseño', checked: false },
-      { value: 'CLASSIC_LITERATURE', label: 'Literatura Clásica', checked: false },
-    ],
-  }
+// Esto le pone las clases a las opciones del Select de Ordenar por.
+// Si está seleccionado, bold o no (active)
+function classNames(...classes : string[]) {
+  return classes.filter(Boolean).join(' ')
+}
 
 const initialFilters: BookFilters = {
+  userId: Number(localStorage.getItem("id")!),
   title: "",
   genders: [], //! debe ser value de keyof enum BookGender
   pagesRangeMin: 0,
@@ -52,34 +46,41 @@ const initialFilters: BookFilters = {
   dropOffDate: addDays(new Date(), 1).toISOString().split("T")[0], // 1 dia despues
   isbn: "",
   ownersName: "",
-  sortedBy: new SortByTitle(),
-  ascending: true,
   page: 0,
-  pageSize: 6
-}
-
-// Esto le pone las clases a las opciones del Select de Ordenar por.
-// Si está seleccionado, bold o no (active)
-function classNames(...classes : string[]) {
-  return classes.filter(Boolean).join(' ')
+  pageSize: 6,
+  sortBy: "title",
+  ascending: true,
 }
 
 export default function Home() {
 
-  const isInitializedRef = useRef(false)
+  // FILTERING, SORTING AND PAGINATION STATES
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
   const [filters, setFilters] = useState<BookFilters>(initialFilters)
+  const [sortingOptions, setSortingOptions] = useState(initialSortOptions)
+  // const [sort, setSort] = useState<string>("title") // por defecto ordeno por titulo
+  // const [ascending, setAscending] = useState<boolean>(true)
   const [page, setPage] = useState(0)
   // const pageSize = 6
   const [totalPages, setTotalPages] = useState(0)
 
   //* ==== GET DATA ====
   const getFilteredBooksPage = async (newFilters: BookFilters) => {
-    const response = await bookService.getFilteredBooksPage(newFilters)
-    const filtered = response.content.map(book => Book.fromJSON(book))
-    // console.log("page: ", response)
-    setFilteredBooks(filtered)
-    setTotalPages(response.totalPages)
+    // console.log("Filters: ", filters)
+    // console.log("Page: ", page, " PageSize: ", pageSize, " Sort: ", sortedBy, " Ascending: ", ascending)
+    try {
+      const response = await bookService.getFilteredBooksPage(newFilters)
+      const filtered = response.content.map(book => Book.fromJSON(book))
+      // console.log("books: ", filtered)
+      setFilteredBooks(filtered)
+      setTotalPages(response.totalPages)
+    } catch (error) {
+      // console.error("Error fetching filtered books: ", error)
+      showToast.httpError(
+        error,
+        "Error al realizar la busqueda: ",
+      )
+    }
   }
 
   //* ==== FILTERS UPDATE ====
@@ -106,6 +107,21 @@ export default function Home() {
     })
   }
 
+  //* ==== DATES MAINTENANCE ====
+  const today = new Date().toISOString().split('T')[0]
+  const handlePickUpDate = (pickUpDateStr: string) => {
+    // Actualizo la fecha de inicio
+    updateSimpleFilter("pickUpDate", pickUpDateStr)
+    // Valido si es despues de la fecha de fin
+    const pickUpDate = new Date(pickUpDateStr)
+    const dropOffDate = new Date(filters.dropOffDate)
+    if (pickUpDate.getTime() > dropOffDate.getTime()) {
+      // Si lo es, modifico la fecha de fin para que se despues de la de inicio
+      pickUpDate.setDate(pickUpDate.getDate() + 1) // Le sumo un dia
+      updateSimpleFilter("dropOffDate", pickUpDate.toISOString().split('T')[0])
+    }
+  }
+
   //* ==== PAGE RANGE VALUES ====
   const handleRangeChange = (values: { min: number; max: number }) => {
     updateSimpleFilter("pagesRangeMin", values.min)
@@ -113,41 +129,37 @@ export default function Home() {
   };
 
   //* ==== SORTING ====
-  const updateSortOptions = (selectedOption: BookSortCriteria) => {
+  const updateSortOptions = (selectedOption: string) => {
     // console.log("Selected sort option: ", selectedOption)
-    updateSimpleFilter("sortedBy", selectedOption)
-    sortOptions.forEach(option => option.current = option.value.type === selectedOption.type)
+    // setSort(selectedOption)
+    setSortingOptions(prev => prev.map(option => ({
+      ...option,
+      current: option.value === selectedOption
+    })))
+    updateSimpleFilter("sortBy", selectedOption)
+    // getFilteredBooksPage({...filters, sortBy: selectedOption})
   }
   
   const toggleSortDirection = () => {
-    setFilters(prev => ({
-      ...prev,
-      ["ascending"]: !filters.ascending
-    }))
+    // setAscending(prev => !prev)
+    //! POR QUE CAMBIA LA PAGINA??? SE PONE EN 0
+    updateSimpleFilter("ascending", !filters.ascending)
+    // getFilteredBooksPage({...filters, ascending: !filters.ascending})
+  }
+  
+  //* ==== PAGE CHANGE ====
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+    updateSimpleFilter("page", newPage)
+    // getFilteredBooksPage({ ...filters, page: newPage })
   }
 
-   //* ==== INITIALIZE FILTERS ====
-  if(!isInitializedRef.current) {
-    getFilteredBooksPage(initialFilters)
-    // console.log("Initial filters: ", filters)
-    isInitializedRef.current = true
-  }
-
-  //! RELOADS WHEN PAGE CHANGES ====
-  useEffect(() => {
-    getFilteredBooksPage({...filters, page: page})
-  }, [page])
-  //! RELOADS WHEN SORTING OPTION CHANGES ====
-  useEffect(() => {
-    handleApplyFilters(filters)
-  }, [filters.sortedBy, filters.ascending])
-
-   //* ==== APPLY FILTERS & RESTART PAGE ====
-  const handleApplyFilters = (filters: BookFilters) => {
-    // console.log("Applying filters: ", filters)
-    getFilteredBooksPage(filters)
-    setPage(0)
-  }
+  //* ==== APPLY FILTERS & RESTART PAGE ====
+ const handleApplyFilters = (filters: BookFilters) => {
+  //  console.log("Applying filters: ", filters)
+  // setPage(0)
+  getFilteredBooksPage(filters)
+ }
 
  //* ==== CLEAR FILTERS & RESTART PAGE ====
   {/* Cuando key cambia, React desmonta y vuelve a montar el componente desde cero, 
@@ -160,6 +172,39 @@ export default function Home() {
     handleApplyFilters(initialFilters)
     setFilterKey(prev => prev + 1) // fuerza el remount del slider
   }
+
+  //! ==== ON INIT ====
+  const [genderFilters, setGendersFilters] = useState<{ value: string; label: string; checked: boolean }[]>([])
+  useOnInit(async () => {
+    getFilteredBooksPage(initialFilters,)
+    const genderOptions = await bookService.getBookGenders()
+    setGendersFilters(genderOptions)
+    // console.log("genders: ", genders)
+  })
+
+  const filtersRef = useRef(filters)
+  useEffect(() => {
+    filtersRef.current = filters
+  }, [filters]) // este useEffect solo actualiza la ref
+  // filters es lo que actualizo constantemente, filtersRef es el que uso para enviar al back
+
+  //! ==== ON KEY PRESS ====
+  useEffect(() => {
+    // console.log("Filters changed: ", filtersRef.current)
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleApplyFilters(filtersRef.current) // uso la ref para asegurarme de enviar los filtros mas actualizados, aunque el usuario haya apretado enter antes de que se actualizara el estado "filters"
+        }
+    }
+    // console.log("Filters changed: ", filters)
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [filters])
+
+  //! ==== ON PAGE, SORT CHANGE ====
+  useEffect(() => {
+    handleApplyFilters(filtersRef.current)
+  }, [page, filters.sortBy, filters.ascending])
 
   return (
     <div className="w-full">
@@ -177,10 +222,10 @@ export default function Home() {
     {/* ========== FILTERS ========== */}
               <form className="hidden lg:flex flex flex-col bg-white p-5 rounded-2xl border border-gray-200 h-max">
                   {/* ========== GENDER FILTERS ========== */}
-                  <Disclosure key={genderFilters.id} as="div" className="border-b border-gray-200 py-6">
+                  <Disclosure key="gender-filter" as="div" className="border-b border-gray-200 py-6">
                     <h3 className="-my-3 flow-root">
                       <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                        <span className="font-medium text-gray-900">{genderFilters.name.toUpperCase()}</span>
+                        <span className="font-medium text-gray-900">GENERO</span>
                         <span className="ml-6 flex items-center">
                           <PlusIcon aria-hidden="true" className="size-5 group-data-open:hidden" />
                           <MinusIcon aria-hidden="true" className="size-5 group-not-data-open:hidden" />
@@ -189,15 +234,15 @@ export default function Home() {
                     </h3>
                     <DisclosurePanel className="pt-6">
                       <div className="space-y-4">
-                        {genderFilters.options.map((option, optionIdx) => (
-                          <div key={option.value} className="flex gap-3">
+                        {genderFilters.map((option, optionIdx) => (
+                          <div key={`${option.value}-${filterKey}`} className="flex gap-3">
                             <div className="flex h-5 shrink-0 items-center">
                               <div className="group grid size-4 grid-cols-1">
                                 <input
                                   defaultValue={option.value}
                                   defaultChecked={option.checked}
-                                  id={`filter-${genderFilters.id}-${optionIdx}`}
-                                  name={`${genderFilters.id}[]`}
+                                  id={`gender-filter-${optionIdx}`}
+                                  name={`gender-filter[]`}
                                   type="checkbox"
                                   className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
                                   onClick={() => toggleGenderFilter(option.value as BookGender)}
@@ -224,7 +269,7 @@ export default function Home() {
                                 </svg>
                               </div>
                             </div>
-                            <label htmlFor={`filter-${genderFilters.id}-${optionIdx}`} className="text-sm text-gray-600">
+                            <label htmlFor={`gender-filter-${optionIdx}`} className="text-sm text-gray-600">
                               {option.label}
                             </label>
                           </div>
@@ -237,7 +282,7 @@ export default function Home() {
                 <Disclosure key="numPageRangeFilter" as="div" className="border-b border-gray-200 py-6">
                   <label htmlFor="steps-range" className="block mb-2.5 text-sm font-medium text-heading">RANGO DE PÁGINAS</label>
                   <MultiRangeSlider
-                    key={filterKey}  // cuando cambia, React destruye y recrea el componente
+                    key={`numPageRangeFilter-${filterKey}`} // cuando cambia, React destruye y recrea el componente
                     min={0}
                     max={1500}
                     onChange={handleRangeChange} 
@@ -251,10 +296,12 @@ export default function Home() {
                     <input type='date' name="" id="date-from" 
                     className='py-2 px-2 text-sm focus:outline-none bg-gray-100 border border-gray-200 text-gray-500 rounded' 
                     value={filters.pickUpDate}
-                    onChange={(e) => updateSimpleFilter("pickUpDate", e.target.value)} />
+                    min={today}
+                    onChange={(e) => handlePickUpDate(e.target.value)} />
                     <input type='date' name="" id="date-to" 
                     className='py-2 px-2 text-sm focus:outline-none bg-gray-100 border border-gray-200 text-gray-500 rounded' 
                     value={filters.dropOffDate}
+                    min={filters.pickUpDate || today}
                     onChange={(e) => updateSimpleFilter("dropOffDate", e.target.value)} />
                   </div>
                 </Disclosure>
@@ -324,7 +371,7 @@ export default function Home() {
                     <Menu as="div" className="relative inline-block text-left">
                       <MenuButton className="group inline-flex justify-center text-md font-medium text-gray-700 hover:text-gray-900">
                         Ordenar por: 
-                        <span className='pl-2 text-blue-400 text-md'>{sortOptions.find((o) => o.current)?.name}</span>
+                        <span className='pl-2 text-blue-400 text-md'>{sortingOptions.find((o) => o.current)?.name}</span>
                         <ChevronDownIcon
                           aria-hidden="true"
                           className="-mr-1 ml-1 size-5 shrink-0 text-gray-400 group-hover:text-gray-500"
@@ -336,7 +383,7 @@ export default function Home() {
                         className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                         >
                         <div className="py-1">
-                          {sortOptions.map((option) => (
+                          {sortingOptions.map((option) => (
                             <MenuItem key={option.name}>
                               <a
                                 onClick={() => {updateSortOptions(option.value)}}
@@ -385,7 +432,7 @@ export default function Home() {
                     <Pagination
                         currentPage={page}
                         totalPages={totalPages}
-                        onPageChange={setPage}
+                        onPageChange={handlePageChange}
                       />
                   </div>
 
