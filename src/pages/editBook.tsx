@@ -53,7 +53,6 @@ import { BookType, BookTypeLabels } from "@/types/bookType"
 
     if (book.errors.length > 0) {
         setErrors(book.errors)
-        showToast.error('Por favor completá todos los campos requeridos')
         return
     }
 
@@ -152,6 +151,7 @@ import { BookType, BookTypeLabels } from "@/types/bookType"
                   placeholder="Buscar tipo..."
                  label="Tipo"
                  getLabel={(v) => BookTypeLabels[v]}
+                 disabled={isEditing}
                 />
               </div>
               {/* dos columnas   */}
