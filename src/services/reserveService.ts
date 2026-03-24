@@ -93,13 +93,17 @@ class ReserveService {
   async getUserOwnBooks(
     filterCriteria: string,
     sortCriteria: string,
-  ): Promise<ReservationProfileBook[]> {
-    const response = () =>
-      axios.get<ReservationProfileBookJSON[]>(
+    page: number,
+    pageSize: number
+  ) {
+    const { data } = await axios.get(
         REST_SERVER_URL +
-          `/userOwnBooks/${this.id}?filterCriteria=${filterCriteria}&sortCriteria=${sortCriteria}`,
+        `/userOwnBooks/${localStorage.getItem("id")}`,
+        { params: { filterCriteria, sortCriteria, page, pageSize } }
       )
-    return (await getAxiosData(response)).map(ReservationProfileBook.fromJSON)
+
+      console.log(data)
+    return data
   }
 
   async getUserLentBooksNumber(): Promise<number> {

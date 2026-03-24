@@ -24,7 +24,6 @@ export default function ProfileSettingsModal({
 }: ProfileSettingsIntf) {
   const [open, setOpen] = useState(false)
   const [errors, setErrors] = useState<ValidationMessage[]>([])
-  const [key, setKey] = useState<number>(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previewImg, setPreviewImg] = useState<string>(
   profile.img ? `http://localhost:9000/${profile.img}` : '/assets/default-img.png'
@@ -37,15 +36,18 @@ export default function ProfileSettingsModal({
     setPreviewImg(URL.createObjectURL(file))
     setSelectedImageFile(file)
   }
+  const handleOpen = () => {
+    setOpen(true)
+  }
 
   const handleImageClick = () => {
     fileInputRef.current?.click()
   }
-
+  
   const handleCancel = () => {
     setPreviewImg(profile.img ? `http://localhost:9000/${profile.img}` : '/assets/default-img.png')
     setSelectedImageFile(null)
-    setKey(key + 1)
+    setErrors([])
     setOpen(false)
   }
 
@@ -80,7 +82,7 @@ export default function ProfileSettingsModal({
         selectedImageFile,
       )
       onProfileUpdated(updatedProfile)
-      setKey(key + 1)
+      showToast.success('Cambios guardados')
       setOpen(false)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
@@ -88,8 +90,6 @@ export default function ProfileSettingsModal({
         "Error al guardar los cambios. " + errorMessage,
         "error",
       )
-      setKey(key + 1)
-      setOpen(false)
     } finally {
       setErrors([])
     }
@@ -103,7 +103,7 @@ useEffect(() => {
   return (
     <div>
       <button
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
         className="flex gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold inset-ring hover:bg-gray-200"
       >
         <GearIcon size={20} />
@@ -208,15 +208,18 @@ useEffect(() => {
                           field="invalid-format-cel"
                           errors={errors}
                         />
-                        <InputField
-                          id="userTypeInputField"
-                          name="userType"
-                          label="Tipo de perfil"
-                          defaultValue={profile.userType}
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
-                          // field="invalid-name"
-                          // errors={errors}
-                        />
+                        <div className="flex flex-col">
+                          <label className="text-sm text-gray-700">Tipo de perfil</label>
+                          <select
+                            name="userType"
+                            defaultValue={profile.userType}
+                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
+                          >
+                            <option value="Publicador">Publicador</option>
+                            <option value="Lector">Lector</option>
+                            <option value="Lector / Publicador">Lector / Publicador</option>
+                          </select>
+                        </div>
                         <div className="mt-5 flex justify-end">
                           <button
                             type="button"
