@@ -2,11 +2,10 @@ import { REST_SERVER_URL } from "@/config/configuration"
 import axios from "axios"
 import { getAxiosData } from "./common"
 // import { mapReservation, type ReservationDTO } from "@/types/reservationType"
-import type { ReservationProfileBookJSON } from "@/json/reservationJSON"
-import { ReservationProfileBook } from "@/model/reservationProfile"
 import type { BookReview } from "@/model/review"
 import { getId } from "@/context/AuthContext"
 
+import type { ReservationDates } from "@/types/reservationDates"
 
 class ReserveService {
   get id() {
@@ -111,6 +110,23 @@ class ReserveService {
       axios.get<number>(
         REST_SERVER_URL + `/userLentBooks/${this.id}`,
       ),
+    )
+  }
+
+  async getReservedDates(bookId: number) {
+    return axios.get<ReservationDates[]>(`${REST_SERVER_URL}/reservations/book/${bookId}/dates`)
+  }
+
+  async getBibliokarmas(bookId: number, userId: number, pickUpDate: string, dropOffDate: string) {
+    return axios.get<number>(
+      `${REST_SERVER_URL}/book-detail/${bookId}/bibliokarmas`,
+    {
+      params: {
+        userId,
+        pickUpDate,
+        dropOffDate
+      }
+    }
     )
   }
 }

@@ -47,6 +47,7 @@ export default function LoanDetails() {
       setTotalPages(backResponse.totalPages)
     } catch (error) {
       showToast.httpError(error, "Error al cargar las reservas")
+      console.error(error)
     }
   }
 

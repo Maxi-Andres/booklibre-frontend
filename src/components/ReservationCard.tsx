@@ -4,18 +4,28 @@ import type { Book } from "@/model/book"
 import { reserveService } from "@/services/reserveService"
 import { showToast } from "@/utils/toast"
 import { formatDate } from "@/utils/formatDate"
+import type { ReservationDates } from "@/types/reservationDates"
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import { useNavigate } from 'react-router'
+import { useOnInit } from "@/hooks/UseOnInit"
 
 type Props = {
   book: Book
   initialPickUpDate?: string
   initialDropOffDate?: string
+  reservedDates: ReservationDates[]
+  onBibliokarmasChange: (value: number) => void
 }
 
-export function ReservationCard({ book, initialPickUpDate, initialDropOffDate }: Props) {
+export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, reservedDates, onBibliokarmasChange}: Props) {
   const [pickUpDate, setPickUpDate] = useState(initialPickUpDate ?? "")
   const [dropOffDate, setDropOffDate] = useState(initialDropOffDate ?? "")
   const [showPicker, setShowPicker] = useState(false)
-  const today = new Date().toISOString().split('T')[0]
+  // const [bibliokarmas, setBibliokarmas] = useState(book.bookBibliokarmas)
+
+  const navigate = useNavigate()
+  // const today = new Date().toISOString().split('T')[0]
 
   const calculateDays = () => {
     if (!pickUpDate || !dropOffDate) return 0
@@ -27,11 +37,40 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate }:
   const handleConfirmReservation = async () => {
     try {
         await reserveService.createReservation(book.id, pickUpDate, dropOffDate)
-        showToast.success("Reserva confirmada!")
+        showToast.success("Reserva confirmada! Seras redireccionado a la página principal")
+        setTimeout(() => navigate("/"), 4000)
     } catch (error) {
         showToast.httpError(error, "Error al reservar")
+        window.location.reload()
     }
   }
+
+  const recalculateBibliokarmas = async (pickup: string, dropoff: string) => {
+    const userId = Number(localStorage.getItem("id"))
+    const res = await reserveService.getBibliokarmas(book.id, userId,pickup, dropoff)
+    onBibliokarmasChange(res.data)  // ← notificás al padre
+  }
+
+  // Solo verifica, sin side effects
+  const isDateInReservedPeriod = (date: string): boolean =>
+  reservedDates.some(period => date >= period.pickUpDate && date <= period.dropOffDate)
+
+  const isReserved = (date: Date): boolean =>
+    isDateInReservedPeriod(date.toISOString().split("T")[0])
+
+  const isDateReserved = (date: string): boolean => {
+    const reserved = isDateInReservedPeriod(date)
+    if (reserved) {
+      showToast.error("La fecha seleccionada no está disponible")
+    }
+    return reserved
+  }
+
+  useOnInit(() => {
+    if (pickUpDate && dropOffDate) {
+      recalculateBibliokarmas(pickUpDate, dropOffDate)
+    }}
+  )
 
   return (
     <div className="flex w-80 shrink-0 flex-col gap-2 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -84,22 +123,34 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate }:
             <div className="absolute top-full left-0 z-10 mt-1 w-full grid grid-cols-2 gap-3 p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
               <div>
                 <label className="text-xs text-gray-400 uppercase">Desde</label>
-                <input
-                  type="date"
-                  value={pickUpDate}
-                  min={today}
-                  onChange={(e) => setPickUpDate(e.target.value)}
-                  className="w-full text-xs px-2 py-1.5 border border-gray-200 rounded-md bg-gray-50"
+                <DatePicker
+                    selected={pickUpDate ? new Date(pickUpDate + "T00:00:00") : null}
+                    onChange={(date: Date | null) => {
+                        const newDate = date?.toISOString().split('T')[0] ?? ""
+                        setPickUpDate(newDate)
+                        if (newDate && dropOffDate) recalculateBibliokarmas(newDate, dropOffDate)
+                    }}
+                    minDate={new Date()}
+                    dayClassName={(date) => isReserved(date) ? "bg-[#FF8A80] text-white rounded-full" : ""}
+                    placeholderText="Desde"
+                    className="w-full text-xs px-2 py-1.5 border border-gray-200 rounded-md bg-gray-50"
+                    // onInputClick={recalculateBibliokarmas()}
                 />
               </div>
               <div>
                 <label className="text-xs text-gray-400 uppercase">Hasta</label>
-                <input
-                  type="date"
-                  value={dropOffDate}
-                  min={pickUpDate || today}
-                  onChange={(e) => setDropOffDate(e.target.value)}
-                  className="w-full text-xs px-2 py-1.5 border border-gray-200 rounded-md bg-gray-50"
+                <DatePicker
+                    selected={dropOffDate ? new Date(dropOffDate + "T00:00:00") : null}
+                    onChange={(date: Date | null) => {
+                        const newDate = date?.toISOString().split('T')[0] ?? ""
+                        setDropOffDate(newDate)
+                        if (pickUpDate && newDate) recalculateBibliokarmas(pickUpDate, newDate)
+                    }}
+                    minDate={pickUpDate ? new Date(pickUpDate + "T00:00:00") : new Date()}
+                    dayClassName={(date) => isReserved(date) ? "bg-[#FF8A80] text-white rounded-full" : ""}
+                    placeholderText="Hasta"
+                    className="w-full text-xs px-2 py-1.5 border border-gray-200 rounded-md bg-gray-50"
+                    // onInputClick={recalculateBibliokarmas()}
                 />
               </div>
             </div>
@@ -126,7 +177,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate }:
       {/* ===== Confirm Button ===== */}
       <button
         onClick={handleConfirmReservation}
-        disabled={!pickUpDate || !dropOffDate}
+        disabled={!pickUpDate || !dropOffDate || isDateReserved(pickUpDate) || isDateReserved(dropOffDate)}
         className="mt-1 cursor-pointer flex w-full items-center justify-center gap-2 rounded-xl bg-[#FF8A80] py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Confirmar Reserva
@@ -136,10 +187,6 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate }:
           <path d="M9 12l2 2l4 -4" />
         </svg>
       </button>
-
-      {/* <p className="text-center text-xs text-gray-400">
-        Con la reserva no se encontrará disponible en el rango de fechas
-      </p> */}
     </div>
   )
 }
