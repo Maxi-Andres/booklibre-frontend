@@ -9,9 +9,10 @@ interface GenericComboboxProps<T extends string> {
   placeholder?: string
   label?:string
   getLabel?: (value: T) => string
+  disabled?: boolean
 }
 
-export function GenericCombobox<T extends string>({ options, value, onChange, placeholder = 'Buscar...', label, getLabel }: GenericComboboxProps<T>) {
+export function GenericCombobox<T extends string>({ options, value, onChange, placeholder = 'Buscar...', label, getLabel, disabled }: GenericComboboxProps<T>) {
   const [query, setQuery] = useState('')
 
   const filtered = query === ''
@@ -24,7 +25,7 @@ export function GenericCombobox<T extends string>({ options, value, onChange, pl
       {label && (
         <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
       )}
-      <Combobox value={value} onChange={onChange}>
+      <Combobox value={value} onChange={onChange}  disabled={disabled}>
         <div className="relative">
           <ComboboxInput
             placeholder={placeholder}
