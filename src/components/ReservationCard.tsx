@@ -32,7 +32,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
     if (!pickUpDate || !dropOffDate) return 0
     const from = new Date(pickUpDate + "T00:00:00")
     const to = new Date(dropOffDate + "T00:00:00")
-    return Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24))
+    return Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)) + 1
   }
 
   const handleConfirmReservation = async () => {
