@@ -8,17 +8,19 @@ import { showToast } from "@/utils/toast"
 const statusStyles: Record<string, string> = {
   ACTIVE: "bg-orange-400 text-white",
   AVAILABLE: "bg-green-500 text-white",
+  RESERVED: "bg-green-500 text-white",
   BORROWED: "bg-orange-400 text-white",
   SOON_TO_END: "bg-orange-400 text-white",
   RETURNED: "bg-green-500 text-white",
 }
 
 const statusLabels: Record<string, string> = {
-  ACTIVE: "PRESTADO",
-  AVAILABLE: "DISPONIBLE",
-  BORROWED: "PRESTADO",
-  SOON_TO_END: "PRESTADO",
-  RETURNED: "DISPONIBLE",
+  ACTIVE: "Prestado",
+  AVAILABLE: "Disponible",
+  BORROWED: "Prestado",
+  RESERVED: "Disponible",
+  SOON_TO_END: "Prestado",
+  RETURNED: "Disponible",
 }
 
 export default function ProfileBook({

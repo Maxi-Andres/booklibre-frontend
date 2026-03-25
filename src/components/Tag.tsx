@@ -3,6 +3,7 @@ import { DotIcon } from "@phosphor-icons/react"
 
 export default function Tag({ text, buttonOnClickFunction, filterKind, filter }: { text: ReactNode, buttonOnClickFunction?: () => void, filterKind: string, filter: string }) {
   const identifier = text == "Todos" || text == "Disponibles" || text == "Prestados"
+  
   const filterColor = 
     filter == filterKind
       ? "bg-black text-white"

@@ -7,7 +7,7 @@ import RatingModal from "./RatingModal"
 const statusStyles: Record<string, string> = {
   ACTIVE: "bg-blue-500 text-white",
   AVAILABLE: "bg-green-500 text-white",
-  BORROWED: "bg-green-500 text-white",
+  RESERVED: "bg-green-500 text-white",
   SOON_TO_END: "bg-orange-400 text-white",
   RETURNED: "bg-red-400 text-white",
 }
@@ -15,7 +15,7 @@ const statusStyles: Record<string, string> = {
 const statusLabels: Record<string, string> = {
   ACTIVE: "ACTIVO",
   AVAILABLE: "PRESTADO",
-  BORROWED: "PRESTADO",
+  RESERVED: "PRESTADO",
   SOON_TO_END: "PRÓXIMO A VENCER",
   RETURNED: "DEVUELTO",
 }
