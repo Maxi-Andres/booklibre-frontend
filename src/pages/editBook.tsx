@@ -255,18 +255,15 @@ import { BookType, BookTypeLabels } from "@/types/bookType"
                           }
                           onChange={(e) => {
                           const raw = e.target.value  // "2024-03-25"
-                          
-                          // Solo actualizás el estado cuando la fecha está completa
                           if (!raw) {
                               updateBook('publishDate', null)
                               return
                           }
-                          
                           const [year, month, day] = raw.split('-').map(Number)
-                          
-                          // Esperás a que el año tenga 4 dígitos
                           if (year < 1000) return
-                          
+                          //en javascript/typescript los meses van de 0 a 11 rarooo
+                          //"2024-01-25"  → month = 1  → 1 - 1 = 0   Enero en JS
+                          //"2024-12-25"  → month = 12 → 12 - 1 = 11  Diciembre en JS
                           const date = new Date(year, month - 1, day)
                           updateBook('publishDate', date)
                         }}
