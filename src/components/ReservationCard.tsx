@@ -1,4 +1,3 @@
-// components/ReservationCard.tsx
 import { useState } from "react"
 import type { Book } from "@/model/book"
 import { reserveService } from "@/services/reserveService"
@@ -49,7 +48,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
   const recalculateBibliokarmas = async (pickup: string, dropoff: string) => {
     const userId = getId()
     const res = await reserveService.getBibliokarmas(book.id, userId,pickup, dropoff)
-    onBibliokarmasChange(res.data)  // ← notificás al padre
+    onBibliokarmasChange(res.data)
   }
 
   // Solo verifica, sin side effects

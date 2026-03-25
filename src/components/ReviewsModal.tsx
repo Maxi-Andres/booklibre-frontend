@@ -8,6 +8,7 @@ import { showToast } from '@/utils/toast'
 type ReviewsModalProps = {
   bookId: number
   bookTitle?: string
+  initialReviews?: BookReview[]
 }
 
 export function StarRating({ rating }: { rating: number }) {
@@ -23,7 +24,7 @@ export function StarRating({ rating }: { rating: number }) {
   )
 }
 
-export default function ReviewsModal({ bookId, bookTitle }: ReviewsModalProps) {
+export default function ReviewsModal({ bookId, bookTitle, initialReviews = [] }: ReviewsModalProps) {
   const [open, setOpen] = useState(false)
   const [reviews, setReviews] = useState<BookReview[]>([])
   const [page, setPage] = useState(0)
@@ -31,19 +32,25 @@ export default function ReviewsModal({ bookId, bookTitle }: ReviewsModalProps) {
 
   const loadReviews = async (pageToLoad: number) => {
     try {
-      const response = await reserveService.getReviews(bookId, pageToLoad, 2)
-      console.log('Pido dos mas al back')
+      const response = await reserveService.getReviews(bookId, pageToLoad, 4)
+      console.log('Respuesta del back:', response.data)
       setReviews(prev => [...prev, ...response.data])
       // esto hace que no me deje seguir haciendo llamadas al back si la última respuesta no trajo 2 reseñas, es decir, si ya no hay más
-      setHasMore(response.data.length === 2)
+      setHasMore(response.data.length === 4)
     } catch (error) {
       showToast.httpError(error, 'Error al cargar libro')
     }
   }
 
-  const handleOpen = () => {
+  const handleOpen = async () => {
     setOpen(true)
-    loadReviews(0)
+    setReviews(initialReviews)
+    if (initialReviews.length < 4) {
+      setHasMore(false)
+    } else {
+      const response = await reserveService.getReviews(bookId, 1, 4)
+      setHasMore(response.data.length > 0)
+    }
   }
 
   const handleClose = () => {
