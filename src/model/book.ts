@@ -104,6 +104,10 @@ export class Book {
     this.addError('numPages', 'Debe ingresar la cantidad de paginas');
   } 
 
+  if (this.numPages > 1500) {
+    this.addError('numPages', 'El libro no debe tener mas de 1500 paginas');
+  }
+
   if (!this.isbn?.trim()) {
     this.addError('isbn', 'Debe ingresar el ISBN');
   } 
