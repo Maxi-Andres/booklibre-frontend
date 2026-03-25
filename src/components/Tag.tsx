@@ -2,7 +2,7 @@ import { type ReactNode } from "react"
 import { DotIcon } from "@phosphor-icons/react"
 
 export default function Tag({ text, buttonOnClickFunction, filterKind, filter }: { text: ReactNode, buttonOnClickFunction?: () => void, filterKind: string, filter: string }) {
-
+  const identifier = text == "Todos" || text == "Disponibles" || text == "Prestados"
   const filterColor = 
     filter == filterKind
       ? "bg-black text-white"
@@ -14,7 +14,7 @@ export default function Tag({ text, buttonOnClickFunction, filterKind, filter }:
       className={`rounded-full flex items-center p-2 pr-3 pl-3 text-xs font-bold ${filterColor}`}
       onClick={buttonOnClickFunction}
     >
-      {<DotIcon size={24} />}
+      {identifier || <DotIcon size={24} />}
       {text}
     </button>
   )
