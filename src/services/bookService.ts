@@ -14,7 +14,7 @@ class BookService {
 
   async createBook(book: Book): Promise<Book> { 
     const response = () => axios.post<Book>(
-      REST_SERVER_URL + `/crear-libro`, toBookCreateDTO(book)
+      REST_SERVER_URL + `/create-book`, toBookCreateDTO(book)
     )
     return (await getAxiosData(response))
   }
@@ -22,13 +22,13 @@ class BookService {
   async updateBook(id: number, book: Book): Promise<Book> {
     const dto = toBookCreateDTO(book)
     const response = () => axios.put<Book>(
-      REST_SERVER_URL + `/editar-libro/${id}`, dto
+      REST_SERVER_URL + `/edit-book/${id}`, dto
     )
     return (await getAxiosData(response))
   }
 
 async deleteBook(id: number): Promise<void> {
-  const response = () => axios.delete(REST_SERVER_URL + `/eliminar-libro/${id}`)
+  const response = () => axios.delete(REST_SERVER_URL + `/delete-book/${id}`)
   return (await getAxiosData(response))
 }
 
