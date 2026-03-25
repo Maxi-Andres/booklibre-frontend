@@ -2,20 +2,23 @@ export const getErrorMessage = (error: any): string => {
   if (error.response && error.response.data) {
     const responseData = error.response.data
     const status = error.response.status
+
     if (typeof responseData === "object" && responseData !== null) {
-      if (responseData.detalle) {
-        return responseData.detalle
-      }
-
-      if (responseData.message && status < 500) {
-        return responseData.message
-      }
-
       if (status >= 500) {
         return "Ocurrió un error, consulte al administrador del sistema."
       }
+      if (responseData.detalle) {
+        return responseData.detalle
+      }
+      if (responseData.detail) {
+        return responseData.detail
+      }
+      if (responseData.message) {
+        return responseData.message
+      }
     }
-    if (typeof responseData === "string" && status < 500) {
+
+    if (typeof responseData === "string") {
       return responseData
     }
   } else if (error.code === "ERR_NETWORK") {

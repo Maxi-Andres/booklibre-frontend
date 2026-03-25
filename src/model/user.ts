@@ -81,6 +81,7 @@ export class UserType {
    if(!this.name){
      this.addError('name','Debe ingresar un nombre')
    }
+
   return this.errors;
 }
 }
