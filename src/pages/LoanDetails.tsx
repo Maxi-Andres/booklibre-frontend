@@ -11,6 +11,7 @@ import { getId } from "@/context/AuthContext"
 
 //! hace TESTS
 //! arregla lo de los bibliokarmas
+//? ver de sacar el when y hacer un enum
 
 export default function LoanDetails() {
   const [activeTab, setActiveTab] = useState<
@@ -94,6 +95,7 @@ export default function LoanDetails() {
               key={tab}
               onClick={() => {
                 setActiveTab(tab)
+                setActivePage(0)
                 if (tab === "prestados-a-mi") {
                   getReservesByUserId()
                 } else {
