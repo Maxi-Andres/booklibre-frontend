@@ -21,7 +21,6 @@ export const Register = () => {
     ev.preventDefault()
 
     const form = ev.currentTarget as HTMLFormElement
-    const formData = new FormData(form)
 
     const userRegister = new UserType(user.email, user.password, user.name)
 
@@ -32,19 +31,19 @@ export const Register = () => {
       return
     }
 
+    if (user.password !== user.passwordRetry) {
+      showToast.error('Las contraseñas no coinciden.')
+      return
+    }
+
      try {
-      if (user.password !== user.passwordRetry) {
-            showToast.httpError('Las contraseñas no coinciden.', 'error')
-            return
-        }
         await userService.createUser(userRegister)
             showToast.success('Usuario generado con exito. Seras redirigido al login')
             setTimeout(() => {
                 navigate('/login') 
             }, 2000)
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      showToast.httpError(errorMessage, 'Error al guardar el libro')
+      showToast.httpError(error, 'Error al registrarse') 
     } finally {
       setErrors([])
     }
