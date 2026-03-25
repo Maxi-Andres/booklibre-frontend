@@ -5,13 +5,14 @@ import RatingModal from "./RatingModal"
 
 // Record<tipoDeClave, tipoDeValor>
 const statusStyles: Record<string, string> = {
-  AVAILABLE: "bg-blue-500 text-white",
+  ACTIVE: "bg-blue-500 text-white",
   BORROWED: "bg-green-500 text-white",
   SOON_TO_END: "bg-orange-400 text-white",
   RETURNED: "bg-red-400 text-white",
 }
 
 const statusLabels: Record<string, string> = {
+  ACTIVE: "ACTIVO",
   AVAILABLE: "ACTIVO",
   BORROWED: "PRESTADO",
   SOON_TO_END: "PRÓXIMO A VENCER",

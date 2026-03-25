@@ -37,11 +37,11 @@ export default function Profile() {
 
   const location = useLocation()
   const navigate = useNavigate()
-  
+
   var pageSize: number = 4
 
   var disabledCondition: boolean = totalBooksNumber == 0
-  
+
   const toggleTitleSort = () => {
     sort == "ALPHABETICAL_ASC"
       ? setSort("ALPHABETICAL_DESC")
@@ -49,38 +49,40 @@ export default function Profile() {
   }
 
   const toggleDateSort = () => {
-    sort == "DATE_ASC"
-      ? setSort("DATE_DESC")
-      : setSort("DATE_ASC")
+    sort == "DATE_ASC" ? setSort("DATE_DESC") : setSort("DATE_ASC")
   }
 
   const getUser = async () => {
     try {
       const userProfile = await userProfileService.getProfile()
       setProfile(userProfile)
+      console.log(userProfile)
+      console.log(new Date(userProfile.timestamp))
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      showToast.httpError(error, 'Error al traer su usuario. ' + errorMessage)
+      showToast.httpError(error, "Error al traer su usuario. " + errorMessage)
     }
   }
 
-  const getUserOwnBooks = async (filterCriteria: string, sortCriteria: string) => {
+  const getUserOwnBooks = async (
+    filterCriteria: string,
+    sortCriteria: string,
+  ) => {
     setFilter(filterCriteria)
     try {
-    // -> devolver tambien el largo total de la lista de libros de un usuario
+      // -> devolver tambien el largo total de la lista de libros de un usuario
       const backResponse = await reserveService.getUserOwnBooks(
-        filterCriteria, 
+        filterCriteria,
         sortCriteria,
         activePage,
-        pageSize
+        pageSize,
       )
       setShownBooks(backResponse.items.map(ReservationProfileBook.fromJSON))
       setTotalPages(backResponse.totalPages)
       setTotalBooksNumber(backResponse.total)
-
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      showToast.httpError(error, 'Error buscar sus libros. ' + errorMessage)
+      showToast.httpError(error, "Error buscar sus libros. " + errorMessage)
     }
   }
 
@@ -90,7 +92,10 @@ export default function Profile() {
       setUserReadBooksNumber(userReadBooksNumber)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      showToast.httpError(error, 'Error al contar sus libros leidos. ' + errorMessage)
+      showToast.httpError(
+        error,
+        "Error al contar sus libros leidos. " + errorMessage,
+      )
     }
   }
 
@@ -100,7 +105,10 @@ export default function Profile() {
       setUserLentBooksNumber(userLentBooksNumber)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      showToast.httpError(error, 'Error al contar sus libros prestados. ' + errorMessage)
+      showToast.httpError(
+        error,
+        "Error al contar sus libros prestados. " + errorMessage,
+      )
     }
   }
 
@@ -116,8 +124,7 @@ export default function Profile() {
       isFirstRender.current = false
       return
     }
-    getUserOwnBooks(filter, sort) 
-
+    getUserOwnBooks(filter, sort)
   }, [activePage, filter, sort])
 
   useEffect(() => {
@@ -134,7 +141,11 @@ export default function Profile() {
       <section className="flex w-245 flex-col gap-7">
         <section className="col-span-3 flex h-42 items-center gap-4 rounded-xl border border-gray-200 bg-white p-4">
           <img
-            src={profile.img ? `http://localhost:9000/${profile.img}` : '/assets/default-img.png'}
+            src={
+              profile.img
+                ? `http://localhost:9000/${profile.img}`
+                : "/assets/default-img.png"
+            }
             alt="Profile Image"
             className="h-26 w-26 rounded-full object-cover"
           />
@@ -144,7 +155,11 @@ export default function Profile() {
             <div className="flex gap-1 text-sm text-gray-400">
               <p>
                 <CalendarBlankIcon size={15} className="inline" /> Se unio en
-                {" " + (profile.timestamp.slice(6) ? new Date(profile.timestamp).getFullYear() : new Date().getFullYear())} ·
+                {" " +
+                  (profile.timestamp
+                    ? profile.timestamp.slice(6)
+                    : new Date().getFullYear())}{" "}
+                ·
               </p>
               <p>
                 <MapPinIcon size={15} className="inline" />{" "}
@@ -156,7 +171,10 @@ export default function Profile() {
               </p>
             </div>
           </div>
-          <ProfileSettingsModal profile={profile} onProfileUpdated={setProfile}/>
+          <ProfileSettingsModal
+            profile={profile}
+            onProfileUpdated={setProfile}
+          />
         </section>
 
         <section className="flex gap-7">
@@ -173,7 +191,13 @@ export default function Profile() {
               <article className="border-b-2 border-gray-300 pb-2">
                 <p className="text-xs font-bold text-gray-500">TELÉFONO</p>
                 <p>
-                  {profile.cel ? "+54" + ' (' + profile.cel.slice(0, 2) + ') ' + profile.cel.slice(3) : 'Aun no registrado'}
+                  {profile.cel
+                    ? "+54" +
+                      " (" +
+                      profile.cel.slice(0, 2) +
+                      ") " +
+                      profile.cel.slice(3)
+                    : "Aun no registrado"}
                 </p>
               </article>
               <article>
@@ -186,14 +210,18 @@ export default function Profile() {
 
             <section className="flex h-42 items-center justify-center gap-4 rounded-xl border border-gray-200 bg-red-100 p-5">
               <article className="flex w-28 flex-col items-center gap-1 rounded-xl bg-gray-50 p-2">
-                <p className="text-xl font-extrabold text-gray-800">{userLentBooksNumber}</p>
+                <p className="text-xl font-extrabold text-gray-800">
+                  {userLentBooksNumber}
+                </p>
                 <p className="text-center text-sm text-gray-500">
                   Libros Prestados
                 </p>
               </article>
 
               <article className="flex h-22 w-28 flex-col items-center justify-center gap-1 rounded-xl bg-gray-50 p-2">
-                <p className="text-xl font-extrabold text-gray-800">{userReadBooksNumber}</p>
+                <p className="text-xl font-extrabold text-gray-800">
+                  {userReadBooksNumber}
+                </p>
                 <p className="text-center text-sm text-gray-500">
                   Libros Leídos
                 </p>
@@ -204,7 +232,10 @@ export default function Profile() {
           <div className="flex flex-1 flex-col">
             <section className="mb-4 flex justify-between">
               <p className="text-2xl font-bold">Gestión de Mis Libros</p>
-              <a className="cursor-pointer rounded-lg bg-red-300 p-1.5 text-sm hover:bg-red-400" href='/crear-libro'>
+              <a
+                className="cursor-pointer rounded-lg bg-red-300 p-1.5 text-sm hover:bg-red-400"
+                href="/crear-libro"
+              >
                 <PlusCircleIcon size={20} className="mr-1 inline" />
                 <p className="inline font-bold">Agregar Nuevo Libro</p>
               </a>
@@ -212,17 +243,42 @@ export default function Profile() {
 
             <section className="flex h-102 flex-1 flex-col gap-1 rounded-xl border border-gray-200 bg-white">
               <section className="flex gap-2 p-4">
-                <Tag filterKind="ALL" filter={filter} text="Todos" buttonOnClickFunction={() => getUserOwnBooks("ALL", sort)}></Tag>
-                <Tag filterKind="AVAILABLE" filter={filter} text="Disponibles" buttonOnClickFunction={() => getUserOwnBooks("AVAILABLE", sort)}></Tag>
-                <Tag filterKind="BORROWED" filter={filter} text="Prestados" buttonOnClickFunction={() => getUserOwnBooks("BORROWED", sort)}></Tag>
+                <Tag
+                  filterKind="ALL"
+                  filter={filter}
+                  text="Todos"
+                  buttonOnClickFunction={() => getUserOwnBooks("ALL", sort)}
+                ></Tag>
+                <Tag
+                  filterKind="AVAILABLE"
+                  filter={filter}
+                  text="Disponibles"
+                  buttonOnClickFunction={() =>
+                    getUserOwnBooks("AVAILABLE", sort)
+                  }
+                ></Tag>
+                <Tag
+                  filterKind="BORROWED"
+                  filter={filter}
+                  text="Prestados"
+                  buttonOnClickFunction={() =>
+                    getUserOwnBooks("BORROWED", sort)
+                  }
+                ></Tag>
               </section>
               <section className="flex gap-2 px-3">
                 <div className="flex w-3/5 items-center justify-between">
                   <p>Titulo y Autor</p>
-                  <button className={disabledCondition ? "" : "hover:cursor-pointer"} disabled={disabledCondition}>
-                    <ArrowsDownUpIcon size={15} onClick={() => { 
-                      toggleTitleSort()
-                      }}/>
+                  <button
+                    className={disabledCondition ? "" : "hover:cursor-pointer"}
+                    disabled={disabledCondition}
+                  >
+                    <ArrowsDownUpIcon
+                      size={15}
+                      onClick={() => {
+                        toggleTitleSort()
+                      }}
+                    />
                   </button>
                 </div>
                 <div className="flex items-center justify-center">
@@ -230,10 +286,16 @@ export default function Profile() {
                 </div>
                 <div className="flex items-center justify-center">
                   <p>Agregado</p>
-                  <button className={disabledCondition ? "" : "hover:cursor-pointer"} disabled={disabledCondition}>
-                    <ArrowsDownUpIcon size={15} onClick={() => {
-                      toggleDateSort()
-                    }}/>
+                  <button
+                    className={disabledCondition ? "" : "hover:cursor-pointer"}
+                    disabled={disabledCondition}
+                  >
+                    <ArrowsDownUpIcon
+                      size={15}
+                      onClick={() => {
+                        toggleDateSort()
+                      }}
+                    />
                   </button>
                 </div>
                 <p>Acciones</p>
@@ -241,7 +303,8 @@ export default function Profile() {
               <div>
                 <section className="pr-1">
                   {shownBooks.map((reserve) => (
-                    <ProfileBook key={reserve.book.id} 
+                    <ProfileBook
+                      key={reserve.book.id}
                       bookId={reserve.book.id}
                       bookImg={reserve.book.imageSrc}
                       bookAuthor={reserve.book.authorName}
@@ -249,11 +312,15 @@ export default function Profile() {
                       bookName={reserve.book.title}
                       bookState={reserve.state}
                       additionDate={reserve.book.timestamp}
-                      onDelete={() => setShownBooks(prev => prev.filter(r => r.book.id !== reserve.book.id))}
+                      onDelete={() =>
+                        setShownBooks((prev) =>
+                          prev.filter((r) => r.book.id !== reserve.book.id),
+                        )
+                      }
                     />
                   ))}
                 </section>
-                <PaginationButtons 
+                <PaginationButtons
                   page={activePage}
                   listSize={shownBooks.length}
                   totalPages={totalPages}
