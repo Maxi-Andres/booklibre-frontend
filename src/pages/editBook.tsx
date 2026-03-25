@@ -31,7 +31,11 @@ import { BookType, BookTypeLabels } from "@/types/bookType"
   const fetchBook = async () => {
     try {
       const found = await bookService.getBookDetail(Number(id))
-      if (found) setBook(found)
+        if (found) {
+            // Trunca en 500 caracteres al cargar del back
+            found.desc = found.desc?.slice(0, 500) ?? ''
+            setBook(found)
+        }
     } catch (error) {
       showToast.httpError(error, 'Error al cargar el libro')
     }
@@ -237,15 +241,33 @@ import { BookType, BookTypeLabels } from "@/types/bookType"
                 <div className="col-start-4 col-end-7">
                   <span >
                     <div>
-                      <InputField 
+                      <InputField
                         label="Fecha de publicacion"
                         id="publishDate"
-                        type="text"
+                        type="date"
                         required
-                        // todo lo que sigue a ? es para transformar al tipo de fecha que acepta el inputfield
-                        value={book.publishDate ? new Date(book.publishDate).toISOString().split('T')[0] : ''}
-                        onChange={(e) => updateBook('publishDate', e.target.value)}
-                      />
+                          value={
+                              book.publishDate
+                                  ? new Date(new Date(book.publishDate).getTime() + 
+                                    new Date(book.publishDate).getTimezoneOffset() * 60000)
+                                    .toISOString().split('T')[0]
+                                  : ''
+                          }
+                          onChange={(e) => {
+                          const raw = e.target.value  // "2024-03-25"
+                          if (!raw) {
+                              updateBook('publishDate', null)
+                              return
+                          }
+                          const [year, month, day] = raw.split('-').map(Number)
+                          if (year < 1000) return
+                          //en javascript/typescript los meses van de 0 a 11 rarooo
+                          //"2024-01-25"  → month = 1  → 1 - 1 = 0   Enero en JS
+                          //"2024-12-25"  → month = 12 → 12 - 1 = 11  Diciembre en JS
+                          const date = new Date(year, month - 1, day)
+                          updateBook('publishDate', date)
+                        }}
+                        />
                       <ValidationField field="publishDate" errors={errors} />
                     </div>
                   </span>

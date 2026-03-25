@@ -7,11 +7,11 @@ import { UserType } from '@/model/user'
 
 const mockedPost = vi.spyOn(axios, 'post')
 
+
 const mockUserResponse = {
   id: 1,
   name: 'Juan',
   email: 'juan@example.com',
-  password: '123456',
 }
 
 describe('UserService', () => {
@@ -20,7 +20,6 @@ describe('UserService', () => {
     vi.clearAllMocks()
   })
 
-  // =================== login ===================
   describe('login', () => {
     it('debería retornar un UserType al loguearse correctamente', async () => {
       mockedPost.mockResolvedValue({ data: mockUserResponse })
@@ -29,6 +28,8 @@ describe('UserService', () => {
 
       expect(result).toBeInstanceOf(UserType)
       expect(result.email).toBe('juan@example.com')
+      expect(result.name).toBe('Juan')         
+      expect(result.password).toBe('')         
     })
 
     it('debería llamar al endpoint correcto con los datos correctos', async () => {
@@ -50,7 +51,6 @@ describe('UserService', () => {
     })
   })
 
-  // =================== createUser ===================
   describe('createUser', () => {
     it('debería llamar al endpoint correcto al registrar un usuario', async () => {
       mockedPost.mockResolvedValue({})
@@ -60,11 +60,12 @@ describe('UserService', () => {
 
       expect(mockedPost).toHaveBeenCalledWith(
         expect.stringContaining('/register'),
-        expect.objectContaining({
+        {
           name: 'Juan',
           email: 'juan@example.com',
           password: '123456',
-        })
+          passwordRetry: '',
+        }
       )
     })
 
