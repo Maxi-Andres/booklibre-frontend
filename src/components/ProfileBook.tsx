@@ -58,23 +58,25 @@ export default function ProfileBook({
   }
 
   return (
-    <div className="flex h-25 items-center justify-center gap-4 pl-3">
-      <img src={bookImg} alt="" className="h-23 w-16 rounded-lg" />
-      <div className="w-3/8">
-        <p>{bookName}</p>
-        <p>{bookAuthor}</p>
-        <p>{bookGender}</p>
+    <div className="flex h-25 items-center justify-center gap-4 pl-2 pr-2">
+      <img src={bookImg} alt="" className="h-23 w-15 rounded-lg" />
+      <div className="min-w-0 flex-1">
+        <p className="truncate">{bookName}</p>
+        <p className="truncate">{bookAuthor}</p>
+        <p className="truncate">{bookGender}</p>
       </div>
-      <span
-        className={`flex rounded-full pr-1 font-semibold ${statusStyles[bookState]}`}
-      >
-        {<DotIcon size={20}/>}
-        {statusLabels[bookState] ?? bookState}
-      </span>
-      <div className="min-w-20 items-center text-sm text-gray-400">
+      <div className="w-28">
+        <span
+          className={`flex rounded-full pr-1 font-semibold ${statusStyles[bookState]}`}
+        >
+          {<DotIcon size={20}/>}
+          {statusLabels[bookState] ?? bookState}
+        </span>
+      </div>
+      <div className="w-24 text-sm text-gray-400">
         {formatDate(additionDate)}
       </div>
-      <div>
+      <div className="w-14">
         <button className="text-gray-500 hover:cursor-pointer hover:text-gray-900">
           <PencilIcon
             size={24}

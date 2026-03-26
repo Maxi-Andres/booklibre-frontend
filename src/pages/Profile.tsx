@@ -40,7 +40,7 @@ export default function Profile() {
 
   var pageSize: number = 4
 
-  var disabledCondition: boolean = totalBooksNumber == 0
+  var disabledCondition: boolean = totalBooksNumber <= 1
 
   const toggleTitleSort = () => {
     sort == "ALPHABETICAL_ASC"
@@ -70,7 +70,6 @@ export default function Profile() {
   ) => {
     setFilter(filterCriteria)
     try {
-      // -> devolver tambien el largo total de la lista de libros de un usuario
       const backResponse = await reserveService.getUserOwnBooks(
         filterCriteria,
         sortCriteria,
@@ -135,7 +134,7 @@ export default function Profile() {
   }, [location.state])
 
   useOnInit(() => handleProfileLoad(filter, sort))
-
+  
   return (
     <div className="flex min-h-screen justify-center bg-gray-100 pt-12">
       <section className="flex w-245 flex-col gap-7">
@@ -186,7 +185,7 @@ export default function Profile() {
               </article>
               <article className="border-b-2 border-gray-300 pb-2">
                 <p className="text-xs font-bold text-gray-500">EMAIL</p>
-                <p>{profile.email}</p>
+                <p className="truncate" title={profile.email}>{profile.email}</p>
               </article>
               <article className="border-b-2 border-gray-300 pb-2">
                 <p className="text-xs font-bold text-gray-500">TELÉFONO</p>
@@ -266,8 +265,8 @@ export default function Profile() {
                   }
                 ></Tag>
               </section>
-              <section className="flex gap-2 px-3">
-                <div className="flex w-3/5 items-center justify-between">
+              <section className="flex items-center gap-4 pl-2 pr-2 text-sm text-gray-500">
+                <div className="flex flex-1  items-center justify-between">
                   <p>Titulo y Autor</p>
                   <button
                     className={disabledCondition ? "" : "hover:cursor-pointer"}
@@ -281,10 +280,10 @@ export default function Profile() {
                     />
                   </button>
                 </div>
-                <div className="flex items-center justify-center">
+                <div className="flex w-28 items-center justify-center">
                   <p>Disponibilidad</p>
                 </div>
-                <div className="flex items-center justify-center">
+                <div className="flex w-24 items-center justify-center">
                   <p>Agregado</p>
                   <button
                     className={disabledCondition ? "" : "hover:cursor-pointer"}
@@ -298,7 +297,7 @@ export default function Profile() {
                     />
                   </button>
                 </div>
-                <p>Acciones</p>
+                <p className="w-16 text-center">Acciones</p>
               </section>
               <div>
                 <section className="pr-1">
