@@ -103,10 +103,9 @@ export default function Profile() {
       const userLentBooksNumber = await reserveService.getUserLentBooksNumber()
       setUserLentBooksNumber(userLentBooksNumber)
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
       showToast.httpError(
         error,
-        "Error al contar sus libros prestados. " + errorMessage,
+        "Error al contar sus libros prestados."
       )
     }
   }

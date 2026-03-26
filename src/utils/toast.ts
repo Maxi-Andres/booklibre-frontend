@@ -20,12 +20,18 @@ const getErrorMessage = (error: any): string => {
   return error?.message ?? "Error desconocido"
 }
 
+const showUnique = (fn: (msg: string, options: object) => void, msg: string) => {
+  const id = msg
+  if (!toast.isActive(id)) fn(msg, { toastId: id })
+}
+
 export const showToast = {
-  success: (msg: string) => toast.success(msg),
-  warning: (msg: string) => toast.warning(msg),
-  error: (msg: string) => toast.error(msg),
+  success: (msg: string) => showUnique(toast.success.bind(toast), msg),
+  warning: (msg: string) => showUnique(toast.warning.bind(toast), msg),
+  error: (msg: string) => showUnique(toast.error.bind(toast), msg),
   httpError: (error: unknown, prefix?: string) => {
     const msg = getErrorMessage(error)
-    toast.error(prefix ? `${prefix}: ${msg}` : msg)
+    const full = prefix ? `${prefix}: ${msg}` : msg
+    showUnique(toast.error.bind(toast), full)
   },
 }
