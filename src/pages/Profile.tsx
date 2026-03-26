@@ -58,8 +58,8 @@ export default function Profile() {
     try {
       const userProfile = await userProfileService.getProfile()
       setProfile(userProfile)
-      console.log(userProfile)
-      console.log(new Date(userProfile.timestamp))
+      //console.log(userProfile)
+      //console.log(new Date(userProfile.timestamp))
     } catch (error) {
       const errorMessage = getErrorMessage(error)
       showToast.httpError(error, "Error al traer su usuario. " + errorMessage)

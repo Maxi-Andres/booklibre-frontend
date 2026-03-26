@@ -268,6 +268,7 @@ import { BookType, BookTypeLabels } from "@/types/bookType"
                           updateBook('publishDate', date)
                         }}
                         />
+
                       <ValidationField field="publishDate" errors={errors} />
                     </div>
                   </span>
