@@ -7,7 +7,6 @@ import {
   DisclosurePanel,
   Menu,
   MenuButton,
-  MenuItem,
   MenuItems,
 } from '@headlessui/react'
 // import { XMarkIcon } from '@heroicons/react/24/outline'
@@ -24,17 +23,13 @@ import { bookService } from '@/services/bookService'
 import OrderDirectionArrow from '@/components/OrderDirectionArrow/OrderDirectionArrow'
 import { useOnInit } from '@/hooks/UseOnInit'
 import { showToast } from '@/utils/toast'
+import SelectSorting from '@/components/SelectSorting'
 
 const initialSortOptions = [
   { name: 'Título', value: "title", current: true },
   { name: 'Autor', value: "author", current: false },
   { name: 'Dueño', value: "owner", current: false },
 ]
-// Esto le pone las clases a las opciones del Select de Ordenar por.
-// Si está seleccionado, bold o no (active)
-function classNames(...classes : string[]) {
-  return classes.filter(Boolean).join(' ')
-}
 
 const initialFilters: BookFilters = {
   title: "",
@@ -57,10 +52,7 @@ export default function Home() {
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
   const [filters, setFilters] = useState<BookFilters>(initialFilters)
   const [sortingOptions, setSortingOptions] = useState(initialSortOptions)
-  // const [sort, setSort] = useState<string>("title") // por defecto ordeno por titulo
-  // const [ascending, setAscending] = useState<boolean>(true)
   const [page, setPage] = useState(0)
-  // const pageSize = 6
   const [totalPages, setTotalPages] = useState(0)
 
   //* ==== GET DATA ====
@@ -136,7 +128,6 @@ export default function Home() {
       current: option.value === selectedOption
     })))
     updateSimpleFilter("sortBy", selectedOption)
-    // getFilteredBooksPage({...filters, sortBy: selectedOption})
   }
   
   const toggleSortDirection = () => {
@@ -166,8 +157,8 @@ export default function Home() {
   const [filterKey, setFilterKey] = useState(0)
 
   const handleClearFilters = () => {
+    updateSortOptions(initialSortOptions[0].value) // resetea la opcion de ordenamiento al default
     setFilters(initialFilters)
-    setPage(0)
     handleApplyFilters(initialFilters)
     setFilterKey(prev => prev + 1) // fuerza el remount del slider
   }
@@ -178,7 +169,7 @@ export default function Home() {
     getFilteredBooksPage(initialFilters)
     const genderOptions = await bookService.getBookGenders()
     setGendersFilters(genderOptions)
-    // console.log("genders: ", genders)
+    console.log("ON INIT ", filters)
   })
 
   const filtersRef = useRef(filters)
@@ -188,6 +179,7 @@ export default function Home() {
   // filters es lo que actualizo constantemente, filtersRef es el que uso para enviar al back
 
   //! ==== ON KEY PRESS ====
+  //* Se ejecuta antes de useOnInit y lanza el toast
   useEffect(() => {
     // console.log("Filters changed: ", filtersRef.current)
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -195,21 +187,23 @@ export default function Home() {
             handleApplyFilters(filtersRef.current) // uso la ref para asegurarme de enviar los filtros mas actualizados, aunque el usuario haya apretado enter antes de que se actualizara el estado "filters"
         }
     }
-    // console.log("Filters changed: ", filters)
+    console.log("ON KEY PRESS ", filters)
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [filters])
+  }, [filtersRef])
 
   //! ==== ON PAGE, SORT CHANGE ====
+  //* Se ejecuta antes de useOnInit y lanza el toast
   useEffect(() => {
     handleApplyFilters(filtersRef.current)
-  }, [page, filters.sortBy, filters.ascending])
+    console.log("ON SORT CHANGE ", filters)
+  }, [page, filtersRef.current.sortBy, filtersRef.current.ascending])
 
   return (
     <div className="w-full">
       <div>
 {/* =============== MAIN ================ */}
-        <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <main className="mx-auto w-[80%] px-4 sm:px-6 lg:px-8">
           
           <section aria-labelledby="products-heading" className="pt-6 pb-24">
             <h1 id="products-heading" className="sr-only">
@@ -219,7 +213,7 @@ export default function Home() {
   {/* ========== PRODUCTOS + FILTERS ========== */}
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-[300px_1fr]">
     {/* ========== FILTERS ========== */}
-              <form className="hidden lg:flex flex flex-col bg-white p-5 rounded-2xl border border-gray-200 h-max">
+              <form className="hidden lg:flex flex flex-col bg-white p-5 rounded-2xl border border-gray-200 h-max mt-7">
                   {/* ========== GENDER FILTERS ========== */}
                   <Disclosure key="gender-filter" as="div" className="border-b border-gray-200 py-6">
                     <h3 className="-my-3 flow-root">
@@ -383,30 +377,23 @@ export default function Home() {
                         >
                         <div className="py-1">
                           {sortingOptions.map((option) => (
-                            <MenuItem key={option.name}>
-                              <a
-                                onClick={() => {updateSortOptions(option.value)}}
-                                className={classNames(
-                                  option.current ? 'font-medium text-gray-900' : 'text-gray-500',
-                                  'block px-4 py-2 text-sm data-focus:bg-gray-100 data-focus:outline-hidden',
-                                )}
-                              >
-                                {option.name}
-                              </a>
-                            </MenuItem>
+                            <SelectSorting 
+                            key={`sortingOption-${option.name}-${filterKey}`} 
+                            option={option} 
+                            onClick={updateSortOptions} />
                           ))}
                         </div>
                       </MenuItems>
                     </Menu>
 
                     {/* ========== CAMBIAR DIRECCION DE ORDEN ========== */}
-                    <OrderDirectionArrow onClick={toggleSortDirection} ascending={filters.ascending} />
+                    <OrderDirectionArrow key={`ascendingBtn-${filterKey}`} onClick={toggleSortDirection} ascending={filters.ascending} />
 
                   </div>
                 </div>
 
           {/* ============ PRODUCT GRID ============== */}
-                  <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8 justify-content-center items-center">
+                  <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8 justify-content-center items-center">
                     {filteredBooks.map((book: Book) => (
                       <BookCardHome key={book.id} book={book} filters={filters} />
                     ))}

@@ -25,6 +25,7 @@ export class Book {
   public imageSrc: string
   public owner: UserProfile
   public bookBibliokarmas: number
+  public rating: number = 0
 
   constructor(
     id: number = 0,
@@ -41,7 +42,8 @@ export class Book {
     condition: BookCondition = BookCondition.GOOD,
     imageSrc: string = "",
     owner: UserProfile = new UserProfile(),
-    bookBibliokarmas: number = 0
+    bookBibliokarmas: number = 0,
+    rating: number = 0
   ) {
     this.id = id
     this.title = title
@@ -58,14 +60,7 @@ export class Book {
     this.imageSrc = imageSrc
     this.owner = owner
     this.bookBibliokarmas = bookBibliokarmas
-  }
-
-  calculateBibliokarmas(): number {
-    return 0
-  }
-
-  ratingAvg(): number {
-    return 0
+    this.rating = rating
   }
 
   static fromJSON(bookJSON: BookJSON): Book {

@@ -43,8 +43,7 @@ export const Login = () => {
         navigate('/', { replace: true })
       }
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      showToast.httpError(errorMessage, 'Error al iniciar sesion, contactese con el administrador')
+      showToast.httpError(error, 'Error al iniciar sesion, contactese con el administrador')
     } 
   }
 

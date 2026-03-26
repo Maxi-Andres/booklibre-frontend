@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback } from 'react'
   import { UserProfile } from '@/model/userProfile'
   import { userProfileService } from '@/services/userProfileService'
+import { showToast } from '@/utils/toast'
 
   interface UserProfileContextType {
     userProfile: UserProfile
@@ -16,7 +17,12 @@ import { createContext, useContext, useState, useCallback } from 'react'
       try {
         const profile = await userProfileService.getProfile()
         setUserProfile(profile)
-      } catch (error) { /* handle */ }
+      } catch (error) {
+        showToast.httpError(
+          error,
+          "Error al cargar el perfil de usuario: ",
+        )
+      }
     }, [])
 
     return (
