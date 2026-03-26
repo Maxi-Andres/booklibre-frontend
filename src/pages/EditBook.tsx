@@ -65,14 +65,14 @@ import { BookType, BookTypeLabels } from "@/types/bookType"
             await bookService.updateBook(Number(id), book)
             showToast.success('Libro actualizado con éxito, redirigiendote a tu perfil')
             setTimeout(() => {
-              navigate('/profile', { state: { refreshBooks: true } })
+              navigate('/perfil', { state: { refreshBooks: true } })
             }, 4000)
             
         } else {
             await bookService.createBook(book)
             showToast.success('Libro creado con éxito, redirigiendote a tu perfil')
             setTimeout(() => {
-              navigate('/profile', { state: { refreshBooks: true } })
+              navigate('/perfil', { state: { refreshBooks: true } })
             }, 4000)
         }
     } catch (error) {

@@ -12,7 +12,7 @@ import { useUserProfile } from "@/context/UserProfileContext"
 const navigation = [
   { name: "Inicio", href: "/", current: true },
   { name: "Mis Préstamos", href: "/prestamos-de-libros", current: false },
-  { name: "Perfil", href: "/profile", current: false },
+  { name: "Perfil", href: "/perfil", current: false },
 ]
 
 export default function NavBar() {
@@ -69,7 +69,7 @@ export default function NavBar() {
               </span>
             </div>
 
-            <Link to={"/profile"}>
+            <Link to={"/perfil"}>
               <img
                 alt="User avatar"
                 src={userProfile.img ? `http://localhost:9000/${userProfile.img}` : '/assets/default-img.png'}

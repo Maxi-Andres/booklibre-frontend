@@ -64,7 +64,7 @@ export default function ProfileBook({
   return (
     <div className="flex h-25 items-center justify-center gap-4 pl-2 pr-2">
       <img src={bookImg} alt="" className="h-23 w-15 rounded-lg" />
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 max-w-65">
         <p className="truncate">{bookName}</p>
         <p className="truncate">{bookAuthor}</p>
         <p className="truncate">{bookGender}</p>
