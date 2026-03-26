@@ -5,7 +5,7 @@ import { formatDate } from "@/utils/formatDate"
 import { bookService } from "@/services/bookService"
 import { showToast } from "@/utils/toast"
 
-const statusStyles: Record<string, string> = {
+export const statusStyles: Record<string, string> = {
   ACTIVE: "bg-orange-400 text-white",
   AVAILABLE: "bg-green-500 text-white",
   RESERVED: "bg-green-500 text-white",
@@ -14,7 +14,7 @@ const statusStyles: Record<string, string> = {
   RETURNED: "bg-green-500 text-white",
 }
 
-const statusLabels: Record<string, string> = {
+export const statusLabels: Record<string, string> = {
   ACTIVE: "Prestado",
   AVAILABLE: "Disponible",
   BORROWED: "Prestado",
