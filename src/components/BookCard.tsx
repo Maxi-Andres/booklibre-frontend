@@ -4,7 +4,7 @@ import type { ReservationDTO } from "@/types/reservationType"
 import RatingModal from "./RatingModal"
 
 // Record<tipoDeClave, tipoDeValor>
-const statusStyles: Record<string, string> = {
+export const statusStyles: Record<string, string> = {
   ACTIVE: "bg-blue-500 text-white",
   AVAILABLE: "bg-green-500 text-white",
   RESERVED: "bg-green-500 text-white",
@@ -12,7 +12,7 @@ const statusStyles: Record<string, string> = {
   RETURNED: "bg-red-400 text-white",
 }
 
-const statusLabels: Record<string, string> = {
+export const statusLabels: Record<string, string> = {
   ACTIVE: "ACTIVO",
   AVAILABLE: "PRESTADO",
   RESERVED: "PRESTADO",

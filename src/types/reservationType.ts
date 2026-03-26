@@ -1,8 +1,10 @@
 //! ESTO ES SOLO MOMEMTANEO
 
 export type ReservationState =
+  | "ACTIVE"
   | "AVAILABLE"
   | "BORROWED"
+  | "RESERVED"
   | "SOON_TO_END"
   | "RETURNED"
 

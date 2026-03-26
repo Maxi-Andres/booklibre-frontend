@@ -1,4 +1,3 @@
-// components/ReservationCard.tsx
 import { useState } from "react"
 import type { Book } from "@/model/book"
 import { reserveService } from "@/services/reserveService"
@@ -10,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import { useNavigate } from 'react-router'
 import { useOnInit } from "@/hooks/UseOnInit"
 import { getId } from "@/context/AuthContext"
+import { useUserProfile } from "@/context/UserProfileContext"
 
 type Props = {
   book: Book
@@ -23,6 +23,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
   const [pickUpDate, setPickUpDate] = useState(initialPickUpDate ?? "")
   const [dropOffDate, setDropOffDate] = useState(initialDropOffDate ?? "")
   const [showPicker, setShowPicker] = useState(false)
+  const { refreshProfile } = useUserProfile()
   // const [bibliokarmas, setBibliokarmas] = useState(book.bookBibliokarmas)
 
   const navigate = useNavigate()
@@ -38,6 +39,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
   const handleConfirmReservation = async () => {
     try {
         await reserveService.createReservation(book.id, pickUpDate, dropOffDate)
+        await refreshProfile()
         showToast.success("Reserva confirmada! Seras redireccionado a la página principal")
         setTimeout(() => navigate("/"), 4000)
     } catch (error) {
@@ -49,7 +51,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
   const recalculateBibliokarmas = async (pickup: string, dropoff: string) => {
     const userId = getId()
     const res = await reserveService.getBibliokarmas(book.id, userId,pickup, dropoff)
-    onBibliokarmasChange(res.data)  // ← notificás al padre
+    onBibliokarmasChange(res.data)
   }
 
   // Solo verifica, sin side effects
