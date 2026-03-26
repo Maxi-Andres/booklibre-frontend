@@ -10,6 +10,12 @@ import { type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 
 vi.mock('@/context/AuthContext', () => ({ getId: () => 1 }))
 
+vi.mock('@/context/UserProfileContext', () => ({
+  useUserProfile: () => ({
+    user: { id: 1 },
+  }),
+}))
+
 const mockAxiosResponse = <T,>(data: T): AxiosResponse<T> => ({
   data,
   status: 200,
@@ -67,20 +73,20 @@ describe('Tests para BookDetail', () => {
   describe('Carga del libro', () => {
     test('muestra el estado de carga inicial', () => {
       renderBookDetail()
-      expect(screen.getByText('Cargando...')).toBeTruthy()
+      expect(screen.findByText('Cargando...')).toBeTruthy()
     })
 
     test('muestra el título y autor cuando carga correctamente', async () => {
       renderBookDetail()
       await waitFor(() => {
-        expect(screen.getByRole('heading', { name: 'El Proceso' })).toBeTruthy()
-        expect(screen.getByText('Franz Kafka')).toBeTruthy()
+        expect(screen.findByRole('heading', { name: 'El Proceso' })).toBeTruthy()
+        expect(screen.findByText('Franz Kafka')).toBeTruthy()
       })
     })
 
     test('muestra la sinopsis del libro', async () => {
       renderBookDetail()
-      await waitFor(() => expect(screen.getByText('Una pesadilla burocrática.')).toBeTruthy())
+      await waitFor(() => expect(screen.findByText('Una pesadilla burocrática.')).toBeTruthy())
     })
 
     test('muestra "Libro no encontrado" si el servicio falla', async () => {
@@ -94,20 +100,20 @@ describe('Tests para BookDetail', () => {
     test('muestra el promedio de rating de las reseñas', async () => {
       renderBookDetail()
       // promedio de 5 y 4 = 4.5
-      await waitFor(() => expect(screen.getByText('(4.5)')).toBeTruthy())
+      await waitFor(() => expect(screen.findByText('(4.5)')).toBeTruthy())
     })
 
     test('muestra las primeras dos reseñas', async () => {
       renderBookDetail()
       await waitFor(() => {
-        expect(screen.getByText('"Obra maestra."')).toBeTruthy()
-        expect(screen.getByText('"Brillante pero incómodo."')).toBeTruthy()
+        expect(screen.findByText('"Obra maestra."')).toBeTruthy()
+        expect(screen.findByText('"Brillante pero incómodo."')).toBeTruthy()
       })
     })
 
     test('muestra el botón ver más si hay 2 o más reseñas', async () => {
       renderBookDetail()
-      await waitFor(() => expect(screen.getByText('Ver todas las reseñas →')).toBeTruthy())
+      await waitFor(() => expect(screen.findByText('Ver todas las reseñas →')).toBeTruthy())
     })
 
     test('no muestra el botón ver más si hay menos de 2 reseñas', async () => {
@@ -121,7 +127,7 @@ describe('Tests para BookDetail', () => {
     test('muestra mensaje cuando el libro no tiene reseñas', async () => {
       vi.spyOn(reserveService, 'getReviews').mockResolvedValueOnce(mockAxiosResponse([]))
       renderBookDetail()
-      await waitFor(() => expect(screen.getByText('Este libro todavía no tiene reseñas.')).toBeTruthy())
+      await waitFor(() => expect(screen.findByText('Este libro todavía no tiene reseñas.')).toBeTruthy())
     })
   })
 })
