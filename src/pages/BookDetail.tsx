@@ -2,10 +2,7 @@ import { useLocation, useParams } from "react-router"
 import { bookService } from "@/services/bookService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { useState } from "react"
-// import { Book } from "@/model/book"
 import type { Book } from "@/model/book"
-// import DatePicker from "react-datepicker"
-// import { Disclosure } from "@headlessui/react"
 import { ReservationCard } from "@/components/ReservationCard"
 import { reserveService } from "@/services/reserveService"
 import { BookReview } from "@/model/review"
@@ -34,7 +31,6 @@ export default function BookDetail() {
     try {
       const bookResponse = await bookService.getBookDetail(Number(id))
       setBook(bookResponse)
-      setBibliokarmas(bookResponse.calculateBibliokarmas())
     } catch (error) {
       showToast.httpError(error, "Error al cargar libro")
     } finally {
@@ -44,8 +40,9 @@ export default function BookDetail() {
 
   const getBookReviews = async () => {
     try {
-      const response = await reserveService.getReviews(Number(id), 0, 2)
+      const response = await reserveService.getReviews(Number(id), 0, 4)
       setReviews(response.data)
+      console.log('Reseñas cargadas:', response.data)
     } catch (error) {
       showToast.httpError(error, "Error al cargar reseñas")
     }
@@ -219,7 +216,7 @@ export default function BookDetail() {
                   </p>
                 ) : (
                   reviews.length >= 2 && (
-                    <ReviewsModal bookId={book.id} bookTitle={book.title} />
+                    <ReviewsModal bookId={book.id} bookTitle={book.title} initialReviews={reviews} />
                   )
                 )}
               </div>
