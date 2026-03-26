@@ -12,6 +12,7 @@ import { getErrorMessage } from "@/validation/errorHandler"
 import { showToast } from "@/utils/toast"
 import { userProfileService } from "@/services/userProfileService"
 import { ValidationMessage } from "@/validation/validationMessage"
+import { useUserProfile } from "@/context/UserProfileContext"
 
 type ProfileSettingsIntf = {
   profile: UserProfile
@@ -29,6 +30,7 @@ export default function ProfileSettingsModal({
   profile.img ? `http://localhost:9000/${profile.img}` : '/assets/default-img.png'
 )
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null)
+  const { refreshProfile } = useUserProfile()
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -82,6 +84,7 @@ export default function ProfileSettingsModal({
         selectedImageFile,
       )
       onProfileUpdated(updatedProfile)
+      refreshProfile()
       showToast.success('Cambios guardados')
       setOpen(false)
     } catch (error) {
