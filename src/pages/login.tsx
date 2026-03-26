@@ -41,10 +41,12 @@ export const Login = () => {
         login(validation, rememberMe)
         navigate('/', { replace: true })
       }
-    } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      showToast.httpError(errorMessage, 'Error al iniciar sesion, contactese con el administrador')
-    } 
+    } catch (error: any) {
+    const message = error.response?.data?.detail
+    || error.response?.data?.message
+    || "Error al iniciar sesión, contactese con el administrador"
+    showToast.error(message)
+} 
   }
 
   const update = (key: keyof typeof user, value:unknown) => {
