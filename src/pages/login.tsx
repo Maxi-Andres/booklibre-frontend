@@ -42,8 +42,8 @@ export const Login = () => {
         navigate('/', { replace: true })
       }
     } catch (error) {
-      showToast.httpError(error, 'Sesión inválida, redirigiendo...')
-      setTimeout(() => navigate('/login'), 2000)
+      const errorMessage = getErrorMessage(error)
+      showToast.httpError(errorMessage, 'Error al iniciar sesion, contactese con el administrador')
     } 
   }
 
