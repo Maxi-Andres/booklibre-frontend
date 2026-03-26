@@ -21,7 +21,8 @@ import ProfileSettingsModal from "@/components/ProfileSettingsModal"
 import { getErrorMessage } from "@/validation/errorHandler"
 import { showToast } from "@/utils/toast"
 import PaginationButtons from "@/components/PaginationButtons"
-import { useLocation, useNavigate } from "react-router"
+import { useLocation, useNavigate, Link } from "react-router"
+import { useAuth } from "@/context/AuthContext"
 
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
@@ -34,6 +35,7 @@ export default function Profile() {
   const [totalPages, setTotalPages] = useState<number>(1)
   const [totalBooksNumber, setTotalBooksNumber] = useState<number>(0)
   const isFirstRender = useRef(true)
+  const { logout } = useAuth()
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -228,14 +230,14 @@ export default function Profile() {
 
           <div className="flex flex-1 flex-col">
             <section className="mb-4 flex justify-between">
-              <p className="text-2xl font-bold">Gestión de Mis Libros</p>
-              <a
-                className="cursor-pointer rounded-lg bg-red-300 p-1.5 text-sm hover:bg-red-400"
-                href="/crear-libro"
+             <p className="text-2xl font-bold">Gestión de Mis Libros</p>
+              <Link
+               to="/crear-libro"
+               className="cursor-pointer rounded-lg bg-red-300 p-1.5 text-sm hover:bg-red-400"
               >
-                <PlusCircleIcon size={20} className="mr-1 inline" />
-                <p className="inline font-bold">Agregar Nuevo Libro</p>
-              </a>
+              <PlusCircleIcon size={20} className="mr-1 inline" />
+             <p className="inline font-bold">Agregar Nuevo Libro</p>
+              </Link>
             </section>
 
             <section className="flex h-102 flex-1 flex-col gap-1 rounded-xl border border-gray-200 bg-white">
