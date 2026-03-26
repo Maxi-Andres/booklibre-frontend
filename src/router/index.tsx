@@ -7,7 +7,7 @@ import Profile from "@/pages/Profile"
 import Home from "@/pages/Home"
 import App from "@/App"
 import AuthLayout from "@/layouts/AuthLayout"
-import EditBook from "@/pages/EditBook"
+import EditBook from "@/pages/editBookpage"
 
 export const router = createBrowserRouter([
   {
