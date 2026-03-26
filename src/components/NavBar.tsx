@@ -6,6 +6,7 @@ import { useOnInit } from "@/hooks/UseOnInit"
 import { userProfileService } from "@/services/userProfileService"
 import { useEffect, useState } from "react"
 import { UserProfile } from "@/model/userProfile"
+import { useUserProfile } from "@/context/UserProfileContext"
 
 
 const navigation = [
@@ -18,7 +19,8 @@ export default function NavBar() {
   const location = useLocation()
   const navigate = useNavigate()
   const { logout } = useAuth()
-  const [user, setUser] = useState<UserProfile>(new UserProfile())
+  // const [user, setUser] = useState<UserProfile>(new UserProfile())
+  const { userProfile, refreshProfile } = useUserProfile()
 
   const handleLogout = () => {
     logout()
@@ -27,20 +29,7 @@ export default function NavBar() {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const handleFetch = async () => {
-    try {
-      const user = await userProfileService.getProfile()
-      setUser(user)
-    } catch (error) {
-
-    }
-  }
-  
-  useEffect(() => {
-    handleFetch()
-  }, [user])
-
-  useOnInit(handleFetch)
+  useOnInit(() => { refreshProfile() })
 
   return (
     <nav className="border-b border-gray-100 bg-white shadow-sm">
@@ -76,14 +65,14 @@ export default function NavBar() {
             {/* Bibliokarma */}
             <div className="flex items-center gap-1.5 text-sm text-gray-500">
               <span className="font-semibold text-[#636F80]">
-                Bibliokarma <span className="font-semibold">{user.bibliokarmas}</span>
+                Bibliokarma <span className="font-semibold">{userProfile.bibliokarmas}</span>
               </span>
             </div>
 
             <Link to={"/profile"}>
               <img
                 alt="User avatar"
-                src={user.img ? `http://localhost:9000/${user.img}` : '/assets/default-img.png'}
+                src={userProfile.img ? `http://localhost:9000/${userProfile.img}` : '/assets/default-img.png'}
                 className="size-8 rounded-full object-cover ring-2 ring-gray-100"
               />
             </Link>
