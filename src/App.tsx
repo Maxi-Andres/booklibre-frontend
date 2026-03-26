@@ -8,8 +8,8 @@ import LoanDetails from "@/pages/LoanDetails"
 import { useAuth } from "./context/AuthContext"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { Login } from "@/pages/loginpage"
-import EditBook from "@/pages/editBookpage"
+import { Login } from "@/pages/Login"
+import EditBook from "@/pages/EditBook"
 import { Register } from "./pages/Register"
 
 
