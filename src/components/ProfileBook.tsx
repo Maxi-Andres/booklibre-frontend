@@ -52,9 +52,13 @@ export default function ProfileBook({
       showToast.success("Libro eliminado con éxito")
       setShowConfirm(false)
       onDelete()
-    } catch (error) {
-      showToast.httpError(error, "Error al eliminar el libro")
+    } 
+      catch (error: any) {
+      const data = error.response?.data
+      const message = data?.detail || "No se pudo eliminar el libro"
+      showToast.error(message)
     }
+      
   }
 
   return (

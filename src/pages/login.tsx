@@ -6,7 +6,6 @@ import { useState } from "react"
 import { ValidationMessage } from "@/validation/validationMessage"
 import ValidationField from "@/validation/ValidationField"
 import { userService } from "@/services/UserService"
-import { getErrorMessage } from "@/validation/errorHandler"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { InputField } from "@/components/InputField"
 import { useAuth } from '@/context/AuthContext'
@@ -43,8 +42,8 @@ export const Login = () => {
         navigate('/', { replace: true })
       }
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      showToast.httpError(errorMessage, 'Error al iniciar sesion, contactese con el administrador')
+      showToast.httpError(error, 'Sesión inválida, redirigiendo...')
+      setTimeout(() => navigate('/login'), 2000)
     } 
   }
 
