@@ -13,6 +13,7 @@ import EditBook from "@/pages/EditBook"
 import { Register } from "./pages/Register"
 
 
+// App.tsx
 function App() {
   const { user } = useAuth()
 
@@ -20,22 +21,22 @@ function App() {
     <>
       <ToastContainer position="bottom-right" autoClose={4000} />
       <Routes>
-        {user ? (
-          <Route element={<PrivateLayer />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/book-detail/:id" element={<BookDetail />} />
-            <Route path="/prestamos-de-libros" element={<LoanDetails />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/editar-libro/:id" element={<EditBook />} />
-            <Route path="/crear-libro" element={<EditBook />} />
-          </Route>
-        ) : (
-          <>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </>
-        )}
+        {/* Rutas públicas - siempre disponibles */}
+        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" replace />} />
+        <Route path="/register" element={!user ? <Register /> : <Navigate to="/" replace />} />
+
+        {/* Rutas privadas */}
+        <Route element={<PrivateLayer />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/book-detail/:id" element={<BookDetail />} />
+          <Route path="/prestamos-de-libros" element={<LoanDetails />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/editar-libro/:id" element={<EditBook />} />
+          <Route path="/crear-libro" element={<EditBook />} />
+        </Route>
+
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
       </Routes>
     </>
   )

@@ -22,6 +22,7 @@ import { getErrorMessage } from "@/validation/errorHandler"
 import { showToast } from "@/utils/toast"
 import PaginationButtons from "@/components/PaginationButtons"
 import { useLocation, useNavigate } from "react-router"
+import { useAuth } from "@/context/AuthContext"
 
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
@@ -34,6 +35,7 @@ export default function Profile() {
   const [totalPages, setTotalPages] = useState<number>(1)
   const [totalBooksNumber, setTotalBooksNumber] = useState<number>(0)
   const isFirstRender = useRef(true)
+  const { logout } = useAuth()
 
   const location = useLocation()
   const navigate = useNavigate()

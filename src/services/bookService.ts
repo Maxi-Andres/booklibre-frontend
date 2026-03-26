@@ -28,10 +28,8 @@ class BookService {
   }
 
 async deleteBook(id: number): Promise<void> {
-  const response = () => axios.delete(REST_SERVER_URL + `/delete-book/${id}`)
-  return (await getAxiosData(response))
+  await axios.delete(REST_SERVER_URL + `/delete-book/${id}`)
 }
-
 
 
   // -- LIBROS FILTRADOS PARA PAGINACION EN HOME --

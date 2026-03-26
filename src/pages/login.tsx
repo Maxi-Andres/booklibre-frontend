@@ -6,7 +6,6 @@ import { useState } from "react"
 import { ValidationMessage } from "@/validation/validationMessage"
 import ValidationField from "@/validation/ValidationField"
 import { userService } from "@/services/UserService"
-import { getErrorMessage } from "@/validation/errorHandler"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { InputField } from "@/components/InputField"
 import { useAuth } from '@/context/AuthContext'
