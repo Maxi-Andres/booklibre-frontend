@@ -42,7 +42,7 @@ export default function BookDetail() {
     try {
       const response = await reserveService.getReviews(Number(id), 0, 4)
       setReviews(response.data)
-      console.log('Reseñas cargadas:', response.data)
+      // console.log('Reseñas cargadas:', response.data)
     } catch (error) {
       showToast.httpError(error, "Error al cargar reseñas")
     }

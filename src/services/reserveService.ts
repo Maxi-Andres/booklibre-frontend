@@ -50,7 +50,7 @@ class ReserveService {
     const { data } = await axios.get(REST_SERVER_URL + "/lector/" + userId, {
       params: { search, page, pageSize },
     })
-    console.log(data, "del user")
+    // console.log(data, "del user")
     return data
   }
 
@@ -64,7 +64,7 @@ class ReserveService {
     const { data } = await axios.get(REST_SERVER_URL + "/owner/" + userId, {
       params: { search, page, pageSize },
     })
-    console.log(data, "que le hicieron al user")
+    // console.log(data, "que le hicieron al user")
     return data
   }
 
@@ -85,7 +85,7 @@ class ReserveService {
         params: { userId: this.id }, // esto es por lo que pusieron en el back en el model de review no se como funciona
       },
     )
-    console.log(data) // no se que onda esto
+    // console.log(data) // no se que onda esto
     return data
   }
 
@@ -101,7 +101,7 @@ class ReserveService {
         { params: { filterCriteria, sortCriteria, page, pageSize } }
       )
 
-      console.log(data)
+      // console.log(data)
     return data
   }
 

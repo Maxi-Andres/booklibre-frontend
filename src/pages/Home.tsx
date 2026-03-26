@@ -169,7 +169,7 @@ export default function Home() {
     getFilteredBooksPage(initialFilters)
     const genderOptions = await bookService.getBookGenders()
     setGendersFilters(genderOptions)
-    console.log("ON INIT ", filters)
+    // console.log("ON INIT ", filters)
   })
 
   const filtersRef = useRef(filters)
@@ -187,7 +187,7 @@ export default function Home() {
             handleApplyFilters(filtersRef.current) // uso la ref para asegurarme de enviar los filtros mas actualizados, aunque el usuario haya apretado enter antes de que se actualizara el estado "filters"
         }
     }
-    console.log("ON KEY PRESS ", filters)
+    // console.log("ON KEY PRESS ", filters)
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [filtersRef])
@@ -196,7 +196,7 @@ export default function Home() {
   //* Se ejecuta antes de useOnInit y lanza el toast
   useEffect(() => {
     handleApplyFilters(filtersRef.current)
-    console.log("ON SORT CHANGE ", filters)
+    // console.log("ON SORT CHANGE ", filters)
   }, [page, filtersRef.current.sortBy, filtersRef.current.ascending])
 
   return (

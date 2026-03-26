@@ -33,7 +33,7 @@ export default function ReviewsModal({ bookId, bookTitle, initialReviews = [] }:
   const loadReviews = async (pageToLoad: number) => {
     try {
       const response = await reserveService.getReviews(bookId, pageToLoad, 4)
-      console.log('Respuesta del back:', response.data)
+      // console.log('Respuesta del back:', response.data)
       setReviews(prev => [...prev, ...response.data])
       // esto hace que no me deje seguir haciendo llamadas al back si la última respuesta no trajo 2 reseñas, es decir, si ya no hay más
       setHasMore(response.data.length === 4)
