@@ -61,9 +61,8 @@ export default function Profile() {
       console.log(userProfile)
       console.log(new Date(userProfile.timestamp))
     } catch (error) {
-      logout()  
-      showToast.httpError(error, 'Sesión inválida, redirigiendo al login...')
-      setTimeout(() => navigate('/login'), 2000)
+      const errorMessage = getErrorMessage(error)
+      showToast.httpError(error, "Error al traer su usuario. " + errorMessage)
     }
   }
 
