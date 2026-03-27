@@ -3,7 +3,6 @@ import { BookConditionStyle } from "@/types/bookCondition"
 import type { BookFilters } from "@/types/bookFilters"
 import { BookTypeLabels, BookTypeStyle } from "@/types/bookType"
 import { IconStar } from "@tabler/icons-react"
-import { useEffect } from "react"
 import { useNavigate } from 'react-router'
 
 
@@ -11,7 +10,7 @@ const BookCardHome = ({book, filters} : {book : Book, filters: BookFilters}) => 
   const navigate = useNavigate()
   return (
     <div key={book.id} 
-      onClick={() => navigate(`/book-detail/${book.id}`, { 
+      onClick={() => navigate(`/detalle-de-libro/${book.id}`, { 
         state: { pickUpDate: filters.pickUpDate, dropOffDate: filters.dropOffDate } 
       })}
       className="cursor-pointer group grid h-full grid-rows-[1fr_auto] bg-white rounded-2xl border border-gray-200 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:shadow-xl hover:shadow-gray-300/60"
