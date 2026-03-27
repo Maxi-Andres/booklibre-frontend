@@ -14,5 +14,4 @@ export class Author {
     this.name = name
     this.avatar = avatar
   }
-
 }
