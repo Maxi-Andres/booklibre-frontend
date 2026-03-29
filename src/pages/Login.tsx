@@ -122,7 +122,7 @@ export const Login = () => {
         <p className="text-center text-sm text-gray-600">
           ¿No tenés cuenta?{" "}
           <Link
-            to="/register"
+            to="/registrarse"
             className="font-medium text-indigo-600 hover:text-indigo-500"
           >
             Registrate

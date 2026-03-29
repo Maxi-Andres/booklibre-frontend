@@ -3,7 +3,7 @@ import Tag from "@/components/Tag"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { UserProfile } from "@/model/userProfile"
 import { userProfileService } from "@/services/userProfileService"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 
 import {
   PlusCircleIcon,
@@ -22,7 +22,6 @@ import { getErrorMessage } from "@/validation/errorHandler"
 import { showToast } from "@/utils/toast"
 import PaginationButtons from "@/components/PaginationButtons"
 import { useLocation, useNavigate, Link } from "react-router"
-import { useAuth } from "@/context/AuthContext"
 
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
@@ -34,9 +33,6 @@ export default function Profile() {
   const [activePage, setActivePage] = useState<number>(0)
   const [totalPages, setTotalPages] = useState<number>(1)
   const [totalBooksNumber, setTotalBooksNumber] = useState<number>(0)
-  const isFirstRender = useRef(true)
-  const { logout } = useAuth()
-
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -45,13 +41,16 @@ export default function Profile() {
   var disabledCondition: boolean = totalBooksNumber <= 1
 
   const toggleTitleSort = () => {
-    sort == "ALPHABETICAL_ASC"
-      ? setSort("ALPHABETICAL_DESC")
-      : setSort("ALPHABETICAL_ASC")
+    const newSort =
+      sort == "ALPHABETICAL_ASC" ? "ALPHABETICAL_DESC" : "ALPHABETICAL_ASC"
+    setSort(newSort)
+    getUserOwnBooks(filter, newSort, activePage)
   }
 
   const toggleDateSort = () => {
-    sort == "DATE_ASC" ? setSort("DATE_DESC") : setSort("DATE_ASC")
+    const newSort = sort == "DATE_ASC" ? "DATE_DESC" : "DATE_ASC"
+    setSort(newSort)
+    getUserOwnBooks(filter, newSort, activePage)
   }
 
   const getUser = async () => {
@@ -67,13 +66,14 @@ export default function Profile() {
   const getUserOwnBooks = async (
     filterCriteria: string,
     sortCriteria: string,
+    page: number,
   ) => {
     setFilter(filterCriteria)
     try {
       const backResponse = await reserveService.getUserOwnBooks(
         filterCriteria,
         sortCriteria,
-        activePage,
+        page,
         pageSize,
       )
       setShownBooks(backResponse.items.map(ReservationProfileBook.fromJSON))
@@ -103,27 +103,16 @@ export default function Profile() {
       const userLentBooksNumber = await reserveService.getUserLentBooksNumber()
       setUserLentBooksNumber(userLentBooksNumber)
     } catch (error) {
-      showToast.httpError(
-        error,
-        "Error al contar sus libros prestados."
-      )
+      showToast.httpError(error, "Error al contar sus libros prestados.")
     }
   }
 
   const handleProfileLoad = async (filter: string, sortBy: string) => {
     getUser()
-    getUserOwnBooks(filter, sortBy)
+    getUserOwnBooks(filter, sortBy, 0)
     getUserReadBooksNumber()
     getUserLentBooksNumber()
   }
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-    getUserOwnBooks(filter, sort)
-  }, [activePage, filter, sort])
 
   useEffect(() => {
     if (location.state?.refreshBooks) {
@@ -133,7 +122,7 @@ export default function Profile() {
   }, [location.state])
 
   useOnInit(() => handleProfileLoad(filter, sort))
-  
+
   return (
     <div className="flex min-h-screen justify-center bg-gray-100 pt-12">
       <section className="flex w-245 flex-col gap-7">
@@ -184,7 +173,9 @@ export default function Profile() {
               </article>
               <article className="border-b-2 border-gray-300 pb-2">
                 <p className="text-xs font-bold text-gray-500">EMAIL</p>
-                <p className="truncate" title={profile.email}>{profile.email}</p>
+                <p className="truncate" title={profile.email}>
+                  {profile.email}
+                </p>
               </article>
               <article className="border-b-2 border-gray-300 pb-2">
                 <p className="text-xs font-bold text-gray-500">TELÉFONO</p>
@@ -229,13 +220,13 @@ export default function Profile() {
 
           <div className="flex flex-1 flex-col">
             <section className="mb-4 flex justify-between">
-             <p className="text-2xl font-bold">Gestión de Mis Libros</p>
+              <p className="text-2xl font-bold">Gestión de Mis Libros</p>
               <Link
-               to="/crear-libro"
-               className="cursor-pointer rounded-lg bg-red-300 p-1.5 text-sm hover:bg-red-400"
+                to="/crear-libro"
+                className="cursor-pointer rounded-lg bg-red-300 p-1.5 text-sm hover:bg-red-400"
               >
-              <PlusCircleIcon size={20} className="mr-1 inline" />
-             <p className="inline font-bold">Agregar Nuevo Libro</p>
+                <PlusCircleIcon size={20} className="mr-1 inline" />
+                <p className="inline font-bold">Agregar Nuevo Libro</p>
               </Link>
             </section>
 
@@ -245,27 +236,32 @@ export default function Profile() {
                   filterKind="ALL"
                   filter={filter}
                   text="Todos"
-                  buttonOnClickFunction={() => getUserOwnBooks("ALL", sort)}
+                  buttonOnClickFunction={() => {
+                    setActivePage(0)
+                    getUserOwnBooks("ALL", sort, 0)
+                  }}
                 ></Tag>
                 <Tag
                   filterKind="AVAILABLE"
                   filter={filter}
                   text="Disponibles"
-                  buttonOnClickFunction={() =>
-                    getUserOwnBooks("AVAILABLE", sort)
-                  }
+                  buttonOnClickFunction={() => {
+                    setActivePage(0)
+                    getUserOwnBooks("AVAILABLE", sort, 0)
+                  }}
                 ></Tag>
                 <Tag
                   filterKind="BORROWED"
                   filter={filter}
                   text="Prestados"
-                  buttonOnClickFunction={() =>
-                    getUserOwnBooks("BORROWED", sort)
-                  }
+                  buttonOnClickFunction={() => {
+                    setActivePage(0)
+                    getUserOwnBooks("BORROWED", sort, 0)
+                  }}
                 ></Tag>
               </section>
-              <section className="flex items-center gap-4 pl-2 pr-2 text-sm text-gray-500">
-                <div className="flex flex-1  items-center justify-between">
+              <section className="flex items-center gap-4 pr-2 pl-2 text-sm text-gray-500">
+                <div className="flex flex-1 items-center justify-between">
                   <p>Titulo y Autor</p>
                   <button
                     className={disabledCondition ? "" : "hover:cursor-pointer"}
@@ -310,11 +306,7 @@ export default function Profile() {
                       bookName={reserve.book.title}
                       bookState={reserve.state}
                       additionDate={reserve.book.timestamp}
-                      onDelete={() =>
-                        setShownBooks((prev) =>
-                          prev.filter((r) => r.book.id !== reserve.book.id),
-                        )
-                      }
+                      onDelete={() => getUserOwnBooks(filter, sort, activePage)}
                     />
                   ))}
                 </section>
@@ -322,7 +314,10 @@ export default function Profile() {
                   page={activePage}
                   listSize={shownBooks.length}
                   totalPages={totalPages}
-                  fetchAnotherPage={setActivePage}
+                  onPageChange={(newPage) => {
+                    setActivePage(newPage)
+                    getUserOwnBooks(filter, sort, newPage)
+                  }}
                   filteredBooksLength={totalBooksNumber}
                 />
               </div>

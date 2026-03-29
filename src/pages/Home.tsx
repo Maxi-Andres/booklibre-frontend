@@ -57,8 +57,7 @@ export default function Home() {
 
   //* ==== GET DATA ====
   const getFilteredBooksPage = async (newFilters: BookFilters) => {
-    // console.log("Filters: ", filters)
-    // console.log("Page: ", page, " PageSize: ", pageSize, " Sort: ", sortedBy, " Ascending: ", ascending)
+    // console.log("newFilters: ", newFilters)
     try {
       const response = await bookService.getFilteredBooksPage(newFilters)
       const filtered = response.content.map(book => Book.fromJSON(book))
@@ -83,6 +82,7 @@ export default function Home() {
       ...prev,
       [key]: value
     }))
+    return { ...filters, [key]: value } // devuelvo los filtros mas actualizados
   }
 
   const toggleGenderFilter = (gender: BookGender) => {
@@ -121,33 +121,30 @@ export default function Home() {
 
   //* ==== SORTING ====
   const updateSortOptions = (selectedOption: string) => {
-    // console.log("Selected sort option: ", selectedOption)
-    // setSort(selectedOption)
     setSortingOptions(prev => prev.map(option => ({
       ...option,
       current: option.value === selectedOption
     })))
-    updateSimpleFilter("sortBy", selectedOption)
+    const newFilters = updateSimpleFilter("sortBy", selectedOption)
+    getFilteredBooksPage(newFilters)
   }
   
   const toggleSortDirection = () => {
-    // setAscending(prev => !prev)
-    //! POR QUE CAMBIA LA PAGINA??? SE PONE EN 0
-    updateSimpleFilter("ascending", !filters.ascending)
-    // getFilteredBooksPage({...filters, ascending: !filters.ascending})
+    const newFilters = updateSimpleFilter("ascending", !filters.ascending)
+    getFilteredBooksPage(newFilters)
   }
   
   //* ==== PAGE CHANGE ====
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
-    updateSimpleFilter("page", newPage)
-    // getFilteredBooksPage({ ...filters, page: newPage })
+    const newFilters = updateSimpleFilter("page", newPage)
+    getFilteredBooksPage(newFilters)
   }
 
   //* ==== APPLY FILTERS & RESTART PAGE ====
  const handleApplyFilters = (filters: BookFilters) => {
   //  console.log("Applying filters: ", filters)
-  // setPage(0)
+  setPage(0)
   getFilteredBooksPage(filters)
  }
 
@@ -169,35 +166,19 @@ export default function Home() {
     getFilteredBooksPage(initialFilters)
     const genderOptions = await bookService.getBookGenders()
     setGendersFilters(genderOptions)
-    // console.log("ON INIT ", filters)
   })
-
-  const filtersRef = useRef(filters)
-  useEffect(() => {
-    filtersRef.current = filters
-  }, [filters]) // este useEffect solo actualiza la ref
-  // filters es lo que actualizo constantemente, filtersRef es el que uso para enviar al back
 
   //! ==== ON KEY PRESS ====
   //* Se ejecuta antes de useOnInit y lanza el toast
   useEffect(() => {
-    // console.log("Filters changed: ", filtersRef.current)
     const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Enter') {
-            handleApplyFilters(filtersRef.current) // uso la ref para asegurarme de enviar los filtros mas actualizados, aunque el usuario haya apretado enter antes de que se actualizara el estado "filters"
+            handleApplyFilters(filters)
         }
     }
-    // console.log("ON KEY PRESS ", filters)
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [filtersRef])
-
-  //! ==== ON PAGE, SORT CHANGE ====
-  //* Se ejecuta antes de useOnInit y lanza el toast
-  useEffect(() => {
-    handleApplyFilters(filtersRef.current)
-    // console.log("ON SORT CHANGE ", filters)
-  }, [page, filtersRef.current.sortBy, filtersRef.current.ascending])
+  }, [filters])
 
   return (
     <div className="w-full">

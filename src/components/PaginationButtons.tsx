@@ -7,13 +7,13 @@ export interface ProfilePagination {
   page: number,
   listSize: number,
   totalPages: number,
-  fetchAnotherPage: React.Dispatch<React.SetStateAction<number>>
+  onPageChange: (newPage: number) => void
   filteredBooksLength: number
 }
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 
-export default function PaginationButtons( {page, listSize, totalPages, fetchAnotherPage, filteredBooksLength}: ProfilePagination ) {
+export default function PaginationButtons( {page, listSize, totalPages, onPageChange, filteredBooksLength}: ProfilePagination ) {
   const hoverIfMore = page == (totalPages - 1) || totalPages == 0 ?  "" : "hover:cursor-pointer"
   const hoverIfFirst = page == 0 ? "" : "hover:cursor-pointer"
 
@@ -26,7 +26,7 @@ export default function PaginationButtons( {page, listSize, totalPages, fetchAno
         <nav aria-label="Pagination" className="isolate inline-flex -space-x-px rounded-md">
           <button
             disabled={page == 0}
-            onClick={() => fetchAnotherPage((prev) => prev - 1)}
+            onClick={() => onPageChange(page - 1)}
             className={`${hoverIfFirst} relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 inset-ring inset-ring-gray-700 hover:bg-white/5 focus:z-20 focus:outline-offset-0`}
           >
             <ChevronLeftIcon aria-hidden="true" className="size-5" />
@@ -36,7 +36,7 @@ export default function PaginationButtons( {page, listSize, totalPages, fetchAno
           </p>
           <button
             disabled={page == totalPages - 1 || totalPages == 0}
-            onClick={() => fetchAnotherPage((prev) => prev + 1)}
+            onClick={() => onPageChange(page + 1)}
             className={`${hoverIfMore} relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 inset-ring inset-ring-gray-700 hover:bg-white/5 focus:z-20 focus:outline-offset-0`}
           >
             <span className="sr-only">Next</span>

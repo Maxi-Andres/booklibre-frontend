@@ -8,7 +8,7 @@ import LoanDetails from "@/pages/LoanDetails"
 import { useAuth } from "./context/AuthContext"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { Login } from "@/pages/login"
+import { Login } from "@/pages/Login"
 import EditBook from "@/pages/EditBook"
 import { Register } from "./pages/Register"
 
@@ -23,14 +23,14 @@ function App() {
       <Routes>
         {/* Rutas públicas - siempre disponibles */}
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/" replace />} />
-        <Route path="/register" element={!user ? <Register /> : <Navigate to="/" replace />} />
+        <Route path="/registrarse" element={!user ? <Register /> : <Navigate to="/" replace />} />
 
         {/* Rutas privadas */}
         <Route element={<PrivateLayer />}>
           <Route path="/" element={<Home />} />
-          <Route path="/book-detail/:id" element={<BookDetail />} />
+          <Route path="/detalle-de-libro/:id" element={<BookDetail />} />
           <Route path="/prestamos-de-libros" element={<LoanDetails />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/perfil" element={<Profile />} />
           <Route path="/editar-libro/:id" element={<EditBook />} />
           <Route path="/crear-libro" element={<EditBook />} />
         </Route>

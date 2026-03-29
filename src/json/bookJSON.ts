@@ -1,5 +1,6 @@
 import type { BookGender } from "@/types/bookGender"
 import type { BookType } from "@/types/bookType"
+import type { BookCondition } from "@/types/bookCondition"
 import type { Languages } from "@/types/languages"
 import type { UserProfileJSON } from "./userProfileJSON"
 import { Book } from "@/model/book"
@@ -38,37 +39,44 @@ export type ProfileBookJSON = {
 
 //esto es para la creacion/actualizacion del libro
 
-export interface BookCreateDTO {
-  title: string
-  bookType: string
-  desc: string
-  gender: string
-  authorName: string
-  authorAvatarUrl: string
-  numPages: number
-  isbn: string
-  language: string
-  editorial: string
-  publishDate: string
-  condition: string
-  imageSrc: string
+export type BookCreateDTO = {
   ownerId: number
+  book: {
+    bookType: BookType  
+    title: string
+    desc: string
+    gender: BookGender
+    author: {
+      name: string
+      avatar: string
+    }
+    numPages: number
+    isbn: string
+    language: Languages
+    editorial: string
+    publishDate: string
+    condition: BookCondition
+    imageSrc: string
+  }
 }
 
 export const toBookCreateDTO = (book: Book): BookCreateDTO => ({
-  title: book.title,
-  bookType: book.bookType,
-  desc: book.desc,
-  gender: book.gender,
-  authorName: book.author.name,
-  authorAvatarUrl: book.author.avatar,
-  numPages: book.numPages,
-  isbn: book.isbn,
-  language: book.language,
-  editorial: book.editorial,
-  publishDate: book.publishDate ? new Date(book.publishDate).toISOString().split('T')[0] : '',
-  condition: book.condition,
-  imageSrc: book.imageSrc,
-  ownerId: Number(getId())
-  //ownerId: Number(localStorage.getItem('id'))
+  ownerId: Number(getId()),
+  book: {
+    bookType: book.bookType,   
+    title: book.title,
+    desc: book.desc,
+    gender: book.gender,
+    author: {
+      name: book.author.name,
+      avatar: book.author.avatar,
+    },
+    numPages: book.numPages,
+    isbn: book.isbn,
+    language: book.language,
+    editorial: book.editorial,
+    publishDate: book.publishDate ? new Date(book.publishDate).toISOString().split('T')[0] : '',
+    condition: book.condition,
+    imageSrc: book.imageSrc,
+  }
 })
