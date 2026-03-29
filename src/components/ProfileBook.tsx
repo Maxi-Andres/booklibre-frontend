@@ -44,12 +44,8 @@ export default function ProfileBook({
 }) {
   const navigate = useNavigate()
 
-  //A PESAR DE QUE LOS ELIMINA, FALTA VER SI PONER UN USE EFFECT O UN STATE DE MODIFICACION PARA RE RENDERIZAR Y QUE YA NO APAREZCA EN LA LISTA
+  
   const handleDelete = async () => {
-
-    console.log(bookState)
-    console.log(JSON.stringify(bookState)) // muestra caracteres ocultos
-console.log(bookState === 'RETURNED')  // debería ser true
       if (bookState === 'SOON_TO_END' || bookState === 'BORROWED' || bookState === 'ACTIVE') {
         showToast.error("No es posible eliminar un libro que esta prestado")}
         else {
