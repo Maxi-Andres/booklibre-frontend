@@ -54,19 +54,21 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
     onBibliokarmasChange(res.data)
   }
 
-  // Solo verifica, sin side effects
-  const isDateInReservedPeriod = (date: string): boolean =>
-  reservedDates.some(period => date >= period.pickUpDate && date <= period.dropOffDate)
+  const isDateInReservedPeriod = (date: string): boolean => reservedDates.some(period => date >= period.pickUpDate && date <= period.dropOffDate)
 
-  const isReserved = (date: Date): boolean =>
-    isDateInReservedPeriod(date.toISOString().split("T")[0])
+  const isReserved = (date: Date): boolean => isDateInReservedPeriod(date.toISOString().split("T")[0])
 
-  const isDateReserved = (date: string): boolean => {
-    const reserved = isDateInReservedPeriod(date)
-    if (reserved) {
-      showToast.error("La fecha seleccionada no está disponible")
-    }
-    return reserved
+  const isDateReserved = (date: string): boolean => isDateInReservedPeriod(date)
+
+  const handleDropOffChange = (date: Date | null) => {
+    if (!date || !pickUpDate) return
+
+    const selected = toLocalDateString(date)
+
+    const final = selected < pickUpDate ? pickUpDate : selected
+
+    setDropOffDate(final)
+    recalculateBibliokarmas(pickUpDate, final)
   }
 
   useOnInit(() => {
@@ -74,6 +76,23 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
       recalculateBibliokarmas(pickUpDate, dropOffDate)
     }}
   )
+
+  const toLocalDateString = (date: Date): string => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const handlePickUpChange = (date: Date | null) => {
+    if (!date) return
+
+    const newDate = toLocalDateString(date)
+    setPickUpDate(newDate)
+    setDropOffDate(newDate)
+
+    recalculateBibliokarmas(newDate, newDate)
+  }
 
   return (
     <div className="flex w-80 shrink-0 flex-col gap-2 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -128,11 +147,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
                 <label className="text-xs text-gray-400 uppercase">Desde</label>
                 <DatePicker
                     selected={pickUpDate ? new Date(pickUpDate + "T00:00:00") : null}
-                    onChange={(date: Date | null) => {
-                        const newDate = date?.toISOString().split('T')[0] ?? ""
-                        setPickUpDate(newDate)
-                        if (newDate && dropOffDate) recalculateBibliokarmas(newDate, dropOffDate)
-                    }}
+                    onChange={handlePickUpChange}
                     minDate={new Date()}
                     dayClassName={(date) => isReserved(date) ? "bg-[#FF8A80] text-white rounded-full" : ""}
                     placeholderText="Desde"
@@ -144,11 +159,7 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
                 <label className="text-xs text-gray-400 uppercase">Hasta</label>
                 <DatePicker
                     selected={dropOffDate ? new Date(dropOffDate + "T00:00:00") : null}
-                    onChange={(date: Date | null) => {
-                        const newDate = date?.toISOString().split('T')[0] ?? ""
-                        setDropOffDate(newDate)
-                        if (pickUpDate && newDate) recalculateBibliokarmas(pickUpDate, newDate)
-                    }}
+                    onChange={handleDropOffChange}
                     minDate={pickUpDate ? new Date(pickUpDate + "T00:00:00") : new Date()}
                     dayClassName={(date) => isReserved(date) ? "bg-[#FF8A80] text-white rounded-full" : ""}
                     placeholderText="Hasta"
