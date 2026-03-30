@@ -49,6 +49,7 @@ export default function ReviewsModal({ bookId, bookTitle, initialReviews = [] }:
       setHasMore(false)
     } else {
       const response = await reserveService.getReviews(bookId, 1, 4)
+      // console.log('Respuesta del back:', response.data)
       setHasMore(response.data.length > 0)
     }
   }

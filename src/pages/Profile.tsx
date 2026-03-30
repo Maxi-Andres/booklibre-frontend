@@ -306,11 +306,7 @@ export default function Profile() {
                       bookName={reserve.book.title}
                       bookState={reserve.state}
                       additionDate={reserve.book.timestamp}
-                      onDelete={() =>
-                        setShownBooks((prev) =>
-                          prev.filter((r) => r.book.id !== reserve.book.id),
-                        )
-                      }
+                      onDelete={() => getUserOwnBooks(filter, sort, activePage)}
                     />
                   ))}
                 </section>
