@@ -58,7 +58,13 @@ export function ReservationCard({ book, initialPickUpDate, initialDropOffDate, r
 
   const isReserved = (date: Date): boolean => isDateInReservedPeriod(date.toISOString().split("T")[0])
 
-  const isDateReserved = (date: string): boolean => isDateInReservedPeriod(date)
+  const isDateReserved = (date: string): boolean => {
+    const reserved = isDateInReservedPeriod(date)
+    if (reserved) {
+      showToast.error("La fecha seleccionada no está disponible")
+    }
+    return reserved
+  }
 
   const handleDropOffChange = (date: Date | null) => {
     if (!date || !pickUpDate) return
