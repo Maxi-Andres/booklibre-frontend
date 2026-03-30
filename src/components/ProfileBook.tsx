@@ -4,24 +4,7 @@ import { useNavigate } from "react-router"
 import { formatDate } from "@/utils/formatDate"
 import { bookService } from "@/services/bookService"
 import { showToast } from "@/utils/toast"
-
-export const statusStyles: Record<string, string> = {
-  ACTIVE: "bg-orange-400 text-white",
-  AVAILABLE: "bg-green-500 text-white",
-  RESERVED: "bg-green-500 text-white",
-  BORROWED: "bg-orange-400 text-white",
-  SOON_TO_END: "bg-orange-400 text-white",
-  RETURNED: "bg-green-500 text-white",
-}
-
-export const statusLabels: Record<string, string> = {
-  ACTIVE: "Prestado",
-  AVAILABLE: "Disponible",
-  BORROWED: "Prestado",
-  RESERVED: "Disponible",
-  SOON_TO_END: "Prestado",
-  RETURNED: "Disponible",
-}
+import { ownerStatusStyles, ownerStatusLabels } from "@/types/statusLabels"
 
 export default function ProfileBook({
   bookImg,
@@ -62,19 +45,19 @@ export default function ProfileBook({
   }}
 
   return (
-    <div className="flex h-25 items-center justify-center gap-4 pl-2 pr-2">
+    <div className="flex h-25 items-center justify-center gap-4 pr-2 pl-2">
       <img src={bookImg} alt="" className="h-23 w-15 rounded-lg" />
-      <div className="min-w-0 flex-1 max-w-65">
+      <div className="max-w-65 min-w-0 flex-1">
         <p className="truncate">{bookName}</p>
         <p className="truncate">{bookAuthor}</p>
         <p className="truncate">{bookGender}</p>
       </div>
       <div className="w-28">
         <span
-          className={`flex rounded-full pr-1 font-semibold ${statusStyles[bookState]}`}
+          className={`flex rounded-full pr-1 font-semibold ${ownerStatusStyles[bookState]}`}
         >
-          {<DotIcon size={20}/>}
-          {statusLabels[bookState] ?? bookState}
+          {<DotIcon size={20} />}
+          {ownerStatusLabels[bookState] ?? bookState}
         </span>
       </div>
       <div className="w-24 text-sm text-gray-400">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Link } from "react-router"
 import { IconSearch, IconBook } from "@tabler/icons-react"
 import { reserveService } from "@/services/reserveService"
@@ -26,21 +26,21 @@ export default function LoanDetails() {
   const pageSizeLoanBooks = 4
   const id = getId()
 
-  const handleSearch = () => {
-    if (activeTab == "prestados-a-mi") {
-      getReservesByUserId()
+  const handleSearch = (tab = activeTab, page = activePage) => {
+    if (tab == "prestados-a-mi") {
+      getReservesByUserId(page)
     } else {
-      getLoansMadeByUserId()
+      getLoansMadeByUserId(page)
     }
   }
 
-  const getReservesByUserId = async () => {
+  const getReservesByUserId = async (page: number) => {
     if (!id) return
     try {
       const backResponse = await reserveService.getReservesByUserId(
         id, // le prometo que no es null
         search,
-        activePage,
+        page,
         pageSizeLoanBooks,
       )
       const reservesByUser = backResponse.items.map(mapReservation)
@@ -52,13 +52,13 @@ export default function LoanDetails() {
     }
   }
 
-  const getLoansMadeByUserId = async () => {
+  const getLoansMadeByUserId = async (page: number) => {
     if (!id) return
     try {
       const backResponse = await reserveService.getLoansMadeByUserId(
         id, // le prometo que no es null
         search,
-        activePage,
+        page,
         pageSizeLoanBooks,
       )
       const reservesByUser = backResponse.items.map(mapReservation)
@@ -68,11 +68,6 @@ export default function LoanDetails() {
       showToast.httpError(error, "Error al cargar las reservas")
     }
   }
-
-  useEffect(() => {
-    handleSearch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePage])
 
   useOnInit(() => handleSearch()) // la primera busqueda es vacia
 
@@ -96,11 +91,7 @@ export default function LoanDetails() {
               onClick={() => {
                 setActiveTab(tab)
                 setActivePage(0)
-                if (tab === "prestados-a-mi") {
-                  getReservesByUserId()
-                } else {
-                  getLoansMadeByUserId()
-                }
+                handleSearch(tab, 0)
               }}
               className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer ${
                 activeTab === tab
@@ -115,7 +106,7 @@ export default function LoanDetails() {
 
         {/* =================== Search =================== */}
         <div className="mt-6 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
-          <button onClick={handleSearch} className="group">
+          <button onClick={() => handleSearch()}>
             <IconSearch
               size={18}
               className="cursor-pointer text-gray-400 transition-all duration-300 group-hover:scale-115 group-hover:text-blue-500"
@@ -148,7 +139,11 @@ export default function LoanDetails() {
         {/* no te tiene que dejas tocar ni los bordes ni el que esta seleccionado */}
         <div className="mt-8 flex items-center justify-center gap-1.5">
           <button
-            onClick={() => setActivePage((prev) => prev - 1)}
+            onClick={() => {
+              const newPage = activePage - 1
+              setActivePage(newPage)
+              handleSearch(activeTab, newPage)
+            }}
             disabled={activePage === 0}
             className="h-9 w-9 cursor-pointer rounded-lg border border-gray-200 text-sm font-bold text-gray-400 transition-all duration-150 ease-out hover:scale-[1.09] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60 disabled:pointer-events-none disabled:opacity-40"
           >
@@ -158,7 +153,10 @@ export default function LoanDetails() {
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i}
-              onClick={() => setActivePage(i)}
+              onClick={() => {
+                setActivePage(i)
+                handleSearch(activeTab, i)
+              }}
               className={`h-9 w-9 cursor-pointer rounded-lg text-sm transition-all duration-150 ease-out hover:scale-[1.09] hover:shadow-xl hover:shadow-gray-300/60 ${
                 activePage === i
                   ? "bg-blue-500 font-bold text-white shadow-sm shadow-blue-200"
@@ -170,7 +168,11 @@ export default function LoanDetails() {
           ))}
 
           <button
-            onClick={() => setActivePage((prev) => prev + 1)}
+            onClick={() => {
+              const newPage = activePage + 1
+              setActivePage(newPage)
+              handleSearch(activeTab, newPage)
+            }}
             disabled={activePage === totalPages - 1}
             className="h-9 w-9 cursor-pointer rounded-lg border border-gray-200 text-sm font-bold text-gray-400 transition-all duration-150 ease-out hover:scale-[1.09] hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:shadow-xl hover:shadow-gray-300/60 disabled:pointer-events-none disabled:opacity-40"
           >

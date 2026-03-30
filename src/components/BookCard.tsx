@@ -2,26 +2,10 @@ import { useState } from "react"
 import { IconUser, IconCalendar, IconBook, IconStar } from "@tabler/icons-react"
 import type { ReservationDTO } from "@/types/reservationType"
 import RatingModal from "./RatingModal"
-
-// Record<tipoDeClave, tipoDeValor>
-export const statusStyles: Record<string, string> = {
-  ACTIVE: "bg-blue-500 text-white",
-  AVAILABLE: "bg-green-500 text-white",
-  RESERVED: "bg-green-500 text-white",
-  SOON_TO_END: "bg-orange-400 text-white",
-  RETURNED: "bg-red-400 text-white",
-}
-
-export const statusLabels: Record<string, string> = {
-  ACTIVE: "ACTIVO",
-  AVAILABLE: "PRESTADO",
-  RESERVED: "PRESTADO",
-  SOON_TO_END: "PRÓXIMO A VENCER",
-  RETURNED: "DEVUELTO",
-}
-// YA ME ACORDE ES PARA CUANDO LO RESERVASTE PERO TODAVIA NO ES LA FECHA
-// no se de donde saque prestado la verdad, osea la cosa es asi,
-// activo es cuando lo tenes, proximo a vencer es cuando lo tenes que devolver en 2 dias, devuelto es cuando se termino tu tiempo con el libro
+import {
+  borrowerStatusStyles,
+  borrowerStatusLabels,
+} from "@/types/statusLabels"
 
 interface BookCardProps {
   book: ReservationDTO
@@ -37,9 +21,9 @@ export default function BookCard({ book, activeTab, onRated }: BookCardProps) {
       <div className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-[1.03] hover:shadow-xl hover:shadow-gray-300/60">
         {/* =================== Status badge =================== */}
         <span
-          className={`absolute top-1 right-2 z-10 rounded-full px-2 py-0.5 text-xs font-semibold ${statusStyles[book.state]}`}
+          className={`absolute top-1 right-2 z-10 rounded-full px-2 py-0.5 text-xs font-semibold ${borrowerStatusStyles[book.state]}`}
         >
-          {statusLabels[book.state] ?? book.state}
+          {borrowerStatusLabels[book.state] ?? book.state}
         </span>
 
         {/* =================== Cover =================== */}

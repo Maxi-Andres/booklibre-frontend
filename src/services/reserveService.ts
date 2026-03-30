@@ -9,14 +9,12 @@ import type { ReservationDates } from "@/types/reservationDates"
 
 class ReserveService {
   get id() {
-    return getId() 
+    return getId()
   }
-  
+
   async getUserReadBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
-      axios.get<number>(
-        REST_SERVER_URL + `/userReadBooks/${this.id}`,
-      ),
+      axios.get<number>(REST_SERVER_URL + `/userReadBooks/${this.id}`),
     )
   }
 
@@ -93,40 +91,44 @@ class ReserveService {
     filterCriteria: string,
     sortCriteria: string,
     page: number,
-    pageSize: number
+    pageSize: number,
   ) {
     const { data } = await axios.get(
-        REST_SERVER_URL +
-        `/userOwnBooks/${this.id}`,
-        { params: { filterCriteria, sortCriteria, page, pageSize } }
-      )
+      REST_SERVER_URL + `/userOwnBooks/${this.id}`,
+      { params: { filterCriteria, sortCriteria, page, pageSize } },
+    )
 
-      // console.log(data)
+    // console.log(data)
     return data
   }
 
   async getUserLentBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
-      axios.get<number>(
-        REST_SERVER_URL + `/userLentBooks/${this.id}`,
-      ),
+      axios.get<number>(REST_SERVER_URL + `/userLentBooks/${this.id}`),
     )
   }
 
   async getReservedDates(bookId: number) {
-    return axios.get<ReservationDates[]>(`${REST_SERVER_URL}/reservations/book/${bookId}/dates`)
+    return axios.get<ReservationDates[]>(
+      `${REST_SERVER_URL}/reservations/book/${bookId}/dates`,
+    )
   }
 
-  async getBibliokarmas(bookId: number, userId: number, pickUpDate: string, dropOffDate: string) {
+  async getBibliokarmas(
+    bookId: number,
+    userId: number,
+    pickUpDate: string,
+    dropOffDate: string,
+  ) {
     return axios.get<number>(
       `${REST_SERVER_URL}/book-detail/${bookId}/bibliokarmas`,
-    {
-      params: {
-        userId,
-        pickUpDate,
-        dropOffDate
-      }
-    }
+      {
+        params: {
+          userId,
+          pickUpDate,
+          dropOffDate,
+        },
+      },
     )
   }
 }
