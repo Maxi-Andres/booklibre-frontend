@@ -5,7 +5,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react"
-import { UserProfile } from "@/model/userProfile"
+import { UserProfile } from "@/domain/userProfile"
 import { GearIcon, PencilIcon } from "@phosphor-icons/react"
 import { InputField } from "@/components/InputField"
 import { getErrorMessage } from "@/validation/errorHandler"
@@ -27,8 +27,10 @@ export default function ProfileSettingsModal({
   const [errors, setErrors] = useState<ValidationMessage[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previewImg, setPreviewImg] = useState<string>(
-  profile.img ? `http://localhost:9000/${profile.img}` : '/assets/default-img.png'
-)
+    profile.img
+      ? `${REST_SERVER_URL}/${profile.img}`
+      : "/assets/default-img.png",
+  )
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null)
   const { refreshProfile } = useUserProfile()
 
@@ -45,9 +47,13 @@ export default function ProfileSettingsModal({
   const handleImageClick = () => {
     fileInputRef.current?.click()
   }
-  
+
   const handleCancel = () => {
-    setPreviewImg(profile.img ? `http://localhost:9000/${profile.img}` : '/assets/default-img.png')
+    setPreviewImg(
+      profile.img
+        ? `${REST_SERVER_URL}/${profile.img}`
+        : "/assets/default-img.png",
+    )
     setSelectedImageFile(null)
     setErrors([])
     setOpen(false)
@@ -85,7 +91,7 @@ export default function ProfileSettingsModal({
       )
       onProfileUpdated(updatedProfile)
       refreshProfile()
-      showToast.success('Cambios guardados')
+      showToast.success("Cambios guardados")
       setOpen(false)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
@@ -98,10 +104,11 @@ export default function ProfileSettingsModal({
     }
   }
 
-  
-useEffect(() => {
-  setPreviewImg(profile.img ? `http://localhost:9000/${profile.img}` : '/default-img.png')
-}, [profile.img])
+  useEffect(() => {
+    setPreviewImg(
+      profile.img ? `${REST_SERVER_URL}/${profile.img}` : "/default-img.png",
+    )
+  }, [profile.img])
 
   return (
     <div>
@@ -212,7 +219,9 @@ useEffect(() => {
                           errors={errors}
                         />
                         <div className="flex flex-col">
-                          <label className="text-sm text-gray-700">Tipo de perfil</label>
+                          <label className="text-sm text-gray-700">
+                            Tipo de perfil
+                          </label>
                           <select
                             name="userType"
                             defaultValue={profile.userType}
@@ -220,7 +229,9 @@ useEffect(() => {
                           >
                             <option value="Publicador">Publicador</option>
                             <option value="Lector">Lector</option>
-                            <option value="Lector / Publicador">Lector / Publicador</option>
+                            <option value="Lector / Publicador">
+                              Lector / Publicador
+                            </option>
                           </select>
                         </div>
                         <div className="mt-5 flex justify-end">

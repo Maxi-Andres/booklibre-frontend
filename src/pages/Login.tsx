@@ -1,31 +1,31 @@
-import '@/css/checkbox.css'
+import "@/css/checkbox.css"
 import { Link, useNavigate, useLocation } from "react-router"
-import type { UserJSONLoginRequest } from "@/model/user"
-import { UserType } from "@/model/user"
+import type { UserJSONLoginRequest } from "@/domain/user"
+import { UserType } from "@/domain/user"
 import { useState } from "react"
 import { ValidationMessage } from "@/validation/validationMessage"
 import ValidationField from "@/validation/ValidationField"
 import { userService } from "@/services/UserService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { InputField } from "@/components/InputField"
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from "@/context/AuthContext"
 import { showToast } from "@/utils/toast"
-
-
 
 export const Login = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const {login} = useAuth()
-  const [user, setUser] = useState<UserJSONLoginRequest>({email:'',password:''})
+  const { login } = useAuth()
+  const [user, setUser] = useState<UserJSONLoginRequest>({
+    email: "",
+    password: "",
+  })
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
-  const [rememberMe, setRememberMe] = useState(false);
-
+  const [rememberMe, setRememberMe] = useState(false)
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
     ev.preventDefault()
 
-    const userLogin = new UserType(user.email, user.password,'')
+    const userLogin = new UserType(user.email, user.password, "")
 
     userLogin.validateLogin()
 
@@ -39,18 +39,24 @@ export const Login = () => {
 
       if (validation) {
         login(validation, rememberMe)
-        navigate('/', { replace: true })
+        navigate("/", { replace: true })
       }
     } catch (error) {
-      showToast.httpError(error, 'Error al iniciar sesion, contactese con el administrador')
-    } 
+      showToast.httpError(error, "Error al iniciar sesion")
+    }
   }
 
-  const update = (key: keyof typeof user, value:unknown) => {
-    setUser({...user, [key]:value})
+  const update = (key: keyof typeof user, value: unknown) => {
+    setUser({ ...user, [key]: value })
   }
 
-  useOnInit(() => { if (location.state?.from?.pathname != '/' && location.state?.from?.pathname != undefined) alert('Debe loguearse')})
+  useOnInit(() => {
+    if (
+      location.state?.from?.pathname != "/" &&
+      location.state?.from?.pathname != undefined
+    )
+      alert("Debe loguearse")
+  })
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -66,55 +72,57 @@ export const Login = () => {
           <div className="space-y-4">
             {/* Email Field */}
             <div>
-              <InputField 
-              label="Email"
-              id="email"
-              type="email"
-              required
-              value={user.email}
-              onChange={(e) => update("email", e.target.value)}
+              <InputField
+                label="Email"
+                id="email"
+                type="email"
+                required
+                value={user.email}
+                onChange={(e) => update("email", e.target.value)}
               />
               <ValidationField field="email" errors={errors} />
             </div>
 
             {/* Password Field */}
             <div>
-              <InputField 
-              label="Password"
-              id="password"
-              type="password"
-              required
-              value={user.password}
-              onChange={(e)=> update("password", e.target.value)}
+              <InputField
+                label="Password"
+                id="password"
+                type="password"
+                required
+                value={user.password}
+                onChange={(e) => update("password", e.target.value)}
               />
               <ValidationField field="password" errors={errors} />
             </div>
           </div>
-        {/* Remember checkbox */}
+          {/* Remember checkbox */}
 
           <div className="flex items-center gap-2">
             <div className="cntr">
-              <input 
-                type="checkbox" 
-                id="cbx" 
+              <input
+                type="checkbox"
+                id="cbx"
                 className="hidden-xs-up"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
-            <label htmlFor="cbx" className="cbx"></label>
+              <label htmlFor="cbx" className="cbx"></label>
+            </div>
+            <label
+              htmlFor="cbx"
+              className="cursor-pointer text-sm text-gray-800"
+            >
+              Recuérdame
+            </label>
           </div>
-          <label htmlFor="cbx" className="text-sm text-gray-800 cursor-pointer">
-           Recuérdame
-          </label>
-        </div>
-          
 
           {/* Submit Button */}
           <button
             type="submit"
             className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           >
-            { "Iniciar sesión"}
+            {"Iniciar sesión"}
           </button>
         </form>
 

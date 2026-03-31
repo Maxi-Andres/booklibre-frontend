@@ -2,15 +2,16 @@ import { useLocation, useParams } from "react-router"
 import { bookService } from "@/services/bookService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { useState } from "react"
-import type { Book } from "@/model/book"
+import type { Book } from "@/domain/book"
 import { ReservationCard } from "@/components/ReservationCard"
 import { reserveService } from "@/services/reserveService"
-import { BookReview } from "@/model/review"
+import { BookReview } from "@/domain/review"
 import { showToast } from "@/utils/toast"
 import ReviewsModal from "@/components/ReviewsModal"
 import { StarRating } from "@/components/ReviewsModal"
 import { formatDate } from "@/utils/formatDate"
 import type { ReservationDates } from "@/types/reservationDates"
+import { REST_SERVER_URL } from "@/config/configuration"
 
 export default function BookDetail() {
   const { id } = useParams()
@@ -21,10 +22,9 @@ export default function BookDetail() {
   const [reservedDates, setReservedDates] = useState<ReservationDates[]>([])
   const [bibliokarmas, setBibliokarmas] = useState(0)
 
-
   const getReservedDates = async () => {
-      const res = await reserveService.getReservedDates(Number(id))
-      setReservedDates(res.data)
+    const res = await reserveService.getReservedDates(Number(id))
+    setReservedDates(res.data)
   }
 
   const getBook = async () => {
@@ -118,7 +118,7 @@ export default function BookDetail() {
                 Autor
               </span>
               <img
-                src={`http://localhost:9000/${book!.author.avatar}`}
+                src={`${REST_SERVER_URL}/${book!.author.avatar}`}
                 alt={book!.author.name}
                 className="h-7 w-7 rounded-full object-cover"
               />
@@ -216,7 +216,11 @@ export default function BookDetail() {
                   </p>
                 ) : (
                   reviews.length >= 2 && (
-                    <ReviewsModal bookId={book.id} bookTitle={book.title} initialReviews={reviews} />
+                    <ReviewsModal
+                      bookId={book.id}
+                      bookTitle={book.title}
+                      initialReviews={reviews}
+                    />
                   )
                 )}
               </div>

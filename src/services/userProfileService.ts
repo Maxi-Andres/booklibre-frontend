@@ -1,14 +1,17 @@
 import { REST_SERVER_URL } from "@/config/configuration"
-import type { UserProfileJSON, UserProfileUpdateJSON } from "@/json/userProfileJSON"
-import { UserProfile } from "@/model/userProfile"
+import type {
+  UserProfileJSON,
+  UserProfileUpdateJSON,
+} from "@/json/userProfileJSON"
+import { UserProfile } from "@/domain/userProfile"
 import axios from "axios"
 import { getId } from "@/context/AuthContext"
 
 class UserProfileService {
   get id() {
-    return getId() 
+    return getId()
   }
-  
+
   async getProfile() {
     const userId = this.id
     const response = await axios.get<UserProfileJSON>(
@@ -34,14 +37,17 @@ class UserProfileService {
 
     formData.append(
       "userData",
-      new Blob([JSON.stringify(userData)], { type: "application/json" })
+      new Blob([JSON.stringify(userData)], { type: "application/json" }),
     )
 
     if (imageFile) {
       formData.append("image", imageFile)
     }
 
-    const response = await axios.put<UserProfileJSON>( REST_SERVER_URL + `/updateProfile`, formData )
+    const response = await axios.put<UserProfileJSON>(
+      REST_SERVER_URL + `/updateProfile`,
+      formData,
+    )
     return UserProfile.fromJSON(response.data)
   }
 }

@@ -1,7 +1,7 @@
 import ProfileBook from "@/components/ProfileBook"
 import Tag from "@/components/Tag"
 import { useOnInit } from "@/hooks/UseOnInit"
-import { UserProfile } from "@/model/userProfile"
+import { UserProfile } from "@/domain/userProfile"
 import { userProfileService } from "@/services/userProfileService"
 import { useEffect, useState } from "react"
 
@@ -16,12 +16,12 @@ import {
 
 // import { getErrorMessage } from "@/validation/errorHandler"
 import { reserveService } from "@/services/reserveService"
-import { ReservationProfileBook } from "@/model/reservationProfile"
+import { ReservationProfileBook } from "@/domain/reservationProfile"
 import ProfileSettingsModal from "@/components/ProfileSettingsModal"
-import { getErrorMessage } from "@/validation/errorHandler"
 import { showToast } from "@/utils/toast"
 import PaginationButtons from "@/components/PaginationButtons"
 import { useLocation, useNavigate, Link } from "react-router"
+import { REST_SERVER_URL } from "@/config/configuration"
 
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
@@ -58,8 +58,7 @@ export default function Profile() {
       const userProfile = await userProfileService.getProfile()
       setProfile(userProfile)
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      showToast.httpError(error, "Error al traer su usuario. " + errorMessage)
+      showToast.httpError(error, "Error al traer su usuario")
     }
   }
 
@@ -80,8 +79,7 @@ export default function Profile() {
       setTotalPages(backResponse.totalPages)
       setTotalBooksNumber(backResponse.total)
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      showToast.httpError(error, "Error buscar sus libros. " + errorMessage)
+      showToast.httpError(error, "Error buscar sus libros")
     }
   }
 
@@ -90,11 +88,7 @@ export default function Profile() {
       const userReadBooksNumber = await reserveService.getUserReadBooksNumber()
       setUserReadBooksNumber(userReadBooksNumber)
     } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      showToast.httpError(
-        error,
-        "Error al contar sus libros leidos. " + errorMessage,
-      )
+      showToast.httpError(error, "Error al contar sus libros leidos")
     }
   }
 
@@ -103,7 +97,7 @@ export default function Profile() {
       const userLentBooksNumber = await reserveService.getUserLentBooksNumber()
       setUserLentBooksNumber(userLentBooksNumber)
     } catch (error) {
-      showToast.httpError(error, "Error al contar sus libros prestados.")
+      showToast.httpError(error, "Error al contar sus libros prestados")
     }
   }
 
@@ -130,7 +124,7 @@ export default function Profile() {
           <img
             src={
               profile.img
-                ? `http://localhost:9000/${profile.img}`
+                ? `${REST_SERVER_URL}/${profile.img}`
                 : "/assets/default-img.png"
             }
             alt="Profile Image"

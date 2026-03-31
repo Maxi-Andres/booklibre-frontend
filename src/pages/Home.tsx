@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from "react"
 import {
   Disclosure,
   DisclosureButton,
@@ -8,27 +8,27 @@ import {
   Menu,
   MenuButton,
   MenuItems,
-} from '@headlessui/react'
+} from "@headlessui/react"
 // import { XMarkIcon } from '@heroicons/react/24/outline'
-import { ChevronDownIcon, MinusIcon, PlusIcon } from '@heroicons/react/20/solid'
-import { IconSearch } from '@tabler/icons-react'
-import { Book } from '@/model/book'
-import BookCardHome from '@/components/BookCardHome'
-import { BookGender } from '@/types/bookGender'
-import type { BookFilters } from '@/types/bookFilters'
-import MultiRangeSlider from '@/components/MultiRangeSlider/MultiRangeSlider'
-import { addDays } from '@/utils/addDays'
-import Pagination from '@/components/Pagination'
-import { bookService } from '@/services/bookService'
-import OrderDirectionArrow from '@/components/OrderDirectionArrow/OrderDirectionArrow'
-import { useOnInit } from '@/hooks/UseOnInit'
-import { showToast } from '@/utils/toast'
-import SelectSorting from '@/components/SelectSorting'
+import { ChevronDownIcon, MinusIcon, PlusIcon } from "@heroicons/react/20/solid"
+import { IconSearch } from "@tabler/icons-react"
+import { Book } from "@/domain/book"
+import BookCardHome from "@/components/BookCardHome"
+import { BookGender } from "@/types/bookGender"
+import type { BookFilters } from "@/types/bookFilters"
+import MultiRangeSlider from "@/components/MultiRangeSlider/MultiRangeSlider"
+import { addDays } from "@/utils/addDays"
+import Pagination from "@/components/Pagination"
+import { bookService } from "@/services/bookService"
+import OrderDirectionArrow from "@/components/OrderDirectionArrow/OrderDirectionArrow"
+import { useOnInit } from "@/hooks/UseOnInit"
+import { showToast } from "@/utils/toast"
+import SelectSorting from "@/components/SelectSorting"
 
 const initialSortOptions = [
-  { name: 'Título', value: "title", current: true },
-  { name: 'Autor', value: "author", current: false },
-  { name: 'Dueño', value: "owner", current: false },
+  { name: "Título", value: "title", current: true },
+  { name: "Autor", value: "author", current: false },
+  { name: "Dueño", value: "owner", current: false },
 ]
 
 const initialFilters: BookFilters = {
@@ -47,7 +47,6 @@ const initialFilters: BookFilters = {
 }
 
 export default function Home() {
-
   // FILTERING, SORTING AND PAGINATION STATES
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
   const [filters, setFilters] = useState<BookFilters>(initialFilters)
@@ -60,46 +59,43 @@ export default function Home() {
     // console.log("newFilters: ", newFilters)
     try {
       const response = await bookService.getFilteredBooksPage(newFilters)
-      const filtered = response.content.map(book => Book.fromJSON(book))
+      const filtered = response.content.map((book) => Book.fromJSON(book))
       // console.log("books: ", filtered)
       setFilteredBooks(filtered)
       setTotalPages(response.totalPages)
     } catch (error) {
       // console.error("Error fetching filtered books: ", error)
-      showToast.httpError(
-        error,
-        "Error al realizar la busqueda: ",
-      )
+      showToast.httpError(error, "Error al realizar la busqueda: ")
     }
   }
 
   //* ==== FILTERS UPDATE ====
   const updateSimpleFilter = <K extends keyof BookFilters>(
     key: K,
-    value: BookFilters[K]
+    value: BookFilters[K],
   ) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }))
     return { ...filters, [key]: value } // devuelvo los filtros mas actualizados
   }
 
   const toggleGenderFilter = (gender: BookGender) => {
-    setFilters(prev => {
+    setFilters((prev) => {
       const alreadySelected = prev.genders.includes(gender)
 
       return {
         ...prev,
         genders: alreadySelected
-          ? prev.genders.filter(g => g !== gender)
-          : [...prev.genders, gender]
+          ? prev.genders.filter((g) => g !== gender)
+          : [...prev.genders, gender],
       }
     })
   }
 
   //* ==== DATES MAINTENANCE ====
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toISOString().split("T")[0]
   const handlePickUpDate = (pickUpDateStr: string) => {
     // Actualizo la fecha de inicio
     updateSimpleFilter("pickUpDate", pickUpDateStr)
@@ -109,31 +105,33 @@ export default function Home() {
     if (pickUpDate.getTime() > dropOffDate.getTime()) {
       // Si lo es, modifico la fecha de fin para que se despues de la de inicio
       pickUpDate.setDate(pickUpDate.getDate() + 1) // Le sumo un dia
-      updateSimpleFilter("dropOffDate", pickUpDate.toISOString().split('T')[0])
+      updateSimpleFilter("dropOffDate", pickUpDate.toISOString().split("T")[0])
     }
   }
 
   //* ==== PAGE RANGE VALUES ====
   const handleRangeChange = (values: { min: number; max: number }) => {
     updateSimpleFilter("pagesRangeMin", values.min)
-    updateSimpleFilter("pagesRangeMax", values.max) 
-  };
+    updateSimpleFilter("pagesRangeMax", values.max)
+  }
 
   //* ==== SORTING ====
   const updateSortOptions = (selectedOption: string) => {
-    setSortingOptions(prev => prev.map(option => ({
-      ...option,
-      current: option.value === selectedOption
-    })))
+    setSortingOptions((prev) =>
+      prev.map((option) => ({
+        ...option,
+        current: option.value === selectedOption,
+      })),
+    )
     const newFilters = updateSimpleFilter("sortBy", selectedOption)
     getFilteredBooksPage(newFilters)
   }
-  
+
   const toggleSortDirection = () => {
     const newFilters = updateSimpleFilter("ascending", !filters.ascending)
     getFilteredBooksPage(newFilters)
   }
-  
+
   //* ==== PAGE CHANGE ====
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
@@ -142,26 +140,30 @@ export default function Home() {
   }
 
   //* ==== APPLY FILTERS & RESTART PAGE ====
- const handleApplyFilters = (filters: BookFilters) => {
-  //  console.log("Applying filters: ", filters)
-  setPage(0)
-  getFilteredBooksPage(filters)
- }
+  const handleApplyFilters = (filters: BookFilters) => {
+    //  console.log("Applying filters: ", filters)
+    setPage(0)
+    getFilteredBooksPage(filters)
+  }
 
- //* ==== CLEAR FILTERS & RESTART PAGE ====
-  {/* Cuando key cambia, React desmonta y vuelve a montar el componente desde cero, 
-  reseteando su estado interno (minVal, maxVal) a los valores iniciales min y max. */}
+  //* ==== CLEAR FILTERS & RESTART PAGE ====
+  {
+    /* Cuando key cambia, React desmonta y vuelve a montar el componente desde cero, 
+  reseteando su estado interno (minVal, maxVal) a los valores iniciales min y max. */
+  }
   const [filterKey, setFilterKey] = useState(0)
 
   const handleClearFilters = () => {
     updateSortOptions(initialSortOptions[0].value) // resetea la opcion de ordenamiento al default
     setFilters(initialFilters)
     handleApplyFilters(initialFilters)
-    setFilterKey(prev => prev + 1) // fuerza el remount del slider
+    setFilterKey((prev) => prev + 1) // fuerza el remount del slider
   }
 
   //! ==== ON INIT ====
-  const [genderFilters, setGendersFilters] = useState<{ value: string; label: string; checked: boolean }[]>([])
+  const [genderFilters, setGendersFilters] = useState<
+    { value: string; label: string; checked: boolean }[]
+  >([])
   useOnInit(async () => {
     getFilteredBooksPage(initialFilters)
     const genderOptions = await bookService.getBookGenders()
@@ -172,180 +174,274 @@ export default function Home() {
   //* Se ejecuta antes de useOnInit y lanza el toast
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            handleApplyFilters(filters)
-        }
+      if (e.key === "Enter") {
+        handleApplyFilters(filters)
+      }
     }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
   }, [filters])
 
   return (
     <div className="w-full">
       <div>
-{/* =============== MAIN ================ */}
+        {/* =============== MAIN ================ */}
         <main className="mx-auto w-[80%] px-4 sm:px-6 lg:px-8">
-          
           <section aria-labelledby="products-heading" className="pt-6 pb-24">
             <h1 id="products-heading" className="sr-only">
               Products
             </h1>
 
-  {/* ========== PRODUCTOS + FILTERS ========== */}
+            {/* ========== PRODUCTOS + FILTERS ========== */}
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-[300px_1fr]">
-    {/* ========== FILTERS ========== */}
-              <form className="hidden lg:flex flex flex-col bg-white p-5 rounded-2xl border border-gray-200 h-max mt-7">
-                  {/* ========== GENDER FILTERS ========== */}
-                  <Disclosure key="gender-filter" as="div" className="border-b border-gray-200 py-6">
-                    <h3 className="-my-3 flow-root">
-                      <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                        <span className="font-medium text-gray-900">GENERO</span>
-                        <span className="ml-6 flex items-center">
-                          <PlusIcon aria-hidden="true" className="size-5 group-data-open:hidden" />
-                          <MinusIcon aria-hidden="true" className="size-5 group-not-data-open:hidden" />
-                        </span>
-                      </DisclosureButton>
-                    </h3>
-                    <DisclosurePanel className="pt-6">
-                      <div className="space-y-4">
-                        {genderFilters.map((option, optionIdx) => (
-                          <div key={`${option.value}-${filterKey}`} className="flex gap-3">
-                            <div className="flex h-5 shrink-0 items-center">
-                              <div className="group grid size-4 grid-cols-1">
-                                <input
-                                  defaultValue={option.value}
-                                  defaultChecked={option.checked}
-                                  id={`gender-filter-${optionIdx}`}
-                                  name={`gender-filter[]`}
-                                  type="checkbox"
-                                  className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
-                                  onClick={() => toggleGenderFilter(option.value as BookGender)}
+              {/* ========== FILTERS ========== */}
+              <form className="mt-7 flex hidden h-max flex-col rounded-2xl border border-gray-200 bg-white p-5 lg:flex">
+                {/* ========== GENDER FILTERS ========== */}
+                <Disclosure
+                  key="gender-filter"
+                  as="div"
+                  className="border-b border-gray-200 py-6"
+                >
+                  <h3 className="-my-3 flow-root">
+                    <DisclosureButton className="group flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                      <span className="font-medium text-gray-900">GENERO</span>
+                      <span className="ml-6 flex items-center">
+                        <PlusIcon
+                          aria-hidden="true"
+                          className="size-5 group-data-open:hidden"
+                        />
+                        <MinusIcon
+                          aria-hidden="true"
+                          className="size-5 group-not-data-open:hidden"
+                        />
+                      </span>
+                    </DisclosureButton>
+                  </h3>
+                  <DisclosurePanel className="pt-6">
+                    <div className="space-y-4">
+                      {genderFilters.map((option, optionIdx) => (
+                        <div
+                          key={`${option.value}-${filterKey}`}
+                          className="flex gap-3"
+                        >
+                          <div className="flex h-5 shrink-0 items-center">
+                            <div className="group grid size-4 grid-cols-1">
+                              <input
+                                defaultValue={option.value}
+                                defaultChecked={option.checked}
+                                id={`gender-filter-${optionIdx}`}
+                                name={`gender-filter[]`}
+                                type="checkbox"
+                                className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
+                                onClick={() =>
+                                  toggleGenderFilter(option.value as BookGender)
+                                }
+                              />
+                              <svg
+                                fill="none"
+                                viewBox="0 0 14 14"
+                                className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+                              >
+                                <path
+                                  d="M3 8L6 11L11 3.5"
+                                  strokeWidth={2}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="opacity-0 group-has-checked:opacity-100"
                                 />
-                                <svg
-                                  fill="none"
-                                  viewBox="0 0 14 14"
-                                  className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                                >
-                                  <path
-                                    d="M3 8L6 11L11 3.5"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="opacity-0 group-has-checked:opacity-100"
-                                  />
-                                  <path
-                                    d="M3 7H11"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="opacity-0 group-has-indeterminate:opacity-100"
-                                  />
-                                </svg>
-                              </div>
+                                <path
+                                  d="M3 7H11"
+                                  strokeWidth={2}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="opacity-0 group-has-indeterminate:opacity-100"
+                                />
+                              </svg>
                             </div>
-                            <label htmlFor={`gender-filter-${optionIdx}`} className="text-sm text-gray-600">
-                              {option.label}
-                            </label>
                           </div>
-                        ))}
-                      </div>
-                    </DisclosurePanel>
-                  </Disclosure>
+                          <label
+                            htmlFor={`gender-filter-${optionIdx}`}
+                            className="text-sm text-gray-600"
+                          >
+                            {option.label}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </DisclosurePanel>
+                </Disclosure>
 
                 {/* ========== NUM PAGE RANGE FILTERS ========== */}
-                <Disclosure key="numPageRangeFilter" as="div" className="border-b border-gray-200 py-6">
-                  <label htmlFor="steps-range" className="block mb-2.5 text-sm font-medium text-heading">RANGO DE PÁGINAS</label>
+                <Disclosure
+                  key="numPageRangeFilter"
+                  as="div"
+                  className="border-b border-gray-200 py-6"
+                >
+                  <label
+                    htmlFor="steps-range"
+                    className="text-heading mb-2.5 block text-sm font-medium"
+                  >
+                    RANGO DE PÁGINAS
+                  </label>
                   <MultiRangeSlider
                     key={`numPageRangeFilter-${filterKey}`} // cuando cambia, React destruye y recrea el componente
                     min={0}
                     max={1500}
-                    onChange={handleRangeChange} 
-                    trackColor={'#cecece'} rangeColor={'#2790F1'} width={'260px'} />
+                    onChange={handleRangeChange}
+                    trackColor={"#cecece"}
+                    rangeColor={"#2790F1"}
+                    width={"260px"}
+                  />
                 </Disclosure>
 
                 {/* ========== RESERVATION DATES RANGE FILTERS ========== */}
-                <Disclosure key="reservationDatesRangeFilter" as="div" className="border-b border-gray-200 py-6">
-                  <label className="block mb-2.5 text-sm font-medium text-heading">RANGO DE FECHAS DE RESERVA</label>
-                  <div className='w-full grid grid-cols-2 gap-x-2 justify-center align-items-center'>
-                    <input type='date' name="" id="date-from" 
-                    className='py-2 px-2 text-sm focus:outline-none bg-gray-100 border border-gray-200 text-gray-500 rounded' 
-                    value={filters.pickUpDate}
-                    min={today}
-                    onChange={(e) => handlePickUpDate(e.target.value)} />
-                    <input type='date' name="" id="date-to" 
-                    className='py-2 px-2 text-sm focus:outline-none bg-gray-100 border border-gray-200 text-gray-500 rounded' 
-                    value={filters.dropOffDate}
-                    min={filters.pickUpDate || today}
-                    onChange={(e) => updateSimpleFilter("dropOffDate", e.target.value)} />
+                <Disclosure
+                  key="reservationDatesRangeFilter"
+                  as="div"
+                  className="border-b border-gray-200 py-6"
+                >
+                  <label className="text-heading mb-2.5 block text-sm font-medium">
+                    RANGO DE FECHAS DE RESERVA
+                  </label>
+                  <div className="align-items-center grid w-full grid-cols-2 justify-center gap-x-2">
+                    <input
+                      type="date"
+                      name=""
+                      id="date-from"
+                      className="rounded border border-gray-200 bg-gray-100 px-2 py-2 text-sm text-gray-500 focus:outline-none"
+                      value={filters.pickUpDate}
+                      min={today}
+                      onChange={(e) => handlePickUpDate(e.target.value)}
+                    />
+                    <input
+                      type="date"
+                      name=""
+                      id="date-to"
+                      className="rounded border border-gray-200 bg-gray-100 px-2 py-2 text-sm text-gray-500 focus:outline-none"
+                      value={filters.dropOffDate}
+                      min={filters.pickUpDate || today}
+                      onChange={(e) =>
+                        updateSimpleFilter("dropOffDate", e.target.value)
+                      }
+                    />
                   </div>
                 </Disclosure>
 
                 {/* ========== DETAILS FILTERS ========== */}
-                <Disclosure key="detailsFilter" as="div" className="flex flex-col gap-y-4 border-b border-gray-200 py-6">
-                  <label className="block mb-2.5 text-sm font-medium text-heading">DETALLES</label>
+                <Disclosure
+                  key="detailsFilter"
+                  as="div"
+                  className="flex flex-col gap-y-4 border-b border-gray-200 py-6"
+                >
+                  <label className="text-heading mb-2.5 block text-sm font-medium">
+                    DETALLES
+                  </label>
 
-                  <div className='flex flex-col justify-start align-items-start'>
-                    <label htmlFor="isbn" className='text-gray-600'>ISBN</label>
-                    <input type='text' name="isbn" id="isbn" placeholder='978-950-xxxx-xx-x'
-                    className='py-2 px-4 text-sm bg-gray-100 border border-gray-200 text-gray-600 rounded' 
-                    value={filters.isbn}
-                    onChange={(e) => updateSimpleFilter("isbn", e.target.value)} />
+                  <div className="align-items-start flex flex-col justify-start">
+                    <label htmlFor="isbn" className="text-gray-600">
+                      ISBN
+                    </label>
+                    <input
+                      type="text"
+                      name="isbn"
+                      id="isbn"
+                      placeholder="978-950-xxxx-xx-x"
+                      className="rounded border border-gray-200 bg-gray-100 px-4 py-2 text-sm text-gray-600"
+                      value={filters.isbn}
+                      onChange={(e) =>
+                        updateSimpleFilter("isbn", e.target.value)
+                      }
+                    />
                   </div>
 
-                  <div className='flex flex-col justify-start align-items-start'>
-                    <label htmlFor="owner" className='text-gray-600'>Prestado por</label>
-                    <input type='text' name="owner" id="owner" placeholder='Usuario...'
-                    className='py-2 px-4 text-sm bg-gray-100 border border-gray-200 text-gray-600 rounded' 
-                    value={filters.ownersName}
-                    onChange={(e) => updateSimpleFilter("ownersName", e.target.value)} />
+                  <div className="align-items-start flex flex-col justify-start">
+                    <label htmlFor="owner" className="text-gray-600">
+                      Prestado por
+                    </label>
+                    <input
+                      type="text"
+                      name="owner"
+                      id="owner"
+                      placeholder="Usuario..."
+                      className="rounded border border-gray-200 bg-gray-100 px-4 py-2 text-sm text-gray-600"
+                      value={filters.ownersName}
+                      onChange={(e) =>
+                        updateSimpleFilter("ownersName", e.target.value)
+                      }
+                    />
                   </div>
                 </Disclosure>
 
                 {/* ========== APPLY FILTERS ========== */}
-                <Disclosure key="applyFiltersBtn" as="div" className="border-b border-gray-200 py-6 grid grid-cols-2 gap-x-4 justify-center">
-                  <button type='button' onClick={() => handleApplyFilters(filters)} 
-                  className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600">
+                <Disclosure
+                  key="applyFiltersBtn"
+                  as="div"
+                  className="grid grid-cols-2 justify-center gap-x-4 border-b border-gray-200 py-6"
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleApplyFilters(filters)}
+                    className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600"
+                  >
                     Aplicar Filtros
                   </button>
-                  <button type='button' onClick={handleClearFilters} 
-                  className="mt-4 inline-block rounded-xl bg-white border border-blue-500 px-6 py-2.5 text-sm font-semibold text-blue-500 transition-all duration-150 ease-out 
-                  hover:scale-[1.08] hover:bg-blue-600 hover:text-white">
+                  <button
+                    type="button"
+                    onClick={handleClearFilters}
+                    className="mt-4 inline-block rounded-xl border border-blue-500 bg-white px-6 py-2.5 text-sm font-semibold text-blue-500 transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600 hover:text-white"
+                  >
                     Limpiar Filtros
                   </button>
                 </Disclosure>
-
               </form>
 
-    {/* ========== BUSQUEDA + ORDENAR + PRODUCTOS ========== */}
-              <div className="lg:block lg:flex flex-col gap-y-4 justify-center items-center">
+              {/* ========== BUSQUEDA + ORDENAR + PRODUCTOS ========== */}
+              <div className="flex-col items-center justify-center gap-y-4 lg:block lg:flex">
+                {/* ========== BUSQUEDA POR TITULO ========== */}
+                <div className="flex w-full flex-col gap-y-2 rounded-2xl border border-gray-200 bg-white p-10">
+                  <h1 className="text-4xl font-bold">
+                    Encuentra tu próxima lectura
+                  </h1>
+                  <p className="text-gray-400">
+                    Explora miles de libros disponibles para préstamo en nuestra
+                    comunidad.
+                  </p>
 
-          {/* ========== BUSQUEDA POR TITULO ========== */}
-                <div className='w-full flex flex-col gap-y-2 bg-white p-10 rounded-2xl border border-gray-200'>
-                  <h1 className='text-4xl font-bold'>Encuentra tu próxima lectura</h1>
-                  <p className='text-gray-400'>Explora miles de libros disponibles para préstamo en nuestra comunidad.</p>
-
-                  <div className='w-full grid grid-cols-3 grid-cols-[min-content_1fr_min-content] gap-x-2 justify-start items-center bg-gray-100 border border-gray-200 rounded-lg px-5 py-2'>
-                    <IconSearch stroke={2} className='text-gray-400'/>
-                    <input type='text' name="owner" id="owner" placeholder='Buscar por título...'
-                    className='py-2 px-4 text-sm bg-gray-100 text-gray-600 rounded focus:outline-none selected:bg-gray-100' 
-                    value={filters.title}
-                    onChange={(e) => updateSimpleFilter("title", e.target.value)} />
-                    <button onClick={() => handleApplyFilters(filters)} className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700">
+                  <div className="grid w-full grid-cols-3 grid-cols-[min-content_1fr_min-content] items-center justify-start gap-x-2 rounded-lg border border-gray-200 bg-gray-100 px-5 py-2">
+                    <IconSearch stroke={2} className="text-gray-400" />
+                    <input
+                      type="text"
+                      name="owner"
+                      id="owner"
+                      placeholder="Buscar por título..."
+                      className="selected:bg-gray-100 rounded bg-gray-100 px-4 py-2 text-sm text-gray-600 focus:outline-none"
+                      value={filters.title}
+                      onChange={(e) =>
+                        updateSimpleFilter("title", e.target.value)
+                      }
+                    />
+                    <button
+                      onClick={() => handleApplyFilters(filters)}
+                      className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
+                    >
                       Buscar
                     </button>
                   </div>
-                  
                 </div>
 
-          {/* ========== ORDERAR POR ========== */}
-                <div className="w-full flex items-baseline justify-between border-b border-gray-200 pt-4 pb-6">
-                  <h2 className="text-2xl font-bold tracking-tight text-gray-900">Libros populares</h2>
+                {/* ========== ORDERAR POR ========== */}
+                <div className="flex w-full items-baseline justify-between border-b border-gray-200 pt-4 pb-6">
+                  <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+                    Libros populares
+                  </h2>
 
                   <div className="flex items-center">
                     <Menu as="div" className="relative inline-block text-left">
-                      <MenuButton className="group inline-flex justify-center text-md font-medium text-gray-700 hover:text-gray-900">
-                        Ordenar por: 
-                        <span className='pl-2 text-blue-400 text-md'>{sortingOptions.find((o) => o.current)?.name}</span>
+                      <MenuButton className="group text-md inline-flex justify-center font-medium text-gray-700 hover:text-gray-900">
+                        Ordenar por:
+                        <span className="text-md pl-2 text-blue-400">
+                          {sortingOptions.find((o) => o.current)?.name}
+                        </span>
                         <ChevronDownIcon
                           aria-hidden="true"
                           className="-mr-1 ml-1 size-5 shrink-0 text-gray-400 group-hover:text-gray-500"
@@ -355,54 +451,56 @@ export default function Home() {
                       <MenuItems
                         transition
                         className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
-                        >
+                      >
                         <div className="py-1">
                           {sortingOptions.map((option) => (
-                            <SelectSorting 
-                            key={`sortingOption-${option.name}-${filterKey}`} 
-                            option={option} 
-                            onClick={updateSortOptions} />
+                            <SelectSorting
+                              key={`sortingOption-${option.name}-${filterKey}`}
+                              option={option}
+                              onClick={updateSortOptions}
+                            />
                           ))}
                         </div>
                       </MenuItems>
                     </Menu>
 
                     {/* ========== CAMBIAR DIRECCION DE ORDEN ========== */}
-                    <OrderDirectionArrow key={`ascendingBtn-${filterKey}`} onClick={toggleSortDirection} ascending={filters.ascending} />
-
+                    <OrderDirectionArrow
+                      key={`ascendingBtn-${filterKey}`}
+                      onClick={toggleSortDirection}
+                      ascending={filters.ascending}
+                    />
                   </div>
                 </div>
 
-          {/* ============ PRODUCT GRID ============== */}
-                  <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8 justify-content-center items-center">
-                    {filteredBooks.map((book: Book) => (
-                      <BookCardHome key={book.id} book={book} filters={filters} />
-                    ))}
-                  </div>
-                  {filteredBooks.length === 0 && (
-                    <div className="w-full mt-10 rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center">
-                      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-2xl">
-                        <IconSearch size={26} className="text-blue-500" />
-                      </div>
-                      <h2 className="text-lg font-bold text-gray-800">
-                        Ups, nada por aquí. 
-                      </h2>
-                      <p className="mt-1 text-md text-gray-500">
-                        Cambiá los filtros o buscá algo distinto.
-                      </p>
+                {/* ============ PRODUCT GRID ============== */}
+                <div className="justify-content-center grid grid-cols-1 items-center gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8">
+                  {filteredBooks.map((book: Book) => (
+                    <BookCardHome key={book.id} book={book} filters={filters} />
+                  ))}
+                </div>
+                {filteredBooks.length === 0 && (
+                  <div className="mt-10 w-full rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center">
+                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-2xl">
+                      <IconSearch size={26} className="text-blue-500" />
                     </div>
-                  )}
-                    
-          
-          {/* ============ PAGINACION============== */}
-                  <div className="flex gap-2 mt-4 justify-center items-center">
-                    <Pagination
-                        currentPage={page}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                      />
+                    <h2 className="text-lg font-bold text-gray-800">
+                      Ups, nada por aquí.
+                    </h2>
+                    <p className="text-md mt-1 text-gray-500">
+                      Cambiá los filtros o buscá algo distinto.
+                    </p>
                   </div>
+                )}
 
+                {/* ============ PAGINACION============== */}
+                <div className="mt-4 flex items-center justify-center gap-2">
+                  <Pagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
               </div>
             </div>
           </section>

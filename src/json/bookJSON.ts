@@ -3,12 +3,10 @@ import type { BookType } from "@/types/bookType"
 import type { BookCondition } from "@/types/bookCondition"
 import type { Languages } from "@/types/languages"
 import type { UserProfileJSON } from "./userProfileJSON"
-import { Book } from "@/model/book"
-import { getId } from '@/context/AuthContext'
-
+import { Book } from "@/domain/book"
+import { getId } from "@/context/AuthContext"
 
 export type BookJSON = {
-
   id: number
   title: string
   bookType: BookType // string?
@@ -26,15 +24,14 @@ export type BookJSON = {
   owner: UserProfileJSON
   imageSrc: string
 }
- 
 
 export type ProfileBookJSON = {
-  id: number,
-  title: string,
-  authorName: string,
-  gender: BookGender,
+  id: number
+  title: string
+  authorName: string
+  gender: BookGender
   timestamp: Date
-  imageSrc: string,
+  imageSrc: string
 }
 
 //esto es para la creacion/actualizacion del libro
@@ -42,7 +39,7 @@ export type ProfileBookJSON = {
 export type BookCreateDTO = {
   ownerId: number
   book: {
-    bookType: BookType  
+    bookType: BookType
     title: string
     desc: string
     gender: BookGender
@@ -63,7 +60,7 @@ export type BookCreateDTO = {
 export const toBookCreateDTO = (book: Book): BookCreateDTO => ({
   ownerId: Number(getId()),
   book: {
-    bookType: book.bookType,   
+    bookType: book.bookType,
     title: book.title,
     desc: book.desc,
     gender: book.gender,
@@ -75,8 +72,10 @@ export const toBookCreateDTO = (book: Book): BookCreateDTO => ({
     isbn: book.isbn,
     language: book.language,
     editorial: book.editorial,
-    publishDate: book.publishDate ? new Date(book.publishDate).toISOString().split('T')[0] : '',
+    publishDate: book.publishDate
+      ? new Date(book.publishDate).toISOString().split("T")[0]
+      : "",
     condition: book.condition,
     imageSrc: book.imageSrc,
-  }
+  },
 })

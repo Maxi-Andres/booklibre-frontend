@@ -2,7 +2,7 @@ import { REST_SERVER_URL } from "@/config/configuration"
 import axios from "axios"
 import { getAxiosData } from "./common"
 // import { mapReservation, type ReservationDTO } from "@/types/reservationType"
-import type { BookReview } from "@/model/review"
+import type { BookReview } from "@/domain/review"
 import { getId } from "@/context/AuthContext"
 
 import type { ReservationDates } from "@/types/reservationDates"
