@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Disclosure,
   DisclosureButton,
@@ -27,8 +27,8 @@ import SelectSorting from "@/components/SelectSorting"
 
 const initialSortOptions = [
   { name: "Título", value: "title", current: true },
-  { name: "Autor", value: "author", current: false },
-  { name: "Dueño", value: "owner", current: false },
+  { name: "Autor", value: "author.name", current: false },
+  { name: "Dueño", value: "owner.name", current: false },
 ]
 
 const initialFilters: BookFilters = {
