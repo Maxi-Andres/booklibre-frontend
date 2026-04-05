@@ -46,15 +46,15 @@ export default function ProfileSettingsModal({
 
     var newProfileData: UserProfile = new UserProfile(
       profile.id,
-      (formData.get("name") as string) || profile.name,
-      (formData.get("description") as string) || profile.description,
+      formData.get("name") as string,
+      formData.get("description") as string,
       profile.img,
-      (formData.get("location") as string) || profile.location,
+      formData.get("location") as string,
       profile.timestamp,
       profile.bibliokarmas,
-      (formData.get("email") as string) || profile.email,
-      (formData.get("celphone") as string) || profile.cel,
-      (formData.get("userType") as string) || profile.userType,
+      formData.get("email") as string,
+      formData.get("celphone") as string,
+      formData.get("userType") as string,
     )
 
     setErrors([])

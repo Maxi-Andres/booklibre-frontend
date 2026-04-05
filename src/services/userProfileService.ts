@@ -20,13 +20,14 @@ class UserProfileService {
     return UserProfile.fromJSON(response.data)
   }
 
-  async updateProfile(profileData: UserProfile, imageFile?: File | null) {
+  async updateProfile(profileData: UserProfile) {
     const formData = new FormData()
 
     const userData: UserProfileUpdateJSON = {
       id: profileData.id,
       name: profileData.name,
       description: profileData.description,
+      img: profileData.img,
       email: profileData.email,
       cel: profileData.cel,
       location: profileData.location,
@@ -39,10 +40,6 @@ class UserProfileService {
       "userData",
       new Blob([JSON.stringify(userData)], { type: "application/json" }),
     )
-
-    if (imageFile) {
-      formData.append("image", imageFile)
-    }
 
     const response = await axios.put<UserProfileJSON>(
       REST_SERVER_URL + `/updateProfile`,
