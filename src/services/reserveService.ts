@@ -6,6 +6,7 @@ import type { BookReview } from "@/domain/review"
 import { getId } from "@/context/AuthContext"
 
 import type { ReservationDates } from "@/types/reservationDates"
+import type { ProfilePageable } from "@/pages/Profile"
 
 class ReserveService {
   get id() {
@@ -88,14 +89,11 @@ class ReserveService {
   }
 
   async getUserOwnBooks(
-    filterCriteria: string,
-    sortCriteria: string,
-    page: number,
-    pageSize: number,
+    pageable: ProfilePageable
   ) {
     const { data } = await axios.get(
       REST_SERVER_URL + `/userOwnBooks/${this.id}`,
-      { params: { filterCriteria, sortCriteria, page, pageSize } },
+      { params: pageable },
     )
 
     // console.log(data)

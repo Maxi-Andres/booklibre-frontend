@@ -23,6 +23,13 @@ import PaginationButtons from "@/components/PaginationButtons"
 import { useLocation, useNavigate, Link } from "react-router"
 import { REST_SERVER_URL } from "@/config/configuration"
 
+export type ProfilePageable = {
+  filterCriteria: string,
+  sortCriteria: string,
+  page: number,
+  pageSize: number
+}
+
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
   const [userReadBooksNumber, setUserReadBooksNumber] = useState<number>(0)
@@ -68,18 +75,20 @@ export default function Profile() {
     page: number,
   ) => {
     setFilter(filterCriteria)
+    let pageable: ProfilePageable = {
+      filterCriteria,
+      sortCriteria,
+      page,
+      pageSize
+    } 
+    console.log(pageable)
     try {
-      const backResponse = await reserveService.getUserOwnBooks(
-        filterCriteria,
-        sortCriteria,
-        page,
-        pageSize,
-      )
+      const backResponse = await reserveService.getUserOwnBooks(pageable)
       setShownBooks(backResponse.items.map(ReservationProfileBook.fromJSON))
       setTotalPages(backResponse.totalPages)
       setTotalBooksNumber(backResponse.total)
     } catch (error) {
-      showToast.httpError(error, "Error buscar sus libros")
+      showToast.httpError(error, "Error al buscar sus libros")
     }
   }
 

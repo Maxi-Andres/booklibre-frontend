@@ -13,6 +13,7 @@ import { showToast } from "@/utils/toast"
 import { userProfileService } from "@/services/userProfileService"
 import { ValidationMessage } from "@/validation/validationMessage"
 import { useUserProfile } from "@/context/UserProfileContext"
+import { REST_SERVER_URL } from "@/config/configuration"
 
 type ProfileSettingsIntf = {
   profile: UserProfile
