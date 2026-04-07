@@ -1,28 +1,27 @@
 import { REST_SERVER_URL } from "@/config/configuration"
 import type { Book } from "@/domain/book"
 import { BookConditionStyle } from "@/types/bookCondition"
-import type { BookFilters } from "@/types/bookFilters"
+// import type { BookFilters } from "@/types/bookFilters"
 import { BookTypeLabels, BookTypeStyle } from "@/types/bookType"
 import { IconStar } from "@tabler/icons-react"
-import { useNavigate } from "react-router"
+import { useNavigate, useSearchParams } from "react-router"
 
 const BookCardHome = ({
   book,
-  filters,
+  // filters,
 }: {
   book: Book
-  filters: BookFilters
+  // filters: BookFilters
 }) => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  
   return (
     <div
       key={book.id}
       onClick={() =>
         navigate(`/detalle-de-libro/${book.id}`, {
-          state: {
-            pickUpDate: filters.pickUpDate,
-            dropOffDate: filters.dropOffDate,
-          },
+          state: { search: searchParams.toString() }
         })
       }
       className="group grid h-full cursor-pointer grid-rows-[1fr_auto] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:shadow-xl hover:shadow-gray-300/60"

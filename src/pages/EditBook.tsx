@@ -8,7 +8,7 @@ import { BookGender } from "@/types/bookGender"
 import { GenericCombobox } from "@/components/GenericComboBox"
 import { Languages } from "@/types/languages"
 import { BookCondition } from "@/types/bookCondition"
-import { useParams, useNavigate } from "react-router"
+import { useParams, useNavigate, Link } from "react-router"
 import { Button } from "@headlessui/react"
 import { bookService } from "@/services/bookService"
 import { showToast } from "@/utils/toast"
@@ -81,9 +81,9 @@ export default function EditBook() {
       <div className="px-6 py-3">
         <ol className="flex items-center gap-1 text-sm text-gray-500">
           <li>
-            <a href="./" className="hover:text-gray-700">
+            <Link to="./" className="hover:text-gray-700">
               Mis Libros
-            </a>
+            </Link>
           </li>
           <li>
             <svg

@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router"
+import { Link, useLocation, useParams } from "react-router"
 import { bookService } from "@/services/bookService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { useState } from "react"
@@ -21,6 +21,7 @@ export default function BookDetail() {
   const location = useLocation()
   const [reservedDates, setReservedDates] = useState<ReservationDates[]>([])
   const [bibliokarmas, setBibliokarmas] = useState(0)
+  const searchParams = new URLSearchParams(location.state?.search ?? "")
 
   const getReservedDates = async () => {
     const res = await reserveService.getReservedDates(Number(id))
@@ -63,9 +64,9 @@ export default function BookDetail() {
       <div className="px-6 py-5 pl-40">
         <ol className="flex items-center gap-1 text-sm text-gray-500">
           <li>
-            <a href="/" className="hover:text-gray-700">
+            <Link to={`/?${location.state?.search ?? ""}`} className="hover:text-gray-700">
               Explorar
-            </a>
+            </Link>
           </li>
           <li>
             <svg
@@ -137,8 +138,8 @@ export default function BookDetail() {
           <ReservationCard
             book={book}
             reservedDates={reservedDates}
-            initialPickUpDate={location.state?.pickUpDate}
-            initialDropOffDate={location.state?.dropOffDate}
+            initialPickUpDate={searchParams.get("pickUpDate") ?? undefined}
+            initialDropOffDate={searchParams.get("dropOffDate") ?? undefined}
             onBibliokarmasChange={setBibliokarmas}
           />
 

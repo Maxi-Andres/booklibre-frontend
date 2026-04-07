@@ -24,6 +24,7 @@ import OrderDirectionArrow from "@/components/OrderDirectionArrow/OrderDirection
 import { useOnInit } from "@/hooks/UseOnInit"
 import { showToast } from "@/utils/toast"
 import SelectSorting from "@/components/SelectSorting"
+import { useSearchParams } from "react-router"
 
 const initialSortOptions = [
   { name: "Título", value: "title", current: true },
@@ -49,10 +50,53 @@ const initialFilters: BookFilters = {
 export default function Home() {
   // FILTERING, SORTING AND PAGINATION STATES
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
-  const [filters, setFilters] = useState<BookFilters>(initialFilters)
-  const [sortingOptions, setSortingOptions] = useState(initialSortOptions)
-  const [page, setPage] = useState(0)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // Leer los filtros de la URL con fallback a initialFilters
+  const filtersFromURL = (): BookFilters => ({
+    title: searchParams.get("title") ?? initialFilters.title,
+    genders: searchParams.getAll("genders") ?? initialFilters.genders,
+    pagesRangeMin: Number(searchParams.get("pagesRangeMin") ?? initialFilters.pagesRangeMin),
+    pagesRangeMax: Number(searchParams.get("pagesRangeMax") ?? initialFilters.pagesRangeMax),
+    pickUpDate: searchParams.get("pickUpDate") ?? initialFilters.pickUpDate,
+    dropOffDate: searchParams.get("dropOffDate") ?? initialFilters.dropOffDate,
+    isbn: searchParams.get("isbn") ?? initialFilters.isbn,
+    ownersName: searchParams.get("ownersName") ?? initialFilters.ownersName,
+    page: Number(searchParams.get("page") ?? initialFilters.page),
+    pageSize: Number(searchParams.get("pageSize") ?? initialFilters.pageSize),
+    sortBy: searchParams.get("sortBy") ?? initialFilters.sortBy,
+    ascending: searchParams.get("ascending") !== "false", // Si ascending es "false", daria false de resultado. 
+    // No puedo parsear con Boolean() porque las strings son truthy, entonces daria true siempre.
+  })
+
+  const initialState = filtersFromURL()
+  const [filters, setFilters] = useState<BookFilters>(initialState)
+  const [sortingOptions, setSortingOptions] = useState(initialSortOptions.map((option) => ({
+        ...option,
+        current: option.value === initialState.sortBy,
+      })))
+  const [page, setPage] = useState(initialState.page)
   const [totalPages, setTotalPages] = useState(0)
+
+  //* SYNC FILTERS WITH URL
+  const syncToURL = (newFilters: BookFilters) => {
+    const params = new URLSearchParams()
+    
+    if (newFilters.title) params.set("title", newFilters.title)
+    newFilters.genders.forEach((g) => params.append("gender", g))
+    params.set("pagesRangeMin", String(newFilters.pagesRangeMin))
+    params.set("pagesRangeMax", String(newFilters.pagesRangeMax))
+    params.set("pickUpDate", newFilters.pickUpDate)
+    params.set("dropOffDate", newFilters.dropOffDate)
+    if (newFilters.isbn) params.set("isbn", newFilters.isbn)
+    if (newFilters.ownersName) params.set("ownersName", newFilters.ownersName)
+    params.set("page", String(newFilters.page))
+    params.set("pageSize", String(newFilters.pageSize))
+    params.set("sortBy", newFilters.sortBy)
+    params.set("ascending", String(newFilters.ascending))
+    
+    setSearchParams(params, { replace: true })
+  }
 
   //* ==== GET DATA ====
   const getFilteredBooksPage = async (newFilters: BookFilters) => {
@@ -124,11 +168,13 @@ export default function Home() {
       })),
     )
     const newFilters = updateSimpleFilter("sortBy", selectedOption)
+    syncToURL(newFilters)
     getFilteredBooksPage(newFilters)
   }
 
   const toggleSortDirection = () => {
     const newFilters = updateSimpleFilter("ascending", !filters.ascending)
+    syncToURL(newFilters)
     getFilteredBooksPage(newFilters)
   }
 
@@ -136,6 +182,7 @@ export default function Home() {
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
     const newFilters = updateSimpleFilter("page", newPage)
+    syncToURL(newFilters)
     getFilteredBooksPage(newFilters)
   }
 
@@ -143,6 +190,7 @@ export default function Home() {
   const handleApplyFilters = (filters: BookFilters) => {
     //  console.log("Applying filters: ", filters)
     setPage(0)
+    syncToURL(filters)
     getFilteredBooksPage(filters)
   }
 
@@ -165,7 +213,7 @@ export default function Home() {
     { value: string; label: string; checked: boolean }[]
   >([])
   useOnInit(async () => {
-    getFilteredBooksPage(initialFilters)
+    getFilteredBooksPage(initialState)
     const genderOptions = await bookService.getBookGenders()
     setGendersFilters(genderOptions)
   })
@@ -476,7 +524,7 @@ export default function Home() {
                 {/* ============ PRODUCT GRID ============== */}
                 <div className="justify-content-center grid grid-cols-1 items-center gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 xl:gap-x-8">
                   {filteredBooks.map((book: Book) => (
-                    <BookCardHome key={book.id} book={book} filters={filters} />
+                    <BookCardHome key={book.id} book={book}  />
                   ))}
                 </div>
                 {filteredBooks.length === 0 && (
