@@ -88,9 +88,7 @@ class ReserveService {
     return data
   }
 
-  async getUserOwnBooks(
-    pageable: ProfilePageable
-  ) {
+  async getUserOwnBooks(pageable: ProfilePageable) {
     const { data } = await axios.get(
       REST_SERVER_URL + `/userOwnBooks/${this.id}`,
       { params: pageable },

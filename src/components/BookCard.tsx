@@ -36,7 +36,8 @@ export default function BookCard({ book, activeTab, onRated }: BookCardProps) {
         {/* =================== Info =================== */}
         <div className="flex flex-col gap-2 p-3">
           <div className="flex items-start justify-between gap-1">
-            <p className="text-sm leading-tight font-bold text-gray-800">
+            {/* <p className="text-sm leading-tight font-bold text-gray-800"> */}
+            <p className="overflow-hidden text-sm leading-tight font-bold text-ellipsis whitespace-nowrap text-gray-800">
               {book.bookTitle}
             </p>
             <span className="flex items-center gap-1 text-xs font-bold whitespace-nowrap text-gray-500">
@@ -58,13 +59,13 @@ export default function BookCard({ book, activeTab, onRated }: BookCardProps) {
               {activeTab == "prestados-a-mi" ? (
                 <>
                   <p className="">Prestado por:</p>
-                  <span className="font-medium text-gray-700">
+                  <span className="max-w-31 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-gray-700">
                     {book.loanedBy}
                   </span>
                 </>
               ) : (
                 <>
-                  <p className="">Prestado a:</p>
+                  <p className="fixed">Prestado a:</p>
                   <span className="font-medium text-gray-700">
                     {book.loanedTo}
                   </span>

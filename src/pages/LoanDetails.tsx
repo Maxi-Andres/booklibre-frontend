@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router"
-import { IconSearch, IconBook } from "@tabler/icons-react"
+import { IconSearch, IconBook, IconBookOff } from "@tabler/icons-react"
 import { reserveService } from "@/services/reserveService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { showToast } from "@/utils/toast"
@@ -10,7 +10,10 @@ import BookCard from "@/components/BookCard"
 import { getId } from "@/context/AuthContext"
 
 //! hace TESTS
-//! arregla lo de los bibliokarmas
+//! arregla lo de los bibliokarmas?
+//! cambia para que reserva en el back sea null
+//! hay un problema, con emilia te deja puntuar el ultimo libro que vos prestaste...
+//! mostrale al profe el back y mostrale lo que arreglaste y lo de el front que emprolijes, ademas de preguntarle si esta bien la estructura
 //? ver de sacar el when y hacer un enum
 
 export default function LoanDetails() {
@@ -93,7 +96,8 @@ export default function LoanDetails() {
                 setActivePage(0)
                 handleSearch(tab, 0)
               }}
-              className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer ${
+              disabled={activeTab == tab}
+              className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer disabled:pointer-events-none ${
                 activeTab === tab
                   ? "border-b-3 border-blue-500 text-blue-500"
                   : "border-b-3 text-gray-500 hover:text-gray-700"
@@ -125,14 +129,39 @@ export default function LoanDetails() {
 
         {/* =================== Cards =================== */}
         <div className="mt-6 grid min-h-[465px] grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-          {reserves.map((book) => (
-            <BookCard
-              key={book.id}
-              book={book}
-              activeTab={activeTab}
-              onRated={() => handleSearch()}
-            />
-          ))}
+          {reserves.length === 0 ? (
+            <div className="col-span-4 flex flex-col items-center justify-center py-16 text-center text-gray-400">
+              <IconBookOff size={48} className="mb-3 text-gray-300" />
+              {search ? (
+                <>
+                  <p className="text-sm font-medium">
+                    No se encontraron reservas
+                  </p>
+                  <p className="mt-1 text-xs">Intentá con otra búsqueda</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium">
+                    Todavía no tenés reservas
+                  </p>
+                  <p className="mt-1 text-xs">
+                    {activeTab === "prestados-a-mi"
+                      ? "Explorá el catálogo y pedí tu primer libro prestado"
+                      : "Cuando alguien reserve un libro tuyo, aparecerá acá"}
+                  </p>
+                </>
+              )}
+            </div>
+          ) : (
+            reserves.map((book) => (
+              <BookCard
+                key={book.id}
+                book={book}
+                activeTab={activeTab}
+                onRated={() => handleSearch()}
+              />
+            ))
+          )}
         </div>
 
         {/* =================== Pagination =================== */}
@@ -157,7 +186,8 @@ export default function LoanDetails() {
                 setActivePage(i)
                 handleSearch(activeTab, i)
               }}
-              className={`h-9 w-9 cursor-pointer rounded-lg text-sm transition-all duration-150 ease-out hover:scale-[1.09] hover:shadow-xl hover:shadow-gray-300/60 ${
+              disabled={activePage == i}
+              className={`h-9 w-9 cursor-pointer rounded-lg text-sm transition-all duration-150 ease-out hover:scale-[1.09] hover:shadow-xl hover:shadow-gray-300/60 disabled:pointer-events-none ${
                 activePage === i
                   ? "bg-blue-500 font-bold text-white shadow-sm shadow-blue-200"
                   : "border border-gray-200 font-semibold text-gray-400 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600"
