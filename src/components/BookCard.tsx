@@ -65,8 +65,8 @@ export default function BookCard({ book, activeTab, onRated }: BookCardProps) {
                 </>
               ) : (
                 <>
-                  <p className="fixed">Prestado a:</p>
-                  <span className="font-medium text-gray-700">
+                  <p className="">Prestado a:</p>
+                  <span className="max-w-31 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-gray-700">
                     {book.loanedTo}
                   </span>
                 </>
