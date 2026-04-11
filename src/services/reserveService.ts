@@ -94,7 +94,7 @@ class ReserveService {
       { params: pageable },
     )
 
-    // console.log(data)
+    console.log(data)
     return data
   }
 

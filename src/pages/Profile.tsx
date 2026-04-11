@@ -16,12 +16,13 @@ import {
 
 // import { getErrorMessage } from "@/validation/errorHandler"
 import { reserveService } from "@/services/reserveService"
-import { ReservationProfileBook } from "@/domain/reservationProfile"
 import ProfileSettingsModal from "@/components/ProfileSettingsModal"
 import { showToast } from "@/utils/toast"
 import PaginationButtons from "@/components/PaginationButtons"
 import { useLocation, useNavigate, Link } from "react-router"
 import { REST_SERVER_URL } from "@/config/configuration"
+import type { ProfileBookJSON } from "@/json/bookJSON"
+import { BookProfile } from "@/domain/bookProfile"
 
 export type ProfilePageable = {
   filterCriteria: string,
@@ -34,12 +35,13 @@ export default function Profile() {
   const [profile, setProfile] = useState<UserProfile>(new UserProfile())
   const [userReadBooksNumber, setUserReadBooksNumber] = useState<number>(0)
   const [userLentBooksNumber, setUserLentBooksNumber] = useState<number>(0)
-  const [shownBooks, setShownBooks] = useState<ReservationProfileBook[]>([])
+  const [shownBooks, setShownBooks] = useState<ProfileBookJSON[]>([])
   const [filter, setFilter] = useState<string>("ALL")
   const [sort, setSort] = useState<string>("DATE_DESC")
   const [activePage, setActivePage] = useState<number>(0)
   const [totalPages, setTotalPages] = useState<number>(1)
   const [totalBooksNumber, setTotalBooksNumber] = useState<number>(0)
+  const [loading, setLoading] = useState(true)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -84,11 +86,13 @@ export default function Profile() {
     console.log(pageable)
     try {
       const backResponse = await reserveService.getUserOwnBooks(pageable)
-      setShownBooks(backResponse.items.map(ReservationProfileBook.fromJSON))
+      setShownBooks(backResponse.items.map(BookProfile.fromJSON))
       setTotalPages(backResponse.totalPages)
       setTotalBooksNumber(backResponse.total)
     } catch (error) {
       showToast.httpError(error, "Error al buscar sus libros")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -117,14 +121,12 @@ export default function Profile() {
     getUserLentBooksNumber()
   }
 
-  useEffect(() => {
-    if (location.state?.refreshBooks) {
-      handleProfileLoad(filter, sort)
+  useOnInit(() => {
+    handleProfileLoad(filter, sort)
+    if(location.state?.refreshBooks) {
       navigate(location.pathname, { replace: true, state: {} })
     }
-  }, [location.state])
-
-  useOnInit(() => handleProfileLoad(filter, sort))
+  })
 
   return (
     <div className="flex min-h-screen justify-center bg-gray-100 pt-12">
@@ -297,33 +299,39 @@ export default function Profile() {
                 </div>
                 <p className="w-16 text-center">Acciones</p>
               </section>
-              <div>
-                <section className="pr-1">
-                  {shownBooks.map((reserve) => (
-                    <ProfileBook
-                      key={reserve.book.id}
-                      bookId={reserve.book.id}
-                      bookImg={reserve.book.imageSrc}
-                      bookAuthor={reserve.book.authorName}
-                      bookGender={reserve.book.gender}
-                      bookName={reserve.book.title}
-                      bookState={reserve.state}
-                      additionDate={reserve.book.timestamp}
-                      onDelete={() => getUserOwnBooks(filter, sort, activePage)}
-                    />
-                  ))}
-                </section>
-                <PaginationButtons
-                  page={activePage}
-                  listSize={shownBooks.length}
-                  totalPages={totalPages}
-                  onPageChange={(newPage) => {
-                    setActivePage(newPage)
-                    getUserOwnBooks(filter, sort, newPage)
-                  }}
-                  filteredBooksLength={totalBooksNumber}
-                />
-              </div>
+              {loading ? (
+                  <div className="flex h-64 items-center justify-center text-gray-400">
+                      Cargando...
+                  </div>
+              ) : (
+                <div>
+                  <section className="pr-1">
+                    {shownBooks.map((book) => (
+                      <ProfileBook
+                        key={book.id}
+                        bookId={book.id}
+                        bookImg={book.imageSrc}
+                        bookAuthor={book.author}
+                        bookGender={book.gender}
+                        bookName={book.title}
+                        bookState={book.state}
+                        timestamp={book.timestamp}
+                        onDelete={() => getUserOwnBooks(filter, sort, activePage)}
+                      />
+                    ))}
+                  </section>
+                  <PaginationButtons
+                    page={activePage}
+                    listSize={shownBooks.length}
+                    totalPages={totalPages}
+                    onPageChange={(newPage) => {
+                      setActivePage(newPage)
+                      getUserOwnBooks(filter, sort, newPage)
+                    }}
+                    filteredBooksLength={totalBooksNumber}
+                  />
+                </div>
+              )}
             </section>
           </div>
         </section>

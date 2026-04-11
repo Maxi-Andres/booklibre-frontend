@@ -28,10 +28,11 @@ export type BookJSON = {
 export type ProfileBookJSON = {
   id: number
   title: string
-  authorName: string
+  author: string
   gender: BookGender
   timestamp: Date
   imageSrc: string
+  state: string
 }
 
 //esto es para la creacion/actualizacion del libro

@@ -1,5 +1,5 @@
 import type { ReservationState } from "@/types/reservationState"
-import type { BookJSON, ProfileBookJSON } from "./bookJSON"
+import type { BookJSON } from "./bookJSON"
 import type { UserProfileJSON } from "./userProfileJSON"
 import type { ReviewJSON } from "./reviewJSON"
 
@@ -11,10 +11,4 @@ export type ReservationJSON = {
   pickUpDate: Date
   dropOffDate: Date
   state: ReservationState
-}
-
-export type ReservationProfileBookJSON = {
-  id: number
-  book: ProfileBookJSON
-  state: string
 }
