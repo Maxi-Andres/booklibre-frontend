@@ -216,6 +216,7 @@ export default function Home() {
     getFilteredBooksPage(initialState)
     const genderOptions = await bookService.getBookGenders()
     setGendersFilters(genderOptions)
+    syncToURL(initialState)
   })
 
   //! ==== ON KEY PRESS ====

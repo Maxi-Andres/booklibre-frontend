@@ -53,6 +53,8 @@ export default function BookDetail() {
     getBook()
     getBookReviews()
     getReservedDates()
+    // console.log(searchParams)
+    // console.log(location.state?.search)
   })
 
   if (loading) return <div>Cargando...</div>
