@@ -108,7 +108,7 @@ export default function BookDetail() {
               </span>
               <div className="flex items-center gap-1.5">
                 <StarRating rating={BookReview.averageRating(reviews)} />
-                <span className="text-xs text-gray-500">{`(${BookReview.averageRating(reviews).toFixed(1)})`}</span>
+                <span className="text-xs text-gray-500">{`(${book.rating.toFixed(1)})`}</span>
               </div>
             </div>
 
@@ -202,7 +202,7 @@ export default function BookDetail() {
                 </div>
                 <div>
                   <p className="text-xs text-[#A3B0C2] uppercase">Rating</p>
-                  <p className="text-base text-gray-800">{`${BookReview.averageRating(reviews).toFixed(1)}`}</p>
+                  <p className="text-base text-gray-800">{`${book.rating.toFixed(1)}`}</p>
                 </div>
               </div>
             </div>
