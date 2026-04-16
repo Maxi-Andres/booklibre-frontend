@@ -15,7 +15,7 @@ class UserService {
     }
 
     const response = await axios.post<UserJSONResponse>(
-      REST_SERVER_URL + "/login",
+      REST_SERVER_URL + "/api/auth",
       userLogin,
     )
 
