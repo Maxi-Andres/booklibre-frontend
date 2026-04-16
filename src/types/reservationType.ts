@@ -30,7 +30,7 @@ export const mapReservation = (res: any): ReservationDTO => ({
   bookTitle: res.book.title,
   bookAuthor: res.book.authorName,
   bookCover: res.book.imageSrc ?? "",
-  rating: res.review?.rating ?? 0, // la puntuacion es de la reserva no de el libro
+  rating: res.review ?? 0, // la puntuacion es de la reserva no de el libro
   loanedBy: res.loanedBy,
   loanedTo: res.loanedTo,
   pickUpDate: res.pickUpDate,
