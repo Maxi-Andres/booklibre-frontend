@@ -1,7 +1,7 @@
-import axios from "axios"
+import axios, { type InternalAxiosRequestConfig } from "axios"
 import customAxios from "./customAxios"
 
-const authInterceptor = (config: any) => {
+const authInterceptor = (config: InternalAxiosRequestConfig) => {
     const stored = localStorage.getItem('user') || sessionStorage.getItem('user')
     if (stored) {
         const { accessToken } = JSON.parse(stored)
