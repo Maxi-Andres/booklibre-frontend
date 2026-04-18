@@ -1,5 +1,5 @@
 import logo from "@/assets/logo.svg"
-import { Link, useLocation } from "react-router"
+import { Link, useLocation, useSearchParams } from "react-router"
 import { useAuth } from "@/context/AuthContext"
 import { useNavigate } from "react-router"
 import { useOnInit } from "@/hooks/UseOnInit"
@@ -16,7 +16,8 @@ const navigation = [
 ]
 
 export default function NavBar() {
-  const location = useLocation()
+  const [searchParams] = useSearchParams() // home searchParams (para mantener filtros)
+  const location = useLocation() // para mantener filtros al navegar
   const navigate = useNavigate()
   const { logout } = useAuth()
   // const [user, setUser] = useState<UserProfile>(new UserProfile())
@@ -38,7 +39,7 @@ export default function NavBar() {
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to={`/?${searchParams.toString()}`} className="flex items-center gap-2">
             <img src={logo} className="h-6 w-6" alt="Logo" />
             <span className="text-xl font-bold tracking-tight text-gray-900">
               Book<span className="font-extra-bold">Libre</span>

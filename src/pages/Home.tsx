@@ -39,7 +39,7 @@ const initialFilters: BookFilters = {
   pagesRangeMax: 1500,
   pickUpDate: new Date().toISOString().split("T")[0],
   dropOffDate: addDays(new Date(), 1).toISOString().split("T")[0], // 1 dia despues
-  isbn: "",
+  // dropOffDate: new Date().toISOString().split("T")[0], // mismo dia
   ownersName: "",
   page: 0,
   pageSize: 6,
@@ -83,7 +83,7 @@ export default function Home() {
     const params = new URLSearchParams()
     
     if (newFilters.title) params.set("title", newFilters.title)
-    newFilters.genders.forEach((g) => params.append("gender", g))
+    newFilters.genders.forEach((g) => params.append("genders", g))
     params.set("pagesRangeMin", String(newFilters.pagesRangeMin))
     params.set("pagesRangeMax", String(newFilters.pagesRangeMax))
     params.set("pickUpDate", newFilters.pickUpDate)
@@ -216,6 +216,10 @@ export default function Home() {
     getFilteredBooksPage(initialState)
     const genderOptions = await bookService.getBookGenders()
     setGendersFilters(genderOptions)
+    handleRangeChange({
+      min: initialState.pagesRangeMin,
+      max: initialState.pagesRangeMax,
+    })
     syncToURL(initialState)
   })
 
@@ -336,6 +340,8 @@ export default function Home() {
                     key={`numPageRangeFilter-${filterKey}`} // cuando cambia, React destruye y recrea el componente
                     min={0}
                     max={1500}
+                    initialMin={filters.pagesRangeMin}
+                    initialMax={filters.pagesRangeMax}
                     onChange={handleRangeChange}
                     trackColor={"#cecece"}
                     rangeColor={"#2790F1"}
