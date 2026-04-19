@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams, useSearchParams } from "react-router"
+import { Link, useParams, useSearchParams } from "react-router"
 import { bookService } from "@/services/bookService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { useState } from "react"
@@ -12,6 +12,7 @@ import { StarRating } from "@/components/ReviewsModal"
 import { formatDate } from "@/utils/formatDate"
 import type { ReservationDates } from "@/types/reservationDates"
 import { REST_SERVER_URL } from "@/config/configuration"
+import { ReviewItem } from "@/components/ReviewItem"
 
 export default function BookDetail() {
   const { id } = useParams()
@@ -234,28 +235,9 @@ export default function BookDetail() {
 
               {/* First two reviews */}
               <div className="mt-3 grid grid-cols-2 gap-4">
-                {reviews.slice(0, 2).map((review, i) => (
-                  <div
-                    key={`${review.id}-${i}`}
-                    className="flex flex-col gap-2 rounded-xl border border-gray-300 p-3"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E0E7FF] text-xs font-bold text-[#6059E8]">
-                        {review.reviewerName.charAt(0)}
-                        {review.reviewerName.charAt(1)}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          {review.reviewerName}
-                        </p>
-                        <StarRating rating={review.rating} />
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-600 italic overflow-hidden text-ellipsis">
-                      "{review.review}"
-                    </p>
-                  </div>
-                ))}
+                  {reviews.slice(0, 2).map((review, i) => (
+                    <ReviewItem key={`${review.id}-${i}`} review={review} i={i} />
+                  ))}
               </div>
             </div>
           </div>
