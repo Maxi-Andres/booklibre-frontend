@@ -2,6 +2,7 @@ import { useState } from "react"
 import { IconStar, IconX } from "@tabler/icons-react"
 import { reserveService } from "@/services/reserveService"
 import { showToast } from "@/utils/toast"
+import { TextareaField } from "./Textarea"
 
 interface RatingModalProps {
   reservationId: number
@@ -105,12 +106,23 @@ export default function RatingModal({
         </p>
 
         {/* =================== review =================== */}
-        <textarea
+        {/* <textarea
           value={review}
           onChange={(e) => setReview(e.target.value)}
           placeholder="Dejá un comentario (opcional)..."
           rows={3}
           className="w-full resize-none rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-700 outline-none placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+        /> */}
+        <TextareaField 
+        value={review}
+        onChange={(e) => setReview(e.target.value)}
+        placeholder="Dejá un comentario (opcional)..."
+        rows={3}
+        className="w-full resize-none rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-700 outline-none placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+        label="" 
+        maxLength={250} 
+        id="review-textarea" 
+        type="text" 
         />
 
         {/* =================== Actions =================== */}

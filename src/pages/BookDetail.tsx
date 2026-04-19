@@ -247,7 +247,7 @@ export default function BookDetail() {
                         <StarRating rating={review.rating} />
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 italic">
+                    <p className="text-sm text-gray-600 italic overflow-hidden text-ellipsis">
                       "{review.review}"
                     </p>
                   </div>

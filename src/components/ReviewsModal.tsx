@@ -145,7 +145,7 @@ export default function ReviewsModal({
                           </span>
                         </div>
                         <StarRating rating={review.rating} />
-                        <p className="mt-1.5 text-sm leading-relaxed text-gray-600 italic">
+                        <p className="mt-1.5 text-sm leading-relaxed text-gray-600 italic overflow-hidden text-ellipsis">
                           "{review.review}"
                         </p>
                       </div>
