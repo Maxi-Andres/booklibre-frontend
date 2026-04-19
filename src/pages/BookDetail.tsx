@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from "react-router"
+import { Link, useLocation, useParams, useSearchParams } from "react-router"
 import { bookService } from "@/services/bookService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { useState } from "react"
@@ -18,10 +18,9 @@ export default function BookDetail() {
   const [book, setBook] = useState<Book>()
   const [reviews, setReviews] = useState<BookReview[]>([])
   const [loading, setLoading] = useState(true)
-  const location = useLocation()
   const [reservedDates, setReservedDates] = useState<ReservationDates[]>([])
   const [bibliokarmas, setBibliokarmas] = useState(0)
-  const searchParams = new URLSearchParams(location.state?.search ?? "")
+  const [searchParams] = useSearchParams()
 
   const getReservedDates = async () => {
     const res = await reserveService.getReservedDates(Number(id))
@@ -66,7 +65,12 @@ export default function BookDetail() {
       <div className="px-6 py-5 pl-40">
         <ol className="flex items-center gap-1 text-sm text-gray-500">
           <li>
-            <Link to={`/?${location.state?.search ?? ""}`} className="hover:text-gray-700">
+            <Link
+              to={{
+                pathname: `/`,
+                search: searchParams.toString()
+              }}
+              className="hover:text-gray-700">
               Explorar
             </Link>
           </li>
