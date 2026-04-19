@@ -40,6 +40,7 @@ const initialFilters: BookFilters = {
   pickUpDate: new Date().toISOString().split("T")[0],
   dropOffDate: addDays(new Date(), 1).toISOString().split("T")[0], // 1 dia despues
   // dropOffDate: new Date().toISOString().split("T")[0], // mismo dia
+  isbn: "",
   ownersName: "",
   page: 0,
   pageSize: 6,
