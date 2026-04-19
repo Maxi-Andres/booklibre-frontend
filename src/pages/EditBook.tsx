@@ -31,7 +31,7 @@ export default function EditBook() {
         const found = await bookService.getBookDetail(Number(id))
         if (found) {
           // Trunca en 500 caracteres al cargar del back
-          found.desc = found.desc?.slice(0, 500) ?? ""
+          found.desc = found.desc?.slice(0, 1000) ?? ""
           setBook(found)
         }
       } catch (error) {
@@ -328,7 +328,7 @@ export default function EditBook() {
                   id="desc"
                   type="text"
                   value={book.desc}
-                  maxLength={500}
+                  maxLength={1000}
                   rows={10}
                   placeholder="Ingrese aqui la descripcion del libro"
                   onChange={(e) => updateBook("desc", e.target.value)}

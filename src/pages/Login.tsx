@@ -68,7 +68,7 @@ export const Login = () => {
         </div>
 
         {/* Formulario */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit} noValidate>
           <div className="space-y-4">
             {/* Email Field */}
             <div>
@@ -76,7 +76,6 @@ export const Login = () => {
                 label="Email"
                 id="email"
                 type="email"
-                required
                 value={user.email}
                 onChange={(e) => update("email", e.target.value)}
               />
@@ -89,7 +88,6 @@ export const Login = () => {
                 label="Password"
                 id="password"
                 type="password"
-                required
                 value={user.password}
                 onChange={(e) => update("password", e.target.value)}
               />
