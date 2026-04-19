@@ -75,29 +75,6 @@ export class Book {
       this.errors.push(new ValidationMessage(field, message))
     }
 
-    private isValidISBN13(isbn: string): boolean {
-    // Saca los guiones y espacios
-    const clean = isbn.replace(/[-\s]/g, '')
-
-    // valida longitud, debe tener exactamente 13 dígitos
-    if (!/^\d{13}$/.test(clean)) return false
-
-    // Debe empezar con 978 o 979
-    if (!clean.startsWith('978') && !clean.startsWith('979')) return false
-
-    // Validación del dígito verificador
-    const sum = clean
-        .slice(0, 12)
-        .split('')
-        .reduce((acc, digit, i) => {
-            const multiplier = i % 2 === 0 ? 1 : 3
-            return acc + Number(digit) * multiplier
-        }, 0)
-
-    const checkDigit = (10 - (sum % 10)) % 10
-
-    return checkDigit === Number(clean[12])
-}
 
   validate() {
   this.errors = [];
@@ -128,11 +105,13 @@ export class Book {
   }
 
   if (!this.isbn?.trim()) {
-        this.addError('isbn', 'Debe ingresar el ISBN')
-    } else if (!this.isValidISBN13(this.isbn)) {
-        this.addError('isbn', 'El ISBN no tiene un formato válido (ej: 978-3-16-148410-0)')
+      this.addError('isbn', 'Debe ingresar el ISBN')
     } 
 
+  if (this.isbn.length>17){
+    this.addError('isbn', 'El ISBN no puede superar los 17 digitos')
+  }
+  
   if (!this.editorial?.trim()) {
     this.addError('editorial', 'Debe ingresar la editorial');
   }
