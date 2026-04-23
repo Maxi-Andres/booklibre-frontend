@@ -24,7 +24,7 @@ import OrderDirectionArrow from "@/components/OrderDirectionArrow/OrderDirection
 import { useOnInit } from "@/hooks/UseOnInit"
 import { showToast } from "@/utils/toast"
 import SelectSorting from "@/components/SelectSorting"
-import { useSearchParams } from "react-router"
+import { useNavigate, useSearchParams } from "react-router"
 
 const initialSortOptions = [
   { name: "Título", value: "title", current: true },
@@ -52,6 +52,8 @@ export default function Home() {
   // FILTERING, SORTING AND PAGINATION STATES
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
+  
 
   // Leer los filtros de la URL con fallback a initialFilters
   const filtersFromURL = (): BookFilters => ({
@@ -111,6 +113,7 @@ export default function Home() {
     } catch (error) {
       // console.error("Error fetching filtered books: ", error)
       showToast.httpError(error, "Error al realizar la busqueda: ")
+      // setTimeout(() => navigate("/login"), 2000)
     }
   }
 

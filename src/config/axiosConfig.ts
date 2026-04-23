@@ -14,3 +14,8 @@ const authInterceptor = (config: InternalAxiosRequestConfig) => {
 
 axios.interceptors.request.use(authInterceptor)
 customAxios.interceptors.request.use(authInterceptor)
+// agrego cookie csrf a todas las requests
+axios.defaults.withCredentials = true
+axios.defaults.withXSRFToken = true
+customAxios.defaults.withCredentials = true
+customAxios.defaults.withXSRFToken = true
