@@ -71,10 +71,7 @@ export default function ProfileSettingsModal({
       setOpen(false)
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      showToast.httpError(
-        "Error al guardar los cambios. " + errorMessage,
-        "error",
-      )
+      showToast.httpError(error,"")
     } finally {
       setErrors([])
     }

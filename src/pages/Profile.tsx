@@ -23,6 +23,7 @@ import { useLocation, useNavigate, Link } from "react-router"
 import { REST_SERVER_URL } from "@/config/configuration"
 import type { ProfileBookJSON } from "@/json/bookJSON"
 import { BookProfile } from "@/domain/bookProfile"
+import { HttpStatusCode } from "axios"
 
 export type ProfilePageable = {
   filterCriteria: string,
@@ -83,13 +84,17 @@ export default function Profile() {
       page,
       pageSize
     } 
-    console.log(pageable)
+    // console.log(pageable)
     try {
       const backResponse = await reserveService.getUserOwnBooks(pageable)
       setShownBooks(backResponse.items.map(BookProfile.fromJSON))
       setTotalPages(backResponse.totalPages)
       setTotalBooksNumber(backResponse.total)
-    } catch (error) {
+    } catch (error: any) {
+      if(error.response?.status == HttpStatusCode.Forbidden) { 
+        showToast.warning("Sos lector, no tenes libros.") 
+        return
+      }
       showToast.httpError(error, "Error al buscar sus libros")
     } finally {
       setLoading(false)

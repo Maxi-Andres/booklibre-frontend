@@ -54,7 +54,7 @@ export function ReservationCard({
       setTimeout(() => navigate("/"), 4000)
     } catch (error) {
       showToast.httpError(error, "Error al reservar")
-      window.location.reload()
+      // window.location.reload()
     }
   }
 
