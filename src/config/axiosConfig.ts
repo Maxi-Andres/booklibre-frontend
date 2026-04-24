@@ -1,20 +1,95 @@
-import axios, { type InternalAxiosRequestConfig } from "axios"
+import axios, {
+  AxiosError,
+  type AxiosRequestConfig,
+  type InternalAxiosRequestConfig,
+} from "axios"
 import customAxios from "./customAxios"
+import { tokenService } from "@/services/tokenService"
 
 const authInterceptor = (config: InternalAxiosRequestConfig) => {
-    const stored = localStorage.getItem('user') || sessionStorage.getItem('user')
-    if (stored) {
-        const { accessToken } = JSON.parse(stored)
-        if (accessToken) {
-            config.headers['Authorization'] = `Bearer ${accessToken}`
-        }
-    }
-    return config
+  const accessToken = tokenService.getAccessToken()
+  if (accessToken) {
+    config.headers["Authorization"] = `Bearer ${accessToken}`
+  }
+  return config
 }
 
 axios.interceptors.request.use(authInterceptor)
 customAxios.interceptors.request.use(authInterceptor)
-// agrego cookie csrf a todas las requests
+
+type Retryable = AxiosRequestConfig & { _retry?: boolean }
+
+let isRefreshing = false
+let failedQueue: Array<{
+  resolve: (token: string) => void
+  reject: (error: unknown) => void
+}> = []
+
+const processQueue = (error: unknown, token: string | null) => {
+  failedQueue.forEach((p) => {
+    if (token) p.resolve(token)
+    else p.reject(error)
+  })
+  failedQueue = []
+}
+
+const isExpiredTokenError = (error: AxiosError): boolean => {
+  if (error.response?.status !== 401) return false
+  const header = error.response.headers["www-authenticate"]
+  return typeof header === "string" && header.includes("invalid_token")
+}
+
+const responseErrorHandler = async (error: AxiosError) => {
+  const originalRequest = error.config as Retryable | undefined
+
+  if (
+    !originalRequest ||
+    !isExpiredTokenError(error) ||
+    originalRequest._retry
+  ) {
+    return Promise.reject(error)
+  }
+
+  if (isRefreshing) {
+    return new Promise((resolve, reject) => {
+      failedQueue.push({
+        resolve: (token) => {
+          originalRequest.headers = {
+            ...originalRequest.headers,
+            Authorization: `Bearer ${token}`,
+          }
+          resolve(axios(originalRequest))
+        },
+        reject,
+      })
+    })
+  }
+
+  originalRequest._retry = true
+  isRefreshing = true
+
+  try {
+    const newToken = await tokenService.refreshAccessToken()
+    processQueue(null, newToken)
+    originalRequest.headers = {
+      ...originalRequest.headers,
+      Authorization: `Bearer ${newToken}`,
+    }
+    return axios(originalRequest)
+  } catch (refreshError) {
+    processQueue(refreshError, null)
+    tokenService.clearTokens()
+    sessionStorage.setItem("sessionExpired", "1")
+    window.location.href = "/login"
+    return Promise.reject(refreshError)
+  } finally {
+    isRefreshing = false
+  }
+}
+
+axios.interceptors.response.use((r) => r, responseErrorHandler)
+customAxios.interceptors.response.use((r) => r, responseErrorHandler)
+
 axios.defaults.withCredentials = true
 axios.defaults.withXSRFToken = true
 customAxios.defaults.withCredentials = true

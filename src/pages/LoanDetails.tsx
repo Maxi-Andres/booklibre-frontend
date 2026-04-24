@@ -11,10 +11,15 @@ import { getId } from "@/context/AuthContext"
 
 //! hace TESTS
 //! arregla lo de los bibliokarmas?
-//! cambia para que reserva en el back sea null
-//! hay un problema, con emilia te deja puntuar el ultimo libro que vos prestaste...
 //! mostrale al profe el back y mostrale lo que arreglaste y lo de el front que emprolijes, ademas de preguntarle si esta bien la estructura
 //? ver de sacar el when y hacer un enum
+
+// que el libro tenga todas sus reseñas y que la reserva tenga una id de su reseña por las dudas
+// preguntar por que lo que te sale en mis prestamos es la puntuacion de la reserva, no el promedio de el libro, es lo que le pusiste vos
+// cambiar de patch a put lo de la reserva
+// fijate el refresh token
+// fiajte lo de readonly tryue que te OCULTA EL N +1
+// arreglar que te deja calificar sin que termine el tiempo por algun motivo
 
 export default function LoanDetails() {
   const [activeTab, setActiveTab] = useState<

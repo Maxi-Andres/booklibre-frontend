@@ -1,19 +1,18 @@
 import "@/css/checkbox.css"
-import { Link, useNavigate, useLocation } from "react-router"
+import { Link, useNavigate } from "react-router"
 import type { UserJSONLoginRequest } from "@/domain/user"
 import { UserType } from "@/domain/user"
 import { useState } from "react"
 import { ValidationMessage } from "@/validation/validationMessage"
 import ValidationField from "@/validation/ValidationField"
 import { userService } from "@/services/UserService"
-import { useOnInit } from "@/hooks/UseOnInit"
 import { InputField } from "@/components/InputField"
 import { useAuth } from "@/context/AuthContext"
 import { showToast } from "@/utils/toast"
+import { useOnInit } from "@/hooks/UseOnInit"
 
 export const Login = () => {
   const navigate = useNavigate()
-  const location = useLocation()
   const { login } = useAuth()
   const [user, setUser] = useState<UserJSONLoginRequest>({
     email: "",
@@ -51,11 +50,10 @@ export const Login = () => {
   }
 
   useOnInit(() => {
-    if (
-      location.state?.from?.pathname != "/" &&
-      location.state?.from?.pathname != undefined
-    )
-      alert("Debe loguearse")
+    if (sessionStorage.getItem("sessionExpired")) {
+      sessionStorage.removeItem("sessionExpired")
+      showToast.warning("Tu session expiro volve a iniciar sesison")
+    }
   })
 
   return (
