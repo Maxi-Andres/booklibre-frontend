@@ -51,8 +51,12 @@ export const Login = () => {
 
   useOnInit(() => {
     if (sessionStorage.getItem("sessionExpired")) {
-      sessionStorage.removeItem("sessionExpired")
-      showToast.warning("Tu session expiro volve a iniciar sesison")
+      setTimeout(() => {
+        sessionStorage.removeItem("sessionExpired")
+      }, 1000)
+      showToast.warning("Tu sesión expiró. Volvé a iniciar sesión")
+      // const msg = sessionStorage.getItem("sessionExpiredMessage")
+      // showToast.error(msg!!)
     }
   })
 

@@ -49,7 +49,7 @@ class ReserveService {
     const { data } = await axios.get(REST_SERVER_URL + "/lector/" + userId, {
       params: { search, page, pageSize },
     })
-    console.log(data, "del user")
+    // console.log(data, "del user")
     return data
   }
 

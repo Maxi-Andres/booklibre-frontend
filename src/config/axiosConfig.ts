@@ -47,6 +47,7 @@ const responseErrorHandler = async (error: AxiosError) => {
     !isExpiredTokenError(error) ||
     originalRequest._retry
   ) {
+    console.log("El error no es de expiracion.")
     return Promise.reject(error)
   }
 
@@ -80,6 +81,14 @@ const responseErrorHandler = async (error: AxiosError) => {
     processQueue(refreshError, null)
     tokenService.clearTokens()
     sessionStorage.setItem("sessionExpired", "1")
+    
+    // Guardá el mensaje para verlo
+    const message =
+    refreshError instanceof AxiosError
+    ? (refreshError.response?.data?.message ?? refreshError.message)
+    : "Tu sesión expiró"
+    sessionStorage.setItem("sessionExpiredMessage", message)
+
     window.location.href = "/login"
     return Promise.reject(refreshError)
   } finally {
