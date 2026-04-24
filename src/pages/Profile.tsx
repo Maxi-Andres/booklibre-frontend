@@ -140,7 +140,7 @@ export default function Profile() {
           <img
             src={
               profile.img
-                ? `${REST_SERVER_URL}/${profile.img}`
+                ? `${REST_SERVER_URL}${profile.img}`
                 : "/assets/default-img.png"
             }
             alt="Profile Image"
