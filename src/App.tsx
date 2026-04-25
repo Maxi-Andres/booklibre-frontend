@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router"
 // import HomePage from './pages/HomePages'
 import Home from "./pages/Home"
 import { PrivateLayer } from "./components/PrivateLayer"
+import { PublisherLayer } from "./components/PublisherLayer"
 import Profile from "@/pages/Profile"
 import BookDetail from "@/pages/BookDetail"
 import LoanDetails from "@/pages/LoanDetails"
@@ -13,16 +14,13 @@ import EditBook from "@/pages/EditBook"
 import { Register } from "./pages/Register"
 import { useUserData } from "./hooks/UseUserData"
 import { useMemo } from "react"
-import { useUserProfile } from "./context/UserProfileContext"
-
 
 // App.tsx
 function App() {
   const { user } = useAuth()
-  const { userProfile } = useUserProfile()
-  const { isPublisher } = useUserData()
+  const { isReader, isPublisher } = useUserData()
 
-   const publisherRedirect = useMemo(() => isPublisher(), [userProfile]) // re-evalúa cuando user cambia
+  const publisherRedirect = useMemo(() => isPublisher(), [user])
   // console.log("isPublisher:", isPublisher(), "user:", userProfile)
 
   return (
@@ -39,8 +37,10 @@ function App() {
           <Route path="/detalle-de-libro/:id" element={<BookDetail />} />
           <Route path="/prestamos-de-libros" element={<LoanDetails />} />
           <Route path="/perfil" element={<Profile />} />
-          <Route path="/editar-libro/:id" element={<EditBook />} />
-          <Route path="/crear-libro" element={<EditBook />} />
+          <Route element={<PublisherLayer />}>
+            <Route path="/editar-libro/:id" element={<EditBook />} />
+            <Route path="/crear-libro" element={<EditBook />} />
+          </Route>
         </Route>
 
         {/* Catch-all */}

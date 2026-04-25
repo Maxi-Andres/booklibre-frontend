@@ -11,6 +11,7 @@ import { BookCondition } from "@/types/bookCondition"
 import { useParams, useNavigate, Link } from "react-router"
 import { Button } from "@headlessui/react"
 import { bookService } from "@/services/bookService"
+import { getId } from "@/context/AuthContext"
 import { showToast } from "@/utils/toast"
 import { TextareaField } from "@/components/Textarea"
 import { BookType, BookTypeLabels } from "@/types/bookType"
@@ -30,6 +31,10 @@ export default function EditBook() {
       try {
         const found = await bookService.getBookDetail(Number(id))
         if (found) {
+          if (found.owner.id !== Number(getId())) {
+            navigate("/", { replace: true })
+            return
+          }
           // Trunca en 500 caracteres al cargar del back
           found.desc = found.desc?.slice(0, 1000) ?? ""
           setBook(found)
