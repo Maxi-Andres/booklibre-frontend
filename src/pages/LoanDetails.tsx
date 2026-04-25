@@ -8,6 +8,7 @@ import { mapReservation, type ReservationDTO } from "@/types/reservationType"
 
 import BookCard from "@/components/BookCard"
 import { getId } from "@/context/AuthContext"
+import { useUserData } from "@/hooks/UseUserData"
 
 //! hace TESTS
 //! arregla lo de los bibliokarmas?
@@ -22,15 +23,16 @@ import { getId } from "@/context/AuthContext"
 // arreglar que te deja calificar sin que termine el tiempo por algun motivo
 
 export default function LoanDetails() {
-  const [activeTab, setActiveTab] = useState<
-    "prestados-a-mi" | "prestados-por-mi"
-  >("prestados-a-mi")
   const [search, setSearch] = useState("")
   // cuando esto cambia se vuelve a renderizar el componente y se vuelve a llamar
   const [reserves, setReserves] = useState<ReservationDTO[]>([])
   const [activePage, setActivePage] = useState<number>(0)
   const [totalPages, setTotalPages] = useState(1)
-
+  const { isReader, isPublisher } = useUserData()
+  const [activeTab, setActiveTab] = useState<
+    "prestados-a-mi" | "prestados-por-mi"
+  >(isPublisher() && !isReader() ? "prestados-por-mi" : "prestados-a-mi")
+  
   const pageSizeLoanBooks = 4
   const id = getId()
 
@@ -93,7 +95,9 @@ export default function LoanDetails() {
 
         {/* =================== Tabs =================== */}
         <div className="mt-6 flex gap-6 border-b border-gray-200">
-          {(["prestados-a-mi", "prestados-por-mi"] as const).map((tab) => (
+          {(["prestados-a-mi", "prestados-por-mi"] as const).filter((tab) =>
+            tab === "prestados-a-mi" ? isReader() : isPublisher()
+          ).map((tab) => (
             <button
               key={tab}
               onClick={() => {

@@ -8,7 +8,6 @@ import {
 import { UserProfile } from "@/domain/userProfile"
 import { GearIcon } from "@phosphor-icons/react"
 import { InputField } from "@/components/InputField"
-import { getErrorMessage } from "@/validation/errorHandler"
 import { showToast } from "@/utils/toast"
 import { userProfileService } from "@/services/userProfileService"
 import { ValidationMessage } from "@/validation/validationMessage"
