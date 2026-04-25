@@ -10,15 +10,9 @@ import BookCard from "@/components/BookCard"
 import { getId } from "@/context/AuthContext"
 import { useUserData } from "@/hooks/UseUserData"
 
-//! hace TESTS
-//! arregla lo de los bibliokarmas?
-//! mostrale al profe el back y mostrale lo que arreglaste y lo de el front que emprolijes, ademas de preguntarle si esta bien la estructura
-//? ver de sacar el when y hacer un enum
-
-// que el libro tenga todas sus reseñas y que la reserva tenga una id de su reseña por las dudas
-// preguntar por que lo que te sale en mis prestamos es la puntuacion de la reserva, no el promedio de el libro, es lo que le pusiste vos
 // cambiar de patch a put lo de la reserva
 // fijate el refresh token
+// por que no ROTA el refresh token
 // fiajte lo de readonly tryue que te OCULTA EL N +1
 // arreglar que te deja calificar sin que termine el tiempo por algun motivo
 
@@ -32,7 +26,7 @@ export default function LoanDetails() {
   const [activeTab, setActiveTab] = useState<
     "prestados-a-mi" | "prestados-por-mi"
   >(isPublisher() && !isReader() ? "prestados-por-mi" : "prestados-a-mi")
-  
+
   const pageSizeLoanBooks = 4
   const id = getId()
 
@@ -95,27 +89,32 @@ export default function LoanDetails() {
 
         {/* =================== Tabs =================== */}
         <div className="mt-6 flex gap-6 border-b border-gray-200">
-          {(["prestados-a-mi", "prestados-por-mi"] as const).filter((tab) =>
-            isCombined() ||
-            (tab === "prestados-a-mi" ? isReader() : isPublisher())
-          ).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => {
-                setActiveTab(tab)
-                setActivePage(0)
-                handleSearch(tab, 0)
-              }}
-              disabled={activeTab == tab}
-              className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer disabled:pointer-events-none ${
-                activeTab === tab
-                  ? "border-b-3 border-blue-500 text-blue-500"
-                  : "border-b-3 text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {tab === "prestados-a-mi" ? "Prestados a mí" : "Prestados por mí"}
-            </button>
-          ))}
+          {(["prestados-a-mi", "prestados-por-mi"] as const)
+            .filter(
+              (tab) =>
+                isCombined() ||
+                (tab === "prestados-a-mi" ? isReader() : isPublisher()),
+            )
+            .map((tab) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab)
+                  setActivePage(0)
+                  handleSearch(tab, 0)
+                }}
+                disabled={activeTab == tab}
+                className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer disabled:pointer-events-none ${
+                  activeTab === tab
+                    ? "border-b-3 border-blue-500 text-blue-500"
+                    : "border-b-3 text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {tab === "prestados-a-mi"
+                  ? "Prestados a mí"
+                  : "Prestados por mí"}
+              </button>
+            ))}
         </div>
 
         {/* =================== Search =================== */}

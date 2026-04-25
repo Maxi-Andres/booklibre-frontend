@@ -71,7 +71,7 @@ class ReserveService {
     reservationId: number,
     body: { rate: number; review: string },
   ) {
-    const { data } = await axios.patch(
+    const { data } = await axios.post(
       REST_SERVER_URL + "/" + reservationId + "/calificar",
       {
         id: 0,
