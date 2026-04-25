@@ -12,12 +12,18 @@ import { Login } from "@/pages/Login"
 import EditBook from "@/pages/EditBook"
 import { Register } from "./pages/Register"
 import { useUserData } from "./hooks/UseUserData"
+import { useMemo } from "react"
+import { useUserProfile } from "./context/UserProfileContext"
 
 
 // App.tsx
 function App() {
   const { user } = useAuth()
+  const { userProfile } = useUserProfile()
   const { isPublisher } = useUserData()
+
+   const publisherRedirect = useMemo(() => isPublisher(), [userProfile]) // re-evalúa cuando user cambia
+  // console.log("isPublisher:", isPublisher(), "user:", userProfile)
 
   return (
     <>
@@ -29,7 +35,7 @@ function App() {
 
         {/* Rutas privadas */}
         <Route element={<PrivateLayer />}>
-          <Route path="/" element={isPublisher() ? <Navigate to="/perfil" replace/> : <Home />} />
+          <Route path="/" element={publisherRedirect ? <Navigate to="/perfil" replace/> : <Home />} />
           <Route path="/detalle-de-libro/:id" element={<BookDetail />} />
           <Route path="/prestamos-de-libros" element={<LoanDetails />} />
           <Route path="/perfil" element={<Profile />} />
