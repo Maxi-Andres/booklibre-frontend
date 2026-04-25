@@ -81,12 +81,12 @@ const responseErrorHandler = async (error: AxiosError) => {
     processQueue(refreshError, null)
     tokenService.clearTokens()
     sessionStorage.setItem("sessionExpired", "1")
-    
+
     // Guardá el mensaje para verlo
     const message =
-    refreshError instanceof AxiosError
-    ? (refreshError.response?.data?.message ?? refreshError.message)
-    : "Tu sesión expiró"
+      refreshError instanceof AxiosError
+        ? (refreshError.response?.data?.message ?? refreshError.message)
+        : "Tu sesión expiró"
     sessionStorage.setItem("sessionExpiredMessage", message)
 
     window.location.href = "/login"
@@ -100,6 +100,6 @@ axios.interceptors.response.use((r) => r, responseErrorHandler)
 customAxios.interceptors.response.use((r) => r, responseErrorHandler)
 
 axios.defaults.withCredentials = true
-axios.defaults.withXSRFToken = true
+// axios.defaults.withXSRFToken = true
 customAxios.defaults.withCredentials = true
-customAxios.defaults.withXSRFToken = true
+// customAxios.defaults.withXSRFToken = true

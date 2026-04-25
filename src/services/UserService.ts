@@ -6,7 +6,6 @@ import {
 } from "@/domain/user"
 import axios from "axios"
 import { REST_SERVER_URL } from "@/config/configuration"
-import { body } from "motion/react-client"
 
 class UserService {
   async login(emailSent: string, passwordSent: string): Promise<UserType> {

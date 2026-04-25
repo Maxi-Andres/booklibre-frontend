@@ -38,9 +38,9 @@ export const tokenService = {
     return readUser()?.accessToken ?? null
   },
 
-  getRefreshToken(): string | null {
-    return readUser()?.refreshToken ?? null
-  },
+  // getRefreshToken(): string | null {
+  //   return readUser()?.refreshToken ?? null
+  // },
 
   updateAccessToken(newAccessToken: string): void {
     const storage = getStorageWithUser()
@@ -58,13 +58,13 @@ export const tokenService = {
   },
 
   async refreshAccessToken(): Promise<string> {
-    const refreshToken = this.getRefreshToken()
-    if (!refreshToken) throw new Error("No refresh token available")
+    // const refreshToken = this.getRefreshToken()
+    // if (!refreshToken) throw new Error("No refresh token available")
 
     const rawClient = axios.create() // crea una instancia de axios sin las configs asi no joden
+    rawClient.defaults.withCredentials = true
     const { data } = await rawClient.post<RefreshResponse>(
       `${REST_SERVER_URL}/api/auth/refresh`,
-      { token: refreshToken },
     )
 
     this.updateAccessToken(data.token)
