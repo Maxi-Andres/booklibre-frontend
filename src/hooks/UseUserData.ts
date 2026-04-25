@@ -11,18 +11,21 @@ const ROLE_MAP: Record<string, UserKind> = {
 export function useUserData() {
   const getRole = (): UserKind | null => {
     const token = tokenService.getAccessToken()   // ← lee del objeto "user" en sessionStorage
-    console.log("token:", token)
+    // console.log("token:", token)
     const payload = getTokenPayload(token)
-    console.log("payload:", payload)
+    // console.log("payload:", payload)
     const raw = (payload?.role?.[0] ?? payload?.roles?.[0])?.replace("ROLE_", "")
     return raw ? ROLE_MAP[raw] ?? null : null
   }
 
+  const isCombined = () => 
+    getRole() === UserKind.COMBINED
+
   const isPublisher = () =>
-    getRole() === UserKind.PUBLISHER || getRole() === UserKind.COMBINED
+    getRole() === UserKind.PUBLISHER
 
   const isReader = () =>
-    getRole() === UserKind.READER || getRole() === UserKind.COMBINED
+    getRole() === UserKind.READER
 
-  return { getRole, isPublisher, isReader }
+  return { getRole, isPublisher, isReader, isCombined }
 }

@@ -28,7 +28,7 @@ export default function LoanDetails() {
   const [reserves, setReserves] = useState<ReservationDTO[]>([])
   const [activePage, setActivePage] = useState<number>(0)
   const [totalPages, setTotalPages] = useState(1)
-  const { isReader, isPublisher } = useUserData()
+  const { isReader, isPublisher, isCombined } = useUserData()
   const [activeTab, setActiveTab] = useState<
     "prestados-a-mi" | "prestados-por-mi"
   >(isPublisher() && !isReader() ? "prestados-por-mi" : "prestados-a-mi")
@@ -96,7 +96,8 @@ export default function LoanDetails() {
         {/* =================== Tabs =================== */}
         <div className="mt-6 flex gap-6 border-b border-gray-200">
           {(["prestados-a-mi", "prestados-por-mi"] as const).filter((tab) =>
-            tab === "prestados-a-mi" ? isReader() : isPublisher()
+            isCombined() ||
+            (tab === "prestados-a-mi" ? isReader() : isPublisher())
           ).map((tab) => (
             <button
               key={tab}

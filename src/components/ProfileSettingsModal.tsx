@@ -13,7 +13,6 @@ import { userProfileService } from "@/services/userProfileService"
 import { ValidationMessage } from "@/validation/validationMessage"
 import { useUserProfile } from "@/context/UserProfileContext"
 import { REST_SERVER_URL } from "@/config/configuration"
-import { HttpStatusCode } from "axios"
 
 type ProfileSettingsIntf = {
   profile: UserProfile
@@ -70,11 +69,7 @@ export default function ProfileSettingsModal({
       showToast.success("Cambios guardados")
       setOpen(false)
     } catch (error: any) {
-      if(error.response?.status == HttpStatusCode.Forbidden) { 
-        showToast.error("No tenés autorización para editar tu perfil.") 
-        return
-      }
-      showToast.httpError(error, "Error al editar perfil:")
+      showToast.httpError(error, "Error al editar perfil")       
     } finally {
       setErrors([])
     }
