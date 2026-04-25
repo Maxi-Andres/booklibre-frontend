@@ -6,6 +6,7 @@ import type {
 import { UserProfile } from "@/domain/userProfile"
 import axios from "axios"
 import { getId } from "@/context/AuthContext"
+import { tokenService } from "./tokenService"
 
 class UserProfileService {
   get id() {
@@ -41,11 +42,11 @@ class UserProfileService {
       new Blob([JSON.stringify(userData)], { type: "application/json" }),
     )
 
-    const response = await axios.put<UserProfileJSON>(
-      REST_SERVER_URL + `/updateProfile`,
-      formData,
+    const response = await axios.put<{ user: UserProfileJSON, accessToken: string }>(
+      REST_SERVER_URL + `/updateProfile`, formData
     )
-    return UserProfile.fromJSON(response.data)
+    tokenService.updateAccessToken(response.data.accessToken)
+    return UserProfile.fromJSON(response.data.user)
   }
 }
 

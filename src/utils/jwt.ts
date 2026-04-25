@@ -6,6 +6,7 @@ export type JwtHeader = {
 export type JwtPayload = {
   sub?: string
   roles?: string[]
+  role?: string[]
   exp?: number
   iat?: number
 } & Record<string, unknown>

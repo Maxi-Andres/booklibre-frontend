@@ -11,11 +11,13 @@ import "react-toastify/dist/ReactToastify.css"
 import { Login } from "@/pages/Login"
 import EditBook from "@/pages/EditBook"
 import { Register } from "./pages/Register"
+import { useUserData } from "./hooks/UseUserData"
 
 
 // App.tsx
 function App() {
   const { user } = useAuth()
+  const { isPublisher } = useUserData()
 
   return (
     <>
@@ -27,7 +29,7 @@ function App() {
 
         {/* Rutas privadas */}
         <Route element={<PrivateLayer />}>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={isPublisher() ? <Navigate to="/perfil" replace/> : <Home />} />
           <Route path="/detalle-de-libro/:id" element={<BookDetail />} />
           <Route path="/prestamos-de-libros" element={<LoanDetails />} />
           <Route path="/perfil" element={<Profile />} />
