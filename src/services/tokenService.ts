@@ -3,6 +3,7 @@ import { REST_SERVER_URL } from "@/config/configuration"
 
 const USER_KEY = "user"
 
+
 interface StoredUser {
   accessToken: string
   refreshToken: string
@@ -26,7 +27,11 @@ const readUser = (): StoredUser | null => {
   const storage = getStorageWithUser()
   if (!storage) return null
   try {
-    return JSON.parse(storage.getItem(USER_KEY)!) as StoredUser
+    const stored = storage.getItem(USER_KEY)
+    if (stored) return JSON.parse(stored) as StoredUser
+    const accessToken = storage.getItem("accessToken")
+    if (!accessToken) return null
+    return { accessToken } as StoredUser
   } catch {
     storage.removeItem(USER_KEY)
     return null
@@ -35,8 +40,10 @@ const readUser = (): StoredUser | null => {
 
 export const tokenService = {
   getAccessToken(): string | null {
-    return readUser()?.accessToken ?? null
-  },
+    return localStorage.getItem("accessToken") ?? 
+           sessionStorage.getItem("accessToken") ?? 
+           readUser()?.accessToken ?? null
+},
 
   // getRefreshToken(): string | null {
   //   return readUser()?.refreshToken ?? null

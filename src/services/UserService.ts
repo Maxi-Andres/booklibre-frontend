@@ -6,23 +6,22 @@ import {
 } from "@/domain/user"
 import axios from "axios"
 import { REST_SERVER_URL } from "@/config/configuration"
+import type { AuthUser } from "@/context/AuthContext"
 
 class UserService {
-  async login(emailSent: string, passwordSent: string): Promise<UserType> {
-    const userLogin: UserJSONLoginRequest = {
-      email: emailSent,
-      password: passwordSent,
-    }
-
+  async login(emailSent: string, passwordSent: string): Promise<AuthUser> {
     const response = await axios.post<UserJSONResponse>(
-      REST_SERVER_URL + "/api/auth",
-      userLogin,
+        REST_SERVER_URL + "/api/auth",
+        { email: emailSent, password: passwordSent }
     )
-
-    //localStorage.setItem('id', response.data.id.toString())
-
-    return UserType.fromJson(response.data)
-  }
+    return {
+        id: response.data.id,
+        accessToken: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
+        email: response.data.email,
+        name: response.data.name,
+    }
+}
 
   async createUser(user: UserType): Promise<void> {
     const userRegister: UserJSONRegisterRequest = {
