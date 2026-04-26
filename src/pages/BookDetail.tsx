@@ -11,7 +11,6 @@ import ReviewsModal from "@/components/ReviewsModal"
 import { StarRating } from "@/components/ReviewsModal"
 import { formatDate } from "@/utils/formatDate"
 import type { ReservationDates } from "@/types/reservationDates"
-import { REST_SERVER_URL } from "@/config/configuration"
 import { ReviewItem } from "@/components/ReviewItem"
 
 export default function BookDetail() {
@@ -126,7 +125,7 @@ export default function BookDetail() {
                 Autor
               </span>
               <img
-                src={`${REST_SERVER_URL}/${book!.author.avatar}`}
+                src={`${import.meta.env.VITE_API_URL}/${book!.author.avatar}`}
                 alt={book!.author.name}
                 className="h-7 w-7 rounded-full object-cover"
               />

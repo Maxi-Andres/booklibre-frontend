@@ -1,4 +1,3 @@
-import { REST_SERVER_URL } from "@/config/configuration"
 import axios from "axios"
 import { getAxiosData } from "./common"
 // import { mapReservation, type ReservationDTO } from "@/types/reservationType"
@@ -15,7 +14,7 @@ class ReserveService {
 
   async getUserReadBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
-      axios.get<number>(REST_SERVER_URL + `/userReadBooks/${this.id}`),
+      axios.get<number>(import.meta.env.VITE_API_URL + `/userReadBooks/${this.id}`),
     )
   }
 
@@ -25,7 +24,7 @@ class ReserveService {
     dropOffDate: string,
   ) {
     const sessionId = this.id
-    return axios.post(REST_SERVER_URL + "/create-reservation", {
+    return axios.post(import.meta.env.VITE_API_URL + "/create-reservation", {
       bookId,
       sessionId,
       pickUpDate,
@@ -35,7 +34,7 @@ class ReserveService {
 
   async getReviews(bookId: number, page: number, pageSize: number) {
     return axios.get<BookReview[]>(
-      `${REST_SERVER_URL}/book-review/${bookId}?page=${page}&pageSize=${pageSize}`,
+      `${import.meta.env.VITE_API_URL}/book-review/${bookId}?page=${page}&pageSize=${pageSize}`,
     )
   }
 
@@ -46,7 +45,7 @@ class ReserveService {
     pageSize: number,
   ) {
     // ): Promise<ReservationDTO[]> {
-    const { data } = await axios.get(REST_SERVER_URL + "/lector/" + userId, {
+    const { data } = await axios.get(import.meta.env.VITE_API_URL + "/lector/" + userId, {
       params: { search, page, pageSize },
     })
     // console.log(data, "del user")
@@ -60,7 +59,7 @@ class ReserveService {
     pageSize: number,
   ) {
     // ): Promise<ReservationDTO[]> {
-    const { data } = await axios.get(REST_SERVER_URL + "/owner/" + userId, {
+    const { data } = await axios.get(import.meta.env.VITE_API_URL + "/owner/" + userId, {
       params: { search, page, pageSize },
     })
     // console.log(data, "que le hicieron al user")
@@ -72,7 +71,7 @@ class ReserveService {
     body: { rate: number; review: string },
   ) {
     const { data } = await axios.post(
-      REST_SERVER_URL + "/" + reservationId + "/calificar",
+      import.meta.env.VITE_API_URL + "/" + reservationId + "/calificar",
       {
         id: 0,
         reviewerName: "", // el back lo resuelve con el userId
@@ -90,7 +89,7 @@ class ReserveService {
 
   async getUserOwnBooks(pageable: ProfilePageable) {
     const { data } = await axios.get(
-      REST_SERVER_URL + `/userOwnBooks/${this.id}`,
+      import.meta.env.VITE_API_URL + `/userOwnBooks/${this.id}`,
       { params: pageable },
     )
 
@@ -100,13 +99,13 @@ class ReserveService {
 
   async getUserLentBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
-      axios.get<number>(REST_SERVER_URL + `/userLentBooks/${this.id}`),
+      axios.get<number>(import.meta.env.VITE_API_URL + `/userLentBooks/${this.id}`),
     )
   }
 
   async getReservedDates(bookId: number) {
     return axios.get<ReservationDates[]>(
-      `${REST_SERVER_URL}/reservations/book/${bookId}/dates`,
+      `${import.meta.env.VITE_API_URL}/reservations/book/${bookId}/dates`,
     )
   }
 
@@ -117,7 +116,7 @@ class ReserveService {
     dropOffDate: string,
   ) {
     return axios.get<number>(
-      `${REST_SERVER_URL}/book-detail/${bookId}/bibliokarmas`,
+      `${import.meta.env.VITE_API_URL}/book-detail/${bookId}/bibliokarmas`,
       {
         params: {
           userId,

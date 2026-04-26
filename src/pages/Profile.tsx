@@ -15,7 +15,6 @@ import { reserveService } from "@/services/reserveService"
 import ProfileSettingsModal from "@/components/ProfileSettingsModal"
 import { showToast } from "@/utils/toast"
 import { useLocation, useNavigate } from "react-router"
-import { REST_SERVER_URL } from "@/config/configuration"
 import ProfileBookList from "@/components/ProfileBookList"
 import { UserKind } from "@/types/userKind"
 
@@ -80,7 +79,7 @@ export default function Profile() {
           <img
             src={
               profile.img
-                ? `${REST_SERVER_URL}${profile.img}`
+                ? `${import.meta.env.VITE_API_URL}${profile.img}`
                 : "/assets/default-img.png"
             }
             alt="Profile Image"

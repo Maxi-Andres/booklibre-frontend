@@ -5,7 +5,6 @@ import {
   UserType,
 } from "@/domain/user"
 import axios from "axios"
-import { REST_SERVER_URL } from "@/config/configuration"
 
 class UserService {
   async login(emailSent: string, passwordSent: string): Promise<UserType> {
@@ -15,7 +14,7 @@ class UserService {
     }
 
     const response = await axios.post<UserJSONResponse>(
-      REST_SERVER_URL + "/api/auth",
+      import.meta.env.VITE_API_URL + "/api/auth",
       userLogin,
     )
 
@@ -33,7 +32,7 @@ class UserService {
     }
 
     await axios.post<UserJSONResponse>(
-      REST_SERVER_URL + "/register",
+      import.meta.env.VITE_API_URL + "/register",
       userRegister,
     )
   }

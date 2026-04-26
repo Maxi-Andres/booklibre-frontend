@@ -1,5 +1,4 @@
 import axios from "axios"
-import { REST_SERVER_URL } from "@/config/configuration"
 
 const USER_KEY = "user"
 
@@ -64,7 +63,7 @@ export const tokenService = {
     const rawClient = axios.create() // crea una instancia de axios sin las configs asi no joden
     rawClient.defaults.withCredentials = true
     const { data } = await rawClient.post<RefreshResponse>(
-      `${REST_SERVER_URL}/api/auth/refresh`,
+      `${import.meta.env.VITE_API_URL}/api/auth/refresh`,
     )
 
     this.updateAccessToken(data.token)

@@ -4,7 +4,6 @@ import { useAuth } from "@/context/AuthContext"
 import { useNavigate } from "react-router"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { useUserProfile } from "@/context/UserProfileContext"
-import { REST_SERVER_URL } from "@/config/configuration"
 import { UserKind } from "@/types/userKind"
 
 const navigation = [
@@ -84,7 +83,7 @@ export default function NavBar() {
                 alt="User avatar"
                 src={
                   userProfile.img
-                    ? `${REST_SERVER_URL}${userProfile.img}`
+                    ? `${import.meta.env.VITE_API_URL}${userProfile.img}`
                     : "/assets/default-img.png"
                 }
                 className="size-8 rounded-full object-cover ring-2 ring-gray-100"

@@ -1,4 +1,3 @@
-import { REST_SERVER_URL } from "@/config/configuration"
 import type {
   UserProfileJSON,
   UserProfileUpdateJSON,
@@ -16,7 +15,7 @@ class UserProfileService {
   async getProfile() {
     const userId = this.id
     const response = await axios.get<UserProfileJSON>(
-      REST_SERVER_URL + `/profile/${userId}`,
+      import.meta.env.VITE_API_URL + `/profile/${userId}`,
     )
     return UserProfile.fromJSON(response.data)
   }
@@ -43,7 +42,7 @@ class UserProfileService {
     )
 
     const response = await axios.put<{ user: UserProfileJSON, accessToken: string }>(
-      REST_SERVER_URL + `/updateProfile`, formData
+      import.meta.env.VITE_API_URL + `/updateProfile`, formData
     )
     tokenService.updateAccessToken(response.data.accessToken)
     return UserProfile.fromJSON(response.data.user)

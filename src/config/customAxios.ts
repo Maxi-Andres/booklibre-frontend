@@ -1,11 +1,10 @@
 import axios from "axios"
-import { REST_SERVER_URL } from "./configuration"
 
 // El serializer global maneja los arrays automáticamente para cualquier 
 // call que hagas con esta instancia de axios.
 
 const customAxios = axios.create({
-    baseURL: REST_SERVER_URL,
+    baseURL: import.meta.env.VITE_API_URL,
     paramsSerializer: (params) => {
         const urlParams = new URLSearchParams()
 

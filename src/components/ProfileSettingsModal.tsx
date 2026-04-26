@@ -12,7 +12,6 @@ import { showToast } from "@/utils/toast"
 import { userProfileService } from "@/services/userProfileService"
 import { ValidationMessage } from "@/validation/validationMessage"
 import { useUserProfile } from "@/context/UserProfileContext"
-import { REST_SERVER_URL } from "@/config/configuration"
 
 type ProfileSettingsIntf = {
   profile: UserProfile
@@ -109,7 +108,7 @@ export default function ProfileSettingsModal({
                       <img
                         src={
                           profile.img
-                            ? `${REST_SERVER_URL}/${profile.img}`
+                            ? `${import.meta.env.VITE_API_URL}/${profile.img}`
                             : "/assets/default-img.png"
                         }
                         alt="profile image"
