@@ -39,13 +39,12 @@ export const Login = () => {
 
       if (validation) {
         // console.log(validation)
-        const userData : AuthUser = {
+        const userData : Omit<AuthUser, 'accessToken'> = {
           id: validation.id,
-          accessToken: validation.accessToken,
           refreshToken: validation.refreshToken,
           sessionExpiresAt: 0
         }
-        login(userData, validation.expirationTime, rememberMe)
+        login(userData, validation.accessToken, validation.expirationTime, rememberMe)
         navigate("/", { replace: true })
       }
     } catch (error) {

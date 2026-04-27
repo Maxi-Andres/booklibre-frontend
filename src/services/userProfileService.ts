@@ -5,7 +5,7 @@ import type {
 import { UserProfile } from "@/domain/userProfile"
 import axios from "axios"
 import { getId } from "@/context/AuthContext"
-import { tokenService } from "./tokenService"
+import { tokenMemory } from "./tokenService"
 
 class UserProfileService {
   get id() {
@@ -44,7 +44,7 @@ class UserProfileService {
     const response = await axios.put<{ user: UserProfileJSON, accessToken: string }>(
       import.meta.env.VITE_API_URL + `/updateProfile`, formData
     )
-    tokenService.updateAccessToken(response.data.accessToken)
+    tokenMemory.set(response.data.accessToken)
     return UserProfile.fromJSON(response.data.user)
   }
 }

@@ -17,11 +17,17 @@ import { useMemo } from "react"
 
 // App.tsx
 function App() {
-  const { user } = useAuth()
+  const { user, isInitializing } = useAuth()
   const { isReader, isPublisher } = useUserData()
 
   const publisherRedirect = useMemo(() => isPublisher(), [user])
   // console.log("isPublisher:", isPublisher(), "user:", userProfile)
+
+  if (isInitializing) return (
+  <div className="fixed inset-0 flex items-center justify-center bg-background">
+    <p className="animate-spin h-8 w-8 text-muted-foreground"> CARGANDOOOO </p>
+  </div>
+)
 
   return (
     <>

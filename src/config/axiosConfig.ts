@@ -4,10 +4,10 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from "axios"
 import customAxios from "./customAxios"
-import { tokenService } from "@/services/tokenService"
+import { tokenMemory, tokenService } from "@/services/tokenService"
 
 const authInterceptor = (config: InternalAxiosRequestConfig) => {
-  const accessToken = tokenService.getAccessToken()
+  const accessToken = tokenMemory.get()
   if (accessToken) {
     config.headers["Authorization"] = `Bearer ${accessToken}`
   }

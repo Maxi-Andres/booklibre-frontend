@@ -1,4 +1,4 @@
-import { tokenService } from "@/services/tokenService"
+import { tokenMemory } from "@/services/tokenService"
 import { UserKind } from "@/types/userKind"
 import { getTokenPayload } from "@/utils/jwt"
 
@@ -10,7 +10,7 @@ const ROLE_MAP: Record<string, UserKind> = {
 
 export function useUserData() {
   const getRole = (): UserKind | null => {
-    const token = tokenService.getAccessToken()   // ← lee del objeto "user" en sessionStorage
+    const token = tokenMemory.get()
     // console.log("token:", token)
     const payload = getTokenPayload(token)
     // console.log("payload:", payload)

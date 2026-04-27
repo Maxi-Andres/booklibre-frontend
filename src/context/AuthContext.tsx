@@ -1,5 +1,7 @@
 import SessionExpiredModal from "@/components/SessionExpiredModal"
 import { createContext, useContext, useEffect, useRef, useState } from "react"
+import { useOnInit } from "@/hooks/UseOnInit"
+import { tokenMemory, tokenService } from "@/services/tokenService"
 
 
 export interface AuthUser {
@@ -9,9 +11,10 @@ export interface AuthUser {
   sessionExpiresAt: number
 }
 interface AuthContextType {
-  user: AuthUser | null
-  login: (userData: AuthUser, expirationTime: number, rememberMe?: boolean) => void
+  user: Omit<AuthUser, 'accessToken'> | null
+  login: (userData: Omit<AuthUser, 'accessToken'>, token: string, expirationTime: number, rememberMe?: boolean) => void
   logout: () => void
+  isInitializing: boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -19,7 +22,7 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export const getId = (): number | null => {
   try {
     const stored = localStorage.getItem("user") || sessionStorage.getItem("user")
-    return stored ? (JSON.parse(stored) as AuthUser).id : null
+    return stored ? (JSON.parse(stored) as Omit<AuthUser, 'accessToken'>).id : null
   } catch {
     localStorage.removeItem("user")
     sessionStorage.removeItem("user")
@@ -28,27 +31,32 @@ export const getId = (): number | null => {
 }
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(() => getId() ? { id: getId()! } as AuthUser : null)
+  const [user, setUser] = useState<Omit<AuthUser, 'accessToken'> | null>(() => {
+    // Solo cargás el user sin el token
+    try {
+      const stored = localStorage.getItem("user") || sessionStorage.getItem("user")
+      return stored ? JSON.parse(stored) : null
+    } catch { return null }
+  })
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [sessionExpiredModal, setSessionExpiredModal] = useState(false)
-  
-  const login = (userData: AuthUser, expirationTime: number, rememberMe = false) => {
+
+  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [isInitializing, setIsInitializing] = useState(true) // evita render prematuro
+
+  const login = (userData: Omit<AuthUser, 'accessToken'>, token: string, expirationTime: number, rememberMe = false) => {
     const storage = rememberMe ? localStorage : sessionStorage
     const sessionExpiresAt = Date.now() + expirationTime
-    // storage.setItem("id", JSON.stringify(userData.id))
-    // storage.setItem("accessToken", userData.accessToken)
-    storage.setItem("user", JSON.stringify({...userData, sessionExpiresAt}))
-    setUser({...userData, sessionExpiresAt})
+    storage.setItem("user", JSON.stringify({ ...userData, sessionExpiresAt }))
+    setUser({ ...userData, sessionExpiresAt })
+    setAccessToken(token) // en memoria, no en storage
   }
   
   const logout = () => {
-    // localStorage.removeItem("id")
-    // localStorage.removeItem("accessToken")
     localStorage.removeItem("user")
-    // sessionStorage.removeItem("id")
-    // sessionStorage.removeItem("accessToken")
     sessionStorage.removeItem("user")
     setUser(null)
+    setAccessToken(null)
   }
 
   const handleSessionExpired = () => {
@@ -96,8 +104,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
   }, [user])
 
+  // sincronizo el estado con tokenMemory ref
+  useEffect(() => {
+    tokenMemory.set(accessToken)
+  }, [accessToken])
+
+  // ref para que no se mande dos veces el refresh al iniciar (strict mode de React)
+  const didRefresh = useRef(false)
+  useOnInit(() => {
+    if (didRefresh.current) return
+    didRefresh.current = true
+
+    if (!user) {
+      setIsInitializing(false)
+      return
+    }
+
+    tokenService.refreshAccessToken()
+      .then((newToken) => {
+        console.log("Refresh inicial exitoso, sesión válida.")
+        setAccessToken(newToken)
+      })
+      .catch(() => {
+        console.log("Refresh inicial falló, cerrando sesión.")
+        logout()
+      })
+      .finally(() => {
+        setIsInitializing(false)
+      })
+  })
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, isInitializing }}>
       {children}
 
       {sessionExpiredModal && (
