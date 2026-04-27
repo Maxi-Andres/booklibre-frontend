@@ -7,7 +7,7 @@ import { ValidationMessage } from "@/validation/validationMessage"
 import ValidationField from "@/validation/ValidationField"
 import { userService } from "@/services/UserService"
 import { InputField } from "@/components/InputField"
-import { useAuth } from "@/context/AuthContext"
+import { useAuth, type AuthUser } from "@/context/AuthContext"
 import { showToast } from "@/utils/toast"
 import { useOnInit } from "@/hooks/UseOnInit"
 
@@ -18,6 +18,7 @@ export const Login = () => {
     email: "",
     password: "",
   })
+  
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
   const [rememberMe, setRememberMe] = useState(false)
 
@@ -38,9 +39,11 @@ export const Login = () => {
 
       if (validation) {
         // console.log(validation)
-        const userData = {
+        const userData : AuthUser = {
           id: validation.id,
           accessToken: validation.accessToken,
+          refreshToken: validation.refreshToken,
+          sessionExpiresAt: 0
         }
         login(userData, validation.expirationTime, rememberMe)
         navigate("/", { replace: true })

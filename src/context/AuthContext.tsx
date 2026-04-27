@@ -1,18 +1,25 @@
 import SessionExpiredModal from "@/components/SessionExpiredModal"
 import { createContext, useContext, useEffect, useRef, useState } from "react"
+
+
+export interface AuthUser {
+  id: number
+  accessToken: string
+  refreshToken: string
+  sessionExpiresAt: number
+}
 interface AuthContextType {
-  user: object | null
-  login: (userData: object, expirationTime: number, rememberMe?: boolean) => void
+  user: AuthUser | null
+  login: (userData: AuthUser, expirationTime: number, rememberMe?: boolean) => void
   logout: () => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-export const getUser = () => {
+export const getId = (): number | null => {
   try {
-    const stored =
-      localStorage.getItem("user") || sessionStorage.getItem("user")
-    return stored ? JSON.parse(stored) : null
+    const stored = localStorage.getItem("user") || sessionStorage.getItem("user")
+    return stored ? (JSON.parse(stored) as AuthUser).id : null
   } catch {
     localStorage.removeItem("user")
     sessionStorage.removeItem("user")
@@ -20,28 +27,27 @@ export const getUser = () => {
   }
 }
 
-export const getId = () => {
-  const user = getUser()
-  return user?.id ?? null
-}
-
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState(() => getUser())
+  const [user, setUser] = useState<AuthUser | null>(() => getId() ? { id: getId()! } as AuthUser : null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [sessionExpiredModal, setSessionExpiredModal] = useState(false)
   
-  const login = (userData: object, expirationTime: number, rememberMe = false) => {
+  const login = (userData: AuthUser, expirationTime: number, rememberMe = false) => {
     const storage = rememberMe ? localStorage : sessionStorage
     const sessionExpiresAt = Date.now() + expirationTime
+    // storage.setItem("id", JSON.stringify(userData.id))
+    // storage.setItem("accessToken", userData.accessToken)
     storage.setItem("user", JSON.stringify({...userData, sessionExpiresAt}))
     setUser({...userData, sessionExpiresAt})
   }
   
   const logout = () => {
+    // localStorage.removeItem("id")
+    // localStorage.removeItem("accessToken")
     localStorage.removeItem("user")
-    localStorage.removeItem("id")
+    // sessionStorage.removeItem("id")
+    // sessionStorage.removeItem("accessToken")
     sessionStorage.removeItem("user")
-    sessionStorage.removeItem("id")
     setUser(null)
   }
 
