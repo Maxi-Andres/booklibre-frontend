@@ -37,7 +37,12 @@ export const Login = () => {
       const validation = await userService.login(user.email, user.password)
 
       if (validation) {
-        login(validation, rememberMe)
+        // console.log(validation)
+        const userData = {
+          id: validation.id,
+          accessToken: validation.accessToken,
+        }
+        login(userData, validation.expirationTime, rememberMe)
         navigate("/", { replace: true })
       }
     } catch (error) {

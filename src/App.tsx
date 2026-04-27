@@ -28,7 +28,7 @@ function App() {
       <ToastContainer position="bottom-right" autoClose={4000} />
       <Routes>
         {/* Rutas públicas - siempre disponibles */}
-        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" replace />} />
+        <Route path="/login" element={user ? <Navigate to="/" replace />  : <Login />}/>
         <Route path="/registrarse" element={!user ? <Register /> : <Navigate to="/" replace />} />
 
         {/* Rutas privadas */}

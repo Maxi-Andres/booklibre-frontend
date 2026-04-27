@@ -8,6 +8,7 @@ export type UserJSONLoginRequest = {
 export interface UserJSONResponse {
   accessToken: string
   refreshToken: string
+  expirationTime: number
   email: string
   name: string
   id: number

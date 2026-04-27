@@ -7,7 +7,7 @@ import {
 import axios from "axios"
 
 class UserService {
-  async login(emailSent: string, passwordSent: string): Promise<UserType> {
+  async login(emailSent: string, passwordSent: string): Promise<UserJSONResponse> {
     const userLogin: UserJSONLoginRequest = {
       email: emailSent,
       password: passwordSent,
@@ -20,7 +20,7 @@ class UserService {
 
     //localStorage.setItem('id', response.data.id.toString())
 
-    return UserType.fromJson(response.data)
+    return response.data
   }
 
   async createUser(user: UserType): Promise<void> {
