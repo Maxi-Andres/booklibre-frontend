@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useRef, useState } from "react"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { tokenMemory, tokenService } from "@/services/tokenService"
 
-
 export interface AuthUser {
   id: number
   accessToken: string
@@ -139,7 +138,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
 
       {sessionExpiredModal && (
-        <SessionExpiredModal onClick={handleSessionExpired} showing={sessionExpiredModal}/>
+        <SessionExpiredModal onClick={handleSessionExpired}/>
       )}
     </AuthContext.Provider>
   )
