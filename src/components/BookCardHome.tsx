@@ -99,7 +99,7 @@ const BookCardHome = ({
             alt="User avatar"
             src={
               book.owner.img
-                ? `${import.meta.env.VITE_API_URL}/${book.owner.img}`
+                ? `${import.meta.env.VITE_API_URL}${book.owner.img}`
                 : "/assets/default-img.png"
             }
             className="size-6 rounded-full object-cover ring-2 ring-gray-100"
