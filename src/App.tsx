@@ -14,13 +14,15 @@ import EditBook from "@/pages/EditBook"
 import { Register } from "./pages/Register"
 import { useUserData } from "./hooks/UseUserData"
 import { useMemo } from "react"
+import { useUserProfile } from "./context/UserProfileContext"
 
 // App.tsx
 function App() {
   const { user, isInitializing } = useAuth()
-  const { isReader, isPublisher } = useUserData()
+  const { userProfile } = useUserProfile()
+  const { isPublisher } = useUserData()
 
-  const publisherRedirect = useMemo(() => isPublisher(), [user])
+  const publisherRedirect = useMemo(() => isPublisher(), [userProfile])
   // console.log("isPublisher:", isPublisher(), "user:", userProfile)
 
   if (isInitializing) return (

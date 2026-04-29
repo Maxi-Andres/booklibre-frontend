@@ -52,7 +52,7 @@ export default function NavBar() {
             {navigation.map((item) => (
               <Link
                 key={item.name}
-                to={item.href}
+                to={item.name == "Inicio" ? `/?${searchParams.toString()}` : item.href}
                 className={`px-3 py-2 text-sm font-semibold transition-colors duration-150 ${
                   (item.name == "Inicio" && userProfile.userType == UserKind.PUBLISHER) ? "hidden" : ""
                 } ${

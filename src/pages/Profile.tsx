@@ -134,7 +134,7 @@ export default function Profile() {
                       " (" +
                       profile.cel.slice(0, 2) +
                       ") " +
-                      profile.cel.slice(3)
+                      profile.cel.slice(2)
                     : "Aun no registrado"}
                 </p>
               </article>

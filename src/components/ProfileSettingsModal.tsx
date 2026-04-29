@@ -108,7 +108,7 @@ export default function ProfileSettingsModal({
                       <img
                         src={
                           profile.img
-                            ? `${import.meta.env.VITE_API_URL}/${profile.img}`
+                            ? `${import.meta.env.VITE_API_URL}${profile.img}`
                             : "/assets/default-img.png"
                         }
                         alt="profile image"
