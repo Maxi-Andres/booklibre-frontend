@@ -7,6 +7,7 @@ import type { PageResponse } from "@/types/pageResponse"
 import customAxios from "@/config/customAxios"
 import { BookGender } from "@/types/bookGender"
 import { getId } from "@/context/AuthContext"
+import type { BookReview } from "@/domain/review"
 
 class BookService {
   async createBook(book: Book): Promise<Book> {
@@ -67,6 +68,12 @@ class BookService {
     })
 
     return genderFilters
+  }
+
+  async getReviews(bookId: number, page: number, pageSize: number) {
+      return axios.get<BookReview[]>(
+        `${import.meta.env.VITE_API_URL}/book-review/${bookId}?page=${page}&pageSize=${pageSize}`,
+      )
   }
 }
 

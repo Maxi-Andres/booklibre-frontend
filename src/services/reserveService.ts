@@ -1,7 +1,6 @@
 import axios from "axios"
 import { getAxiosData } from "./common"
 // import { mapReservation, type ReservationDTO } from "@/types/reservationType"
-import type { BookReview } from "@/domain/review"
 import { getId } from "@/context/AuthContext"
 
 import type { ReservationDates } from "@/types/reservationDates"
@@ -30,12 +29,6 @@ class ReserveService {
       pickUpDate,
       dropOffDate,
     })
-  }
-
-  async getReviews(bookId: number, page: number, pageSize: number) {
-    return axios.get<BookReview[]>(
-      `${import.meta.env.VITE_API_URL}/book-review/${bookId}?page=${page}&pageSize=${pageSize}`,
-    )
   }
 
   async getReservesByUserId(

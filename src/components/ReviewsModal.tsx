@@ -7,9 +7,9 @@ import {
 } from "@headlessui/react"
 import { StarIcon, XMarkIcon } from "@heroicons/react/24/solid"
 import type { BookReview } from "@/domain/review"
-import { reserveService } from "@/services/reserveService"
 import { showToast } from "@/utils/toast"
 import { ReviewItem } from "./ReviewItem"
+import { bookService } from "@/services/bookService"
 
 type ReviewsModalProps = {
   bookId: number
@@ -43,7 +43,7 @@ export default function ReviewsModal({
 
   const loadReviews = async (pageToLoad: number) => {
     try {
-      const response = await reserveService.getReviews(bookId, pageToLoad, 4)
+      const response = await bookService.getReviews(bookId, pageToLoad, 4)
       // console.log('Respuesta del back:', response.data)
       setReviews((prev) => [...prev, ...response.data])
       // esto hace que no me deje seguir haciendo llamadas al back si la última respuesta no trajo 2 reseñas, es decir, si ya no hay más
@@ -59,7 +59,7 @@ export default function ReviewsModal({
     if (initialReviews.length < 4) {
       setHasMore(false)
     } else {
-      const response = await reserveService.getReviews(bookId, 1, 4)
+      const response = await bookService.getReviews(bookId, 1, 4)
       // console.log('Respuesta del back:', response.data)
       setHasMore(response.data.length > 0)
     }

@@ -40,7 +40,7 @@ export default function BookDetail() {
 
   const getBookReviews = async () => {
     try {
-      const response = await reserveService.getReviews(Number(id), 0, 4)
+      const response = await bookService.getReviews(Number(id), 0, 4)
       setReviews(response.data)
       // console.log('Reseñas cargadas:', response.data)
     } catch (error) {
