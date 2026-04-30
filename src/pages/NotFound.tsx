@@ -1,5 +1,4 @@
-import { div } from "motion/react-client"
-import { useRouteError, isRouteErrorResponse, Link } from "react-router"
+import { Link } from "react-router"
 
 export default function NotFound() {
   // const error = useRouteError() // esto es un hook que agarra el error que tiro React Router
@@ -7,8 +6,7 @@ export default function NotFound() {
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-4">
       <h1 className="text-4xl font-bold">
-        {/* {isRouteErrorResponse(error) ? error.status : "Error"} */}
-        {/* devuelve true si tiro un error React Router */}
+        Mmm la ruta que estas buscando no existe
       </h1>
       <p className="text-gray-500">
         Parece que te perdiste...
