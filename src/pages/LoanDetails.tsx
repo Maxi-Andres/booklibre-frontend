@@ -10,11 +10,7 @@ import BookCard from "@/components/BookCard"
 import { getId } from "@/context/AuthContext"
 import { useUserData } from "@/hooks/UseUserData"
 
-// cambiar de patch a put lo de la reserva
-// fijate el refresh token
-// por que no ROTA el refresh token
-// fiajte lo de readonly tryue que te OCULTA EL N +1
-// arreglar que te deja calificar sin que termine el tiempo por algun motivo
+// fiajte lo de readonly tryue que te OCULTA EL N + 1
 
 export default function LoanDetails() {
   const [search, setSearch] = useState("")
@@ -42,7 +38,7 @@ export default function LoanDetails() {
     if (!id) return
     try {
       const backResponse = await reserveService.getReservesByUserId(
-        id, // le prometo que no es null
+        id.toString(), // le prometo que no es null
         search,
         page,
         pageSizeLoanBooks,
@@ -60,7 +56,7 @@ export default function LoanDetails() {
     if (!id) return
     try {
       const backResponse = await reserveService.getLoansMadeByUserId(
-        id, // le prometo que no es null
+        id.toString(), // le prometo que no es null
         search,
         page,
         pageSizeLoanBooks,
@@ -137,7 +133,8 @@ export default function LoanDetails() {
         </div>
 
         {/* =================== Cards =================== */}
-        <div className="mt-6 grid min-h-[465px] grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+        {/* min-h-[465px] */}
+        <div className="mt-6 grid min-h-116.25 grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
           {reserves.length === 0 ? (
             <div className="col-span-4 flex flex-col items-center justify-center py-16 text-center text-gray-400">
               <IconBookOff size={48} className="mb-3 text-gray-300" />

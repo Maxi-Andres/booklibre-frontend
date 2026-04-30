@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import axios from "axios"
-import { userService } from "./UserService"
+import { userService } from "../services/UserService"
 import { UserType } from "@/domain/user"
 // para correrlos pnpm exec vitest run
 
