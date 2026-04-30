@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = (userData: Omit<AuthUser, 'accessToken'>, token: string, expirationTime: number, rememberMe = false) => {
     const storage = rememberMe ? localStorage : sessionStorage
     const sessionExpiresAt = Date.now() + expirationTime
-    storage.setItem("user", JSON.stringify({ ...userData, sessionExpiresAt }))
+    storage.setItem("user", JSON.stringify({ ...userData, sessionExpiresAt, sessionDuration: expirationTime }))
     setUser({ ...userData, sessionExpiresAt })
     setAccessToken(token) // en memoria, no en storage
   }
@@ -64,6 +64,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     logout()
     sessionStorage.setItem("sessionExpiredMessage", "Tu sesión expiró")
   }
+
+  // Callback que se llama cada vez que se hace el refresh del token
+  const renewSession = () => {
+    const storage = localStorage.getItem("user") ? localStorage : sessionStorage
+    const rawUser = storage.getItem("user")
+    if (!rawUser) return
+    try {
+      const stored = JSON.parse(rawUser)
+      const duration = stored.sessionDuration
+      if (!duration) return
+      const sessionExpiresAt = Date.now() + duration
+      stored.sessionExpiresAt = sessionExpiresAt // nuevo expiry
+      storage.setItem("user", JSON.stringify(stored)) // guardo en storage
+      setUser(prev => prev ? { ...prev, sessionExpiresAt } : prev) // modifico el user y el timeout se lanza denuevo
+    } catch {
+      /* si el storage está corrupto, lo más seguro es limpiar la sesión (hacer logout), porque el dato del usuario ya no es confiable */ 
+      console.log("Error al renovar sesión: datos de usuario corruptos en storage, limpiando.")
+      logout()
+    }
+  }
+
+  useEffect(() => {
+    tokenService.setOnRefresh(renewSession)
+    return () => { tokenService.setOnRefresh(null) }
+  }, [])
   
   useEffect(() => {
     // console.log("Hubo un cambio en user")

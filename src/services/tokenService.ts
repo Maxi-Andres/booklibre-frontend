@@ -3,6 +3,8 @@ import axios from "axios"
 const USER_KEY = "user"
 
 let _accessToken: string | null = null
+let _onRefreshCallback: (() => void) | null = null
+
 
 export const tokenMemory = {
   get: () => _accessToken,
@@ -14,6 +16,8 @@ interface RefreshResponse {
 }
 
 export const tokenService = {
+  setOnRefresh(cb: (() => void) | null) { _onRefreshCallback = cb },
+
   clearTokens(): void {
     tokenMemory.set(null)
     localStorage.removeItem(USER_KEY)
@@ -28,6 +32,7 @@ export const tokenService = {
     )
 
     tokenMemory.set(data.token)
+    _onRefreshCallback?.() // llamo al callback para modificar el user con nuevo expiry y resetear el timeout
     return data.token
   },
 }
