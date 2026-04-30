@@ -15,6 +15,7 @@ import { Register } from "./pages/Register"
 import { useUserData } from "./hooks/UseUserData"
 import { useEffect, useMemo } from "react"
 import { useUserProfile } from "./context/UserProfileContext"
+import NotFound from "./pages/NotFound"
 
 // App.tsx
 function App() {
@@ -55,7 +56,7 @@ function App() {
         </Route>
 
         {/* Catch-all */}
-        <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
+        <Route path="*" element={user ? <NotFound /> : <Navigate to="/login" replace />} />
       </Routes>
     </>
   )
