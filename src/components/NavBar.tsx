@@ -2,7 +2,6 @@ import logo from "@/assets/logo.svg"
 import { Link, useLocation, useSearchParams } from "react-router"
 import { useAuth } from "@/context/AuthContext"
 import { useNavigate } from "react-router"
-import { useOnInit } from "@/hooks/UseOnInit"
 import { useUserProfile } from "@/context/UserProfileContext"
 import { UserKind } from "@/types/userKind"
 
@@ -18,7 +17,7 @@ export default function NavBar() {
   const navigate = useNavigate()
   const { logout } = useAuth()
   // const [user, setUser] = useState<UserProfile>(new UserProfile())
-  const { userProfile, refreshProfile } = useUserProfile()
+  const { userProfile } = useUserProfile()
 
   const handleLogout = () => {
     logout()
@@ -26,10 +25,6 @@ export default function NavBar() {
   }
 
   const isActive = (path: string) => location.pathname === path
-
-  useOnInit(() => {
-    refreshProfile()
-  })
 
   return (
     <nav className="border-b border-gray-100 bg-white shadow-sm">

@@ -13,17 +13,20 @@ import { Login } from "@/pages/Login"
 import EditBook from "@/pages/EditBook"
 import { Register } from "./pages/Register"
 import { useUserData } from "./hooks/UseUserData"
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { useUserProfile } from "./context/UserProfileContext"
 
 // App.tsx
 function App() {
   const { user, isInitializing } = useAuth()
-  const { userProfile } = useUserProfile()
+  const { userProfile, refreshProfile } = useUserProfile()
   const { isPublisher } = useUserData()
 
-  const publisherRedirect = useMemo(() => isPublisher(), [userProfile])
-  // console.log("isPublisher:", isPublisher(), "user:", userProfile)
+  useEffect(() => {
+    if (user && !isInitializing) refreshProfile()
+  }, [user, isInitializing])
+
+  const publisherRedirect = useMemo(() => isPublisher(), [userProfile, user])
 
   if (isInitializing) return (
   <div className="fixed inset-0 flex items-center justify-center bg-background">

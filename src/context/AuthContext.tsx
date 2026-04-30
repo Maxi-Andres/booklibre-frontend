@@ -48,7 +48,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const sessionExpiresAt = Date.now() + expirationTime
     storage.setItem("user", JSON.stringify({ ...userData, sessionExpiresAt, sessionDuration: expirationTime }))
     setUser({ ...userData, sessionExpiresAt })
-    setAccessToken(token) // en memoria, no en storage
+    tokenMemory.set(token)
+    setAccessToken(token)
   }
   
   const logout = () => {
