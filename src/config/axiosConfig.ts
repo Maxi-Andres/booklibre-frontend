@@ -17,6 +17,22 @@ const authInterceptor = (config: InternalAxiosRequestConfig) => {
 axios.interceptors.request.use(authInterceptor)
 customAxios.interceptors.request.use(authInterceptor)
 
+const storageGuard = (config: InternalAxiosRequestConfig) => {
+  if (config.url?.includes("/api/auth")) return config // no bloquees todo lo de /api/auth
+
+  const stored = localStorage.getItem("user") || sessionStorage.getItem("user")
+  if (!stored) {
+    tokenService.clearTokens()
+    sessionStorage.setItem("invalidSession", "1")
+    window.location.href = "/login"
+    return Promise.reject(new axios.Cancel("No hay sesión activa"))
+  }
+  return config
+}
+
+axios.interceptors.request.use(storageGuard)
+customAxios.interceptors.request.use(storageGuard)
+
 type Retryable = AxiosRequestConfig & { _retry?: boolean }
 
 let isRefreshing = false

@@ -35,10 +35,10 @@ export default function LoanDetails() {
   }
 
   const getReservesByUserId = async (page: number) => {
-    if (!id) return
+    // if (!id) return
     try {
       const backResponse = await reserveService.getReservesByUserId(
-        id.toString(), // le prometo que no es null
+        id!!, // le prometo que no es null
         search,
         page,
         pageSizeLoanBooks,
@@ -53,10 +53,10 @@ export default function LoanDetails() {
   }
 
   const getLoansMadeByUserId = async (page: number) => {
-    if (!id) return
+    // if (!id) return
     try {
       const backResponse = await reserveService.getLoansMadeByUserId(
-        id.toString(), // le prometo que no es null
+        id!!, // le prometo que no es null
         search,
         page,
         pageSizeLoanBooks,

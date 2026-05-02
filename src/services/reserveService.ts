@@ -32,7 +32,7 @@ class ReserveService {
   }
 
   async getReservesByUserId(
-    userId: string,
+    userId: number,
     search: string,
     page: number,
     pageSize: number,
@@ -46,7 +46,7 @@ class ReserveService {
   }
 
   async getLoansMadeByUserId(
-    userId: string,
+    userId: number,
     search: string,
     page: number,
     pageSize: number,

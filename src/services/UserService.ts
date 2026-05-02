@@ -23,7 +23,7 @@ class UserService {
     }
 
     await axios.post<UserJSONResponse>(
-      import.meta.env.VITE_API_URL + "/register",
+      import.meta.env.VITE_API_URL + "/api/auth/register",
       userRegister,
     )
   }
