@@ -1,28 +1,18 @@
 import {
-  type UserJSONLoginRequest,
   type UserJSONRegisterRequest,
   type UserJSONResponse,
   UserType,
 } from "@/domain/user"
 import axios from "axios"
-import { REST_SERVER_URL } from "@/config/configuration"
 
 class UserService {
-  async login(emailSent: string, passwordSent: string): Promise<UserType> {
-    const userLogin: UserJSONLoginRequest = {
-      email: emailSent,
-      password: passwordSent,
-    }
-
+  async login(emailSent: string, passwordSent: string): Promise<UserJSONResponse> {
     const response = await axios.post<UserJSONResponse>(
-      REST_SERVER_URL + "/login",
-      userLogin,
+        import.meta.env.VITE_API_URL + "/api/auth",
+        { email: emailSent, password: passwordSent }
     )
-
-    //localStorage.setItem('id', response.data.id.toString())
-
-    return UserType.fromJson(response.data)
-  }
+    return response.data
+}
 
   async createUser(user: UserType): Promise<void> {
     const userRegister: UserJSONRegisterRequest = {
@@ -33,7 +23,7 @@ class UserService {
     }
 
     await axios.post<UserJSONResponse>(
-      REST_SERVER_URL + "/register",
+      import.meta.env.VITE_API_URL + "/api/auth/register",
       userRegister,
     )
   }

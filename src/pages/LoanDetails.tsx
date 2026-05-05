@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router"
-import { IconSearch, IconBook } from "@tabler/icons-react"
+import { IconSearch, IconBook, IconBookOff } from "@tabler/icons-react"
 import { reserveService } from "@/services/reserveService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { showToast } from "@/utils/toast"
@@ -8,20 +8,20 @@ import { mapReservation, type ReservationDTO } from "@/types/reservationType"
 
 import BookCard from "@/components/BookCard"
 import { getId } from "@/context/AuthContext"
+import { useUserData } from "@/hooks/UseUserData"
 
-//! hace TESTS
-//! arregla lo de los bibliokarmas
-//? ver de sacar el when y hacer un enum
+// fiajte lo de readonly tryue que te OCULTA EL N + 1
 
 export default function LoanDetails() {
-  const [activeTab, setActiveTab] = useState<
-    "prestados-a-mi" | "prestados-por-mi"
-  >("prestados-a-mi")
   const [search, setSearch] = useState("")
   // cuando esto cambia se vuelve a renderizar el componente y se vuelve a llamar
   const [reserves, setReserves] = useState<ReservationDTO[]>([])
   const [activePage, setActivePage] = useState<number>(0)
   const [totalPages, setTotalPages] = useState(1)
+  const { isReader, isPublisher, isCombined } = useUserData()
+  const [activeTab, setActiveTab] = useState<
+    "prestados-a-mi" | "prestados-por-mi"
+  >(isPublisher() && !isReader() ? "prestados-por-mi" : "prestados-a-mi")
 
   const pageSizeLoanBooks = 4
   const id = getId()
@@ -35,10 +35,10 @@ export default function LoanDetails() {
   }
 
   const getReservesByUserId = async (page: number) => {
-    if (!id) return
+    // if (!id) return
     try {
       const backResponse = await reserveService.getReservesByUserId(
-        id, // le prometo que no es null
+        id!!, // le prometo que no es null
         search,
         page,
         pageSizeLoanBooks,
@@ -53,10 +53,10 @@ export default function LoanDetails() {
   }
 
   const getLoansMadeByUserId = async (page: number) => {
-    if (!id) return
+    // if (!id) return
     try {
       const backResponse = await reserveService.getLoansMadeByUserId(
-        id, // le prometo que no es null
+        id!!, // le prometo que no es null
         search,
         page,
         pageSizeLoanBooks,
@@ -85,23 +85,32 @@ export default function LoanDetails() {
 
         {/* =================== Tabs =================== */}
         <div className="mt-6 flex gap-6 border-b border-gray-200">
-          {(["prestados-a-mi", "prestados-por-mi"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => {
-                setActiveTab(tab)
-                setActivePage(0)
-                handleSearch(tab, 0)
-              }}
-              className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer ${
-                activeTab === tab
-                  ? "border-b-3 border-blue-500 text-blue-500"
-                  : "border-b-3 text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {tab === "prestados-a-mi" ? "Prestados a mí" : "Prestados por mí"}
-            </button>
-          ))}
+          {(["prestados-a-mi", "prestados-por-mi"] as const)
+            .filter(
+              (tab) =>
+                isCombined() ||
+                (tab === "prestados-a-mi" ? isReader() : isPublisher()),
+            )
+            .map((tab) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab)
+                  setActivePage(0)
+                  handleSearch(tab, 0)
+                }}
+                disabled={activeTab == tab}
+                className={`pb-2 text-sm font-medium transition-all hover:cursor-pointer disabled:pointer-events-none ${
+                  activeTab === tab
+                    ? "border-b-3 border-blue-500 text-blue-500"
+                    : "border-b-3 text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {tab === "prestados-a-mi"
+                  ? "Prestados a mí"
+                  : "Prestados por mí"}
+              </button>
+            ))}
         </div>
 
         {/* =================== Search =================== */}
@@ -124,15 +133,41 @@ export default function LoanDetails() {
         </div>
 
         {/* =================== Cards =================== */}
-        <div className="mt-6 grid min-h-[465px] grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-          {reserves.map((book) => (
-            <BookCard
-              key={book.id}
-              book={book}
-              activeTab={activeTab}
-              onRated={() => handleSearch()}
-            />
-          ))}
+        {/* min-h-[465px] */}
+        <div className="mt-6 grid min-h-116.25 grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+          {reserves.length === 0 ? (
+            <div className="col-span-4 flex flex-col items-center justify-center py-16 text-center text-gray-400">
+              <IconBookOff size={48} className="mb-3 text-gray-300" />
+              {search ? (
+                <>
+                  <p className="text-sm font-medium">
+                    No se encontraron reservas
+                  </p>
+                  <p className="mt-1 text-xs">Intentá con otra búsqueda</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium">
+                    Todavía no tenés reservas
+                  </p>
+                  <p className="mt-1 text-xs">
+                    {activeTab === "prestados-a-mi"
+                      ? "Explorá el catálogo y pedí tu primer libro prestado"
+                      : "Cuando alguien reserve un libro tuyo, aparecerá acá"}
+                  </p>
+                </>
+              )}
+            </div>
+          ) : (
+            reserves.map((book) => (
+              <BookCard
+                key={book.id}
+                book={book}
+                activeTab={activeTab}
+                onRated={() => handleSearch()}
+              />
+            ))
+          )}
         </div>
 
         {/* =================== Pagination =================== */}
@@ -157,7 +192,8 @@ export default function LoanDetails() {
                 setActivePage(i)
                 handleSearch(activeTab, i)
               }}
-              className={`h-9 w-9 cursor-pointer rounded-lg text-sm transition-all duration-150 ease-out hover:scale-[1.09] hover:shadow-xl hover:shadow-gray-300/60 ${
+              disabled={activePage == i}
+              className={`h-9 w-9 cursor-pointer rounded-lg text-sm transition-all duration-150 ease-out hover:scale-[1.09] hover:shadow-xl hover:shadow-gray-300/60 disabled:pointer-events-none ${
                 activePage === i
                   ? "bg-blue-500 font-bold text-white shadow-sm shadow-blue-200"
                   : "border border-gray-200 font-semibold text-gray-400 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600"

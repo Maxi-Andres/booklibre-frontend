@@ -99,6 +99,11 @@ export class UserProfile {
         "invalid-format-loc",
         "Ingrese una ubicacion en formato valido: \'PROVINCIA, ARG\' ",
       )
+    } else if (this.location.length == 0) {
+      this.addError(
+        "invalid-length-loc",
+        "La ubicacion no puede estar vacia."
+      )
     }
   }
 
@@ -108,6 +113,11 @@ export class UserProfile {
       this.addError(
         "invalid-format-email",
         "Ingrese un mail en formato valido: example@example.com",
+      )
+    } else if (this.email.length == 0) {
+      this.addError(
+        "invalid-length-email",
+        "El mail no puede estar vacio."
       )
     }
   }

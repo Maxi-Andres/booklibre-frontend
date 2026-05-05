@@ -1,3 +1,4 @@
+import { HttpStatusCode } from "axios"
 import { toast } from "react-toastify"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,6 +17,9 @@ const getErrorMessage = (error: any): string => {
 
   if (error?.code === "ERR_NETWORK")
     return "Problema de conexión con el servidor. Intente más tarde."
+
+  if (error.response?.status == HttpStatusCode.Forbidden)
+    return "No tenés autorización para realizar esta acción"
 
   return error?.message ?? "Error desconocido"
 }

@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router"
+import { Link, useParams, useSearchParams } from "react-router"
 import { bookService } from "@/services/bookService"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { useState } from "react"
@@ -11,16 +11,16 @@ import ReviewsModal from "@/components/ReviewsModal"
 import { StarRating } from "@/components/ReviewsModal"
 import { formatDate } from "@/utils/formatDate"
 import type { ReservationDates } from "@/types/reservationDates"
-import { REST_SERVER_URL } from "@/config/configuration"
+import { ReviewItem } from "@/components/ReviewItem"
 
 export default function BookDetail() {
   const { id } = useParams()
   const [book, setBook] = useState<Book>()
   const [reviews, setReviews] = useState<BookReview[]>([])
   const [loading, setLoading] = useState(true)
-  const location = useLocation()
   const [reservedDates, setReservedDates] = useState<ReservationDates[]>([])
   const [bibliokarmas, setBibliokarmas] = useState(0)
+  const [searchParams] = useSearchParams()
 
   const getReservedDates = async () => {
     const res = await reserveService.getReservedDates(Number(id))
@@ -40,7 +40,7 @@ export default function BookDetail() {
 
   const getBookReviews = async () => {
     try {
-      const response = await reserveService.getReviews(Number(id), 0, 4)
+      const response = await bookService.getReviews(Number(id), 0, 4)
       setReviews(response.data)
       // console.log('Reseñas cargadas:', response.data)
     } catch (error) {
@@ -52,6 +52,8 @@ export default function BookDetail() {
     getBook()
     getBookReviews()
     getReservedDates()
+    // console.log(searchParams)
+    // console.log(location.state?.search)
   })
 
   if (loading) return <div>Cargando...</div>
@@ -63,9 +65,14 @@ export default function BookDetail() {
       <div className="px-6 py-5 pl-40">
         <ol className="flex items-center gap-1 text-sm text-gray-500">
           <li>
-            <a href="/" className="hover:text-gray-700">
+            <Link
+              to={{
+                pathname: `/`,
+                search: searchParams.toString()
+              }}
+              className="hover:text-gray-700">
               Explorar
-            </a>
+            </Link>
           </li>
           <li>
             <svg
@@ -105,7 +112,7 @@ export default function BookDetail() {
               </span>
               <div className="flex items-center gap-1.5">
                 <StarRating rating={BookReview.averageRating(reviews)} />
-                <span className="text-xs text-gray-500">{`(${BookReview.averageRating(reviews).toFixed(1)})`}</span>
+                <span className="text-xs text-gray-500">{`(${book.rating.toFixed(1)})`}</span>
               </div>
             </div>
 
@@ -118,7 +125,7 @@ export default function BookDetail() {
                 Autor
               </span>
               <img
-                src={`${REST_SERVER_URL}/${book!.author.avatar}`}
+                src={`${import.meta.env.VITE_API_URL}/${book!.author.avatar}`}
                 alt={book!.author.name}
                 className="h-7 w-7 rounded-full object-cover"
               />
@@ -137,8 +144,8 @@ export default function BookDetail() {
           <ReservationCard
             book={book}
             reservedDates={reservedDates}
-            initialPickUpDate={location.state?.pickUpDate}
-            initialDropOffDate={location.state?.dropOffDate}
+            initialPickUpDate={searchParams.get("pickUpDate") ?? undefined}
+            initialDropOffDate={searchParams.get("dropOffDate") ?? undefined}
             onBibliokarmasChange={setBibliokarmas}
           />
 
@@ -199,7 +206,7 @@ export default function BookDetail() {
                 </div>
                 <div>
                   <p className="text-xs text-[#A3B0C2] uppercase">Rating</p>
-                  <p className="text-base text-gray-800">{`${BookReview.averageRating(reviews).toFixed(1)}`}</p>
+                  <p className="text-base text-gray-800">{`${book.rating.toFixed(1)}`}</p>
                 </div>
               </div>
             </div>
@@ -227,28 +234,9 @@ export default function BookDetail() {
 
               {/* First two reviews */}
               <div className="mt-3 grid grid-cols-2 gap-4">
-                {reviews.slice(0, 2).map((review, i) => (
-                  <div
-                    key={`${review.id}-${i}`}
-                    className="flex flex-col gap-2 rounded-xl border border-gray-300 p-3"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E0E7FF] text-xs font-bold text-[#6059E8]">
-                        {review.reviewerName.charAt(0)}
-                        {review.reviewerName.charAt(1)}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">
-                          {review.reviewerName}
-                        </p>
-                        <StarRating rating={review.rating} />
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-600 italic">
-                      "{review.review}"
-                    </p>
-                  </div>
-                ))}
+                  {reviews.slice(0, 2).map((review, i) => (
+                    <ReviewItem key={`${review.id}-${i}`} review={review} i={i} />
+                  ))}
               </div>
             </div>
           </div>

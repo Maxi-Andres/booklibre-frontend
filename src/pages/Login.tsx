@@ -1,24 +1,24 @@
 import "@/css/checkbox.css"
-import { Link, useNavigate, useLocation } from "react-router"
+import { Link, useNavigate } from "react-router"
 import type { UserJSONLoginRequest } from "@/domain/user"
 import { UserType } from "@/domain/user"
 import { useState } from "react"
 import { ValidationMessage } from "@/validation/validationMessage"
 import ValidationField from "@/validation/ValidationField"
 import { userService } from "@/services/UserService"
-import { useOnInit } from "@/hooks/UseOnInit"
 import { InputField } from "@/components/InputField"
-import { useAuth } from "@/context/AuthContext"
+import { useAuth, type AuthUser } from "@/context/AuthContext"
 import { showToast } from "@/utils/toast"
+import { useOnInit } from "@/hooks/UseOnInit"
 
 export const Login = () => {
   const navigate = useNavigate()
-  const location = useLocation()
   const { login } = useAuth()
   const [user, setUser] = useState<UserJSONLoginRequest>({
     email: "",
     password: "",
   })
+  
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
   const [rememberMe, setRememberMe] = useState(false)
 
@@ -38,7 +38,13 @@ export const Login = () => {
       const validation = await userService.login(user.email, user.password)
 
       if (validation) {
-        login(validation, rememberMe)
+        // console.log(validation)
+        const userData : Omit<AuthUser, 'accessToken'> = {
+          id: validation.id,
+          refreshToken: validation.refreshToken,
+          sessionExpiresAt: 0
+        }
+        login(userData, validation.accessToken, validation.expirationTime, rememberMe)
         navigate("/", { replace: true })
       }
     } catch (error) {
@@ -51,11 +57,21 @@ export const Login = () => {
   }
 
   useOnInit(() => {
-    if (
-      location.state?.from?.pathname != "/" &&
-      location.state?.from?.pathname != undefined
-    )
-      alert("Debe loguearse")
+    if (sessionStorage.getItem("sessionExpired")) {
+      showToast.warning("Tu sesión expiró. Volvé a iniciar sesión")
+      setTimeout(() => {
+        sessionStorage.removeItem("sessionExpired")
+      }, 1000)
+      // const msg = sessionStorage.getItem("sessionExpiredMessage")
+      // showToast.error(msg!!)
+    }
+
+    if(sessionStorage.getItem("invalidSession")) {
+      showToast.error("Tu sesión no es válida. Por favor, inicia sesión nuevamente.")
+      setTimeout(() => {
+        sessionStorage.removeItem("invalidSession")
+      }, 1000)
+    }
   })
 
   return (
@@ -68,7 +84,7 @@ export const Login = () => {
         </div>
 
         {/* Formulario */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit} noValidate>
           <div className="space-y-4">
             {/* Email Field */}
             <div>
@@ -76,7 +92,6 @@ export const Login = () => {
                 label="Email"
                 id="email"
                 type="email"
-                required
                 value={user.email}
                 onChange={(e) => update("email", e.target.value)}
               />
@@ -89,7 +104,6 @@ export const Login = () => {
                 label="Password"
                 id="password"
                 type="password"
-                required
                 value={user.password}
                 onChange={(e) => update("password", e.target.value)}
               />

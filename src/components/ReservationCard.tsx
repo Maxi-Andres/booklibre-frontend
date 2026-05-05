@@ -54,7 +54,7 @@ export function ReservationCard({
       setTimeout(() => navigate("/"), 4000)
     } catch (error) {
       showToast.httpError(error, "Error al reservar")
-      window.location.reload()
+      // window.location.reload()
     }
   }
 
@@ -112,11 +112,15 @@ export function ReservationCard({
   const handlePickUpChange = (date: Date | null) => {
     if (!date) return
 
-    const newDate = toLocalDateString(date)
-    setPickUpDate(newDate)
-    setDropOffDate(newDate)
+    const newPickUp = toLocalDateString(date)
+    setPickUpDate(newPickUp)
 
-    recalculateBibliokarmas(newDate, newDate)
+    // Solo piso la fecha de fin si la nueva fecha de inicio la pasa
+    const effectiveDropOff =
+      dropOffDate && newPickUp <= dropOffDate ? dropOffDate : newPickUp
+    setDropOffDate(effectiveDropOff)
+
+    recalculateBibliokarmas(newPickUp, effectiveDropOff)
   }
 
   return (

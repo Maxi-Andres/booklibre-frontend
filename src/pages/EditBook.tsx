@@ -8,9 +8,10 @@ import { BookGender } from "@/types/bookGender"
 import { GenericCombobox } from "@/components/GenericComboBox"
 import { Languages } from "@/types/languages"
 import { BookCondition } from "@/types/bookCondition"
-import { useParams, useNavigate } from "react-router"
+import { useParams, useNavigate, Link } from "react-router"
 import { Button } from "@headlessui/react"
 import { bookService } from "@/services/bookService"
+import { getId } from "@/context/AuthContext"
 import { showToast } from "@/utils/toast"
 import { TextareaField } from "@/components/Textarea"
 import { BookType, BookTypeLabels } from "@/types/bookType"
@@ -30,8 +31,12 @@ export default function EditBook() {
       try {
         const found = await bookService.getBookDetail(Number(id))
         if (found) {
+          if (found.owner.id !== Number(getId())) {
+            navigate("/", { replace: true })
+            return
+          }
           // Trunca en 500 caracteres al cargar del back
-          found.desc = found.desc?.slice(0, 500) ?? ""
+          found.desc = found.desc?.slice(0, 1000) ?? ""
           setBook(found)
         }
       } catch (error) {
@@ -81,9 +86,9 @@ export default function EditBook() {
       <div className="px-6 py-3">
         <ol className="flex items-center gap-1 text-sm text-gray-500">
           <li>
-            <a href="./" className="hover:text-gray-700">
+            <Link to="./" className="hover:text-gray-700">
               Mis Libros
-            </a>
+            </Link>
           </li>
           <li>
             <svg
@@ -328,7 +333,7 @@ export default function EditBook() {
                   id="desc"
                   type="text"
                   value={book.desc}
-                  maxLength={500}
+                  maxLength={1000}
                   rows={10}
                   placeholder="Ingrese aqui la descripcion del libro"
                   onChange={(e) => updateBook("desc", e.target.value)}

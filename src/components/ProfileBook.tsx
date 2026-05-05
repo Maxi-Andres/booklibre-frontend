@@ -1,5 +1,4 @@
 import { DotIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react"
-import { useState } from "react"
 import { useNavigate } from "react-router"
 import { formatDate } from "@/utils/formatDate"
 import { bookService } from "@/services/bookService"
@@ -12,7 +11,7 @@ export default function ProfileBook({
   bookAuthor,
   bookGender,
   bookState,
-  additionDate,
+  timestamp,
   bookId,
   onDelete,
 }: {
@@ -21,36 +20,35 @@ export default function ProfileBook({
   bookAuthor: string
   bookGender: string
   bookState: string
-  additionDate: Date
+  timestamp: Date
   bookId: Number
   onDelete: () => void
 }) {
   const navigate = useNavigate()
 
-  
   const handleDelete = async () => {
-      if (bookState === 'SOON_TO_END' || bookState === 'BORROWED' || bookState === 'ACTIVE') {
-        showToast.error("No es posible eliminar un libro que esta prestado")}
-        else {
-          try { 
-              await bookService.deleteBook(Number(bookId))
-              showToast.success("Libro eliminado con éxito")
-              onDelete()
-            }
-            catch (error: any) {
-            const data = error.response?.data
-            const message = data?.detail || "No se pudo eliminar el libro"
-            showToast.error(message)
-          }  
-  }}
+    if (bookState === "PRESTADO") {
+      showToast.error("No es posible eliminar un libro que esta prestado")
+    } else {
+      try {
+        await bookService.deleteBook(Number(bookId))
+        showToast.success("Libro eliminado con éxito")
+        onDelete()
+      } catch (error: any) {
+        const data = error.response?.data
+        const message = data?.detail || "No se pudo eliminar el libro"
+        showToast.error(message)
+      }
+    }
+  }
 
   return (
     <div className="flex h-25 items-center justify-center gap-4 pr-2 pl-2">
       <img src={bookImg} alt="" className="h-23 w-15 rounded-lg" />
       <div className="max-w-65 min-w-0 flex-1">
         <p className="truncate">{bookName}</p>
-        <p className="truncate">{bookAuthor}</p>
-        <p className="truncate">{bookGender}</p>
+        <p className="truncate text-sm text-gray-400">{bookAuthor}</p>
+        <p className="truncate text-sm text-gray-400">{bookGender}</p>
       </div>
       <div className="w-28">
         <span
@@ -60,9 +58,7 @@ export default function ProfileBook({
           {ownerStatusLabels[bookState] ?? bookState}
         </span>
       </div>
-      <div className="w-24 text-sm text-gray-400">
-        {formatDate(additionDate)}
-      </div>
+      <div className="w-24 text-sm text-gray-400">{formatDate(timestamp)}</div>
       <div className="w-14">
         <button className="text-gray-500 hover:cursor-pointer hover:text-gray-900">
           <PencilIcon
@@ -74,7 +70,6 @@ export default function ProfileBook({
           <TrashIcon size={24} onClick={() => handleDelete()} />
         </button>
       </div>
-
     </div>
   )
 }

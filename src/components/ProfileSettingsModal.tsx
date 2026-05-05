@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import {
   Dialog,
   DialogBackdrop,
@@ -6,9 +6,8 @@ import {
   DialogTitle,
 } from "@headlessui/react"
 import { UserProfile } from "@/domain/userProfile"
-import { GearIcon, PencilIcon } from "@phosphor-icons/react"
+import { GearIcon } from "@phosphor-icons/react"
 import { InputField } from "@/components/InputField"
-import { getErrorMessage } from "@/validation/errorHandler"
 import { showToast } from "@/utils/toast"
 import { userProfileService } from "@/services/userProfileService"
 import { ValidationMessage } from "@/validation/validationMessage"
@@ -25,36 +24,14 @@ export default function ProfileSettingsModal({
 }: ProfileSettingsIntf) {
   const [open, setOpen] = useState(false)
   const [errors, setErrors] = useState<ValidationMessage[]>([])
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [previewImg, setPreviewImg] = useState<string>(
-    profile.img
-      ? `${REST_SERVER_URL}/${profile.img}`
-      : "/assets/default-img.png",
-  )
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null)
+
   const { refreshProfile } = useUserProfile()
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setPreviewImg(URL.createObjectURL(file))
-    setSelectedImageFile(file)
-  }
   const handleOpen = () => {
     setOpen(true)
   }
 
-  const handleImageClick = () => {
-    fileInputRef.current?.click()
-  }
-
   const handleCancel = () => {
-    setPreviewImg(
-      profile.img
-        ? `${REST_SERVER_URL}/${profile.img}`
-        : "/assets/default-img.png",
-    )
-    setSelectedImageFile(null)
     setErrors([])
     setOpen(false)
   }
@@ -67,15 +44,15 @@ export default function ProfileSettingsModal({
 
     var newProfileData: UserProfile = new UserProfile(
       profile.id,
-      (formData.get("name") as string) || profile.name,
-      (formData.get("description") as string) || profile.description,
+      formData.get("name") as string,
+      formData.get("description") as string,
       profile.img,
-      (formData.get("location") as string) || profile.location,
+      formData.get("location") as string,
       profile.timestamp,
       profile.bibliokarmas,
-      (formData.get("email") as string) || profile.email,
-      (formData.get("celphone") as string) || profile.cel,
-      (formData.get("userType") as string) || profile.userType,
+      formData.get("email") as string,
+      formData.get("celphone") as string,
+      formData.get("userType") as string,
     )
 
     setErrors([])
@@ -85,30 +62,17 @@ export default function ProfileSettingsModal({
       return errors
     }
     try {
-      const updatedProfile = await userProfileService.updateProfile(
-        newProfileData,
-        selectedImageFile,
-      )
+      const updatedProfile = await userProfileService.updateProfile(newProfileData)
       onProfileUpdated(updatedProfile)
       refreshProfile()
       showToast.success("Cambios guardados")
       setOpen(false)
-    } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      showToast.httpError(
-        "Error al guardar los cambios. " + errorMessage,
-        "error",
-      )
+    } catch (error: any) {
+      showToast.httpError(error, "Error al editar perfil")       
     } finally {
       setErrors([])
     }
   }
-
-  useEffect(() => {
-    setPreviewImg(
-      profile.img ? `${REST_SERVER_URL}/${profile.img}` : "/default-img.png",
-    )
-  }, [profile.img])
 
   return (
     <div>
@@ -141,34 +105,16 @@ export default function ProfileSettingsModal({
                       Edicion de perfil
                     </DialogTitle>
                     <div className="mt-5 flex gap-10">
-                      <section>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          name="image"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleImageChange}
-                        />
+                      <img
+                        src={
+                          profile.img
+                            ? `${import.meta.env.VITE_API_URL}${profile.img}`
+                            : "/assets/default-img.png"
+                        }
+                        alt="profile image"
+                        className="max-h-25"
+                      />
 
-                        <div
-                          className="group relative h-24 w-24 cursor-pointer"
-                          onClick={handleImageClick}
-                        >
-                          <img
-                            src={previewImg}
-                            alt="profile image"
-                            className="h-full w-full rounded-full object-cover transition-all duration-200 group-hover:brightness-50"
-                          />
-                          <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                            <PencilIcon
-                              size={24}
-                              className="text-amber-50"
-                              weight="bold"
-                            />
-                          </div>
-                        </div>
-                      </section>
                       <form
                         onSubmit={handleSave}
                         className="flex w-full flex-col gap-2"

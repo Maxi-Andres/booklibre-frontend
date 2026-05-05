@@ -14,15 +14,11 @@ export const borrowerStatusLabels: Record<string, string> = {
 }
 
 export const ownerStatusStyles: Record<string, string> = {
-  ACTIVE: "bg-orange-400 text-white",
-  RESERVED: "bg-green-500 text-white",
-  SOON_TO_END: "bg-orange-400 text-white",
-  RETURNED: "bg-green-500 text-white",
+  PRESTADO: "bg-orange-400 text-white",
+  DISPONIBLE: "bg-green-500 text-white",
 }
 
 export const ownerStatusLabels: Record<string, string> = {
-  ACTIVE: "Prestado",
-  RESERVED: "Disponible",
-  SOON_TO_END: "Prestado",
-  RETURNED: "Disponible",
+  PRESTADO: "Prestado",
+  DISPONIBLE: "Disponible",
 }

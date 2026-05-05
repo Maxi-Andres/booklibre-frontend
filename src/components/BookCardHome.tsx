@@ -1,30 +1,24 @@
-import { REST_SERVER_URL } from "@/config/configuration"
 import type { Book } from "@/domain/book"
 import { BookConditionStyle } from "@/types/bookCondition"
-import type { BookFilters } from "@/types/bookFilters"
+// import type { BookFilters } from "@/types/bookFilters"
 import { BookTypeLabels, BookTypeStyle } from "@/types/bookType"
 import { IconStar } from "@tabler/icons-react"
-import { useNavigate } from "react-router"
+import { Link, useSearchParams } from "react-router"
 
 const BookCardHome = ({
   book,
-  filters,
 }: {
   book: Book
-  filters: BookFilters
 }) => {
-  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  
   return (
-    <div
+    <Link
       key={book.id}
-      onClick={() =>
-        navigate(`/detalle-de-libro/${book.id}`, {
-          state: {
-            pickUpDate: filters.pickUpDate,
-            dropOffDate: filters.dropOffDate,
-          },
-        })
-      }
+      to={{
+        pathname: `/detalle-de-libro/${book.id}`,
+        search: searchParams.toString()
+      }}
       className="group grid h-full cursor-pointer grid-rows-[1fr_auto] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:shadow-xl hover:shadow-gray-300/60"
     >
       <img
@@ -105,7 +99,7 @@ const BookCardHome = ({
             alt="User avatar"
             src={
               book.owner.img
-                ? `${REST_SERVER_URL}/${book.owner.img}`
+                ? `${import.meta.env.VITE_API_URL}${book.owner.img}`
                 : "/assets/default-img.png"
             }
             className="size-6 rounded-full object-cover ring-2 ring-gray-100"
@@ -113,7 +107,7 @@ const BookCardHome = ({
           <p className="w-fit text-sm font-bold">@{book.owner.name}</p>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 

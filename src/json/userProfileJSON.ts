@@ -18,6 +18,7 @@ export type UserProfileUpdateJSON = {
   name: string
   description: string
   email: string
+  img: string
   cel: string
   location: string
   timestamp: string

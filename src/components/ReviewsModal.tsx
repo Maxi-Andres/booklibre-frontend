@@ -7,8 +7,9 @@ import {
 } from "@headlessui/react"
 import { StarIcon, XMarkIcon } from "@heroicons/react/24/solid"
 import type { BookReview } from "@/domain/review"
-import { reserveService } from "@/services/reserveService"
 import { showToast } from "@/utils/toast"
+import { ReviewItem } from "./ReviewItem"
+import { bookService } from "@/services/bookService"
 
 type ReviewsModalProps = {
   bookId: number
@@ -39,9 +40,10 @@ export default function ReviewsModal({
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
 
+
   const loadReviews = async (pageToLoad: number) => {
     try {
-      const response = await reserveService.getReviews(bookId, pageToLoad, 4)
+      const response = await bookService.getReviews(bookId, pageToLoad, 4)
       // console.log('Respuesta del back:', response.data)
       setReviews((prev) => [...prev, ...response.data])
       // esto hace que no me deje seguir haciendo llamadas al back si la última respuesta no trajo 2 reseñas, es decir, si ya no hay más
@@ -57,7 +59,7 @@ export default function ReviewsModal({
     if (initialReviews.length < 4) {
       setHasMore(false)
     } else {
-      const response = await reserveService.getReviews(bookId, 1, 4)
+      const response = await bookService.getReviews(bookId, 1, 4)
       // console.log('Respuesta del back:', response.data)
       setHasMore(response.data.length > 0)
     }
@@ -127,29 +129,7 @@ export default function ReviewsModal({
                   </p>
                 ) : (
                   reviews.map((review, i) => (
-                    <div
-                      key={`${review.id}-${i}`}
-                      className="flex gap-4 rounded-xl border border-gray-100 bg-gray-100 p-4"
-                    >
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#E0E7FF] text-sm font-bold text-[#26A67D]">
-                        {review.reviewerName.charAt(0).toUpperCase()}
-                        {review.reviewerName.charAt(1)?.toUpperCase()}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="text-sm font-semibold text-gray-900">
-                            {review.reviewerName}
-                          </span>
-                          <span className="text-xs text-gray-400">
-                            {review.timestamp}
-                          </span>
-                        </div>
-                        <StarRating rating={review.rating} />
-                        <p className="mt-1.5 text-sm leading-relaxed text-gray-600 italic">
-                          "{review.review}"
-                        </p>
-                      </div>
-                    </div>
+                    <ReviewItem key={`${review.id}-${i}`} review={review} i={i} />
                   ))
                 )}
 

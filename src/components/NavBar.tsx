@@ -1,13 +1,9 @@
 import logo from "@/assets/logo.svg"
-import { Link, useLocation } from "react-router"
+import { Link, useLocation, useSearchParams } from "react-router"
 import { useAuth } from "@/context/AuthContext"
 import { useNavigate } from "react-router"
-import { useOnInit } from "@/hooks/UseOnInit"
-import { userProfileService } from "@/services/userProfileService"
-import { useEffect, useState } from "react"
-import { UserProfile } from "@/domain/userProfile"
 import { useUserProfile } from "@/context/UserProfileContext"
-import { REST_SERVER_URL } from "@/config/configuration"
+import { UserKind } from "@/types/userKind"
 
 const navigation = [
   { name: "Inicio", href: "/", current: true },
@@ -16,11 +12,12 @@ const navigation = [
 ]
 
 export default function NavBar() {
-  const location = useLocation()
+  const [searchParams] = useSearchParams() // home searchParams (para mantener filtros)
+  const location = useLocation() // para mantener filtros al navegar
   const navigate = useNavigate()
   const { logout } = useAuth()
   // const [user, setUser] = useState<UserProfile>(new UserProfile())
-  const { userProfile, refreshProfile } = useUserProfile()
+  const { userProfile } = useUserProfile()
 
   const handleLogout = () => {
     logout()
@@ -29,16 +26,16 @@ export default function NavBar() {
 
   const isActive = (path: string) => location.pathname === path
 
-  useOnInit(() => {
-    refreshProfile()
-  })
-
   return (
     <nav className="border-b border-gray-100 bg-white shadow-sm">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link 
+            to={userProfile.userType === UserKind.PUBLISHER ? "#" : `/?${searchParams.toString()}`}
+            className={`flex items-center gap-2 ${userProfile.userType === UserKind.PUBLISHER ? "cursor-default" : ""}`}
+            onClick={(e) => userProfile.userType === UserKind.PUBLISHER && e.preventDefault()}
+          >
             <img src={logo} className="h-6 w-6" alt="Logo" />
             <span className="text-xl font-bold tracking-tight text-gray-900">
               Book<span className="font-extra-bold">Libre</span>
@@ -50,8 +47,10 @@ export default function NavBar() {
             {navigation.map((item) => (
               <Link
                 key={item.name}
-                to={item.href}
+                to={item.name == "Inicio" ? `/?${searchParams.toString()}` : item.href}
                 className={`px-3 py-2 text-sm font-semibold transition-colors duration-150 ${
+                  (item.name == "Inicio" && userProfile.userType == UserKind.PUBLISHER) ? "hidden" : ""
+                } ${
                   isActive(item.href)
                     ? "text-blue-500"
                     : "text-[#636F80] hover:text-gray-900"
@@ -79,7 +78,7 @@ export default function NavBar() {
                 alt="User avatar"
                 src={
                   userProfile.img
-                    ? `${REST_SERVER_URL}/${userProfile.img}`
+                    ? `${import.meta.env.VITE_API_URL}${userProfile.img}`
                     : "/assets/default-img.png"
                 }
                 className="size-8 rounded-full object-cover ring-2 ring-gray-100"

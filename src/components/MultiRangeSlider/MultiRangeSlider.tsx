@@ -10,6 +10,8 @@ import './multiRangeSlider.css'
 const MultiRangeSlider = ({
     min,
     max,
+    initialMin,
+    initialMax,
     trackColor = "#cecece",
     onChange,
     rangeColor = "#ff0303",
@@ -17,16 +19,18 @@ const MultiRangeSlider = ({
 } : {
   min: number,
   max: number,
+  initialMin?: number,
+  initialMax?: number,
   trackColor: string,
   onChange: ({min, max} : { min: number, max: number }) => void,
   rangeColor: string,
   width: string,
 }) => {
 
-    const [minVal, setMinVal] = useState(min);
-    const [maxVal, setMaxVal] = useState(max);
-    const minValRef = useRef(min);
-    const maxValRef = useRef(max);
+    const [minVal, setMinVal] = useState(initialMin ?? min);
+    const [maxVal, setMaxVal] = useState(initialMax ?? max);
+    const minValRef = useRef(initialMin ?? min);
+    const maxValRef = useRef(initialMax ?? max);
     const range = useRef<HTMLDivElement>(null);
 
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import axios from "axios"
-import { bookService } from "./bookService"
+import { bookService } from "../services/bookService"
 import { Book } from "@/domain/book"
 import { Author } from "@/domain/author"
 import { BookType } from "@/types/bookType"
