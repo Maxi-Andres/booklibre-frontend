@@ -7,7 +7,7 @@ import { Book } from "@/domain/book"
 import { getId } from "@/context/AuthContext"
 
 export type BookJSON = {
-  id: number
+  id: string
   title: string
   bookType: BookType // string?
   desc: string

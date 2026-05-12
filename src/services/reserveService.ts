@@ -18,7 +18,7 @@ class ReserveService {
   }
 
   async createReservation(
-    bookId: number,
+    bookId: string,
     pickUpDate: string,
     dropOffDate: string,
   ) {
@@ -96,14 +96,14 @@ class ReserveService {
     )
   }
 
-  async getReservedDates(bookId: number) {
+  async getReservedDates(bookId: string) {
     return axios.get<ReservationDates[]>(
       `${import.meta.env.VITE_API_URL}/reservations/book/${bookId}/dates`,
     )
   }
 
   async getBibliokarmas(
-    bookId: number,
+    bookId: string,
     userId: number,
     pickUpDate: string,
     dropOffDate: string,

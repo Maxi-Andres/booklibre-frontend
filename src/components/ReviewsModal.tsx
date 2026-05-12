@@ -12,7 +12,7 @@ import { ReviewItem } from "./ReviewItem"
 import { bookService } from "@/services/bookService"
 
 type ReviewsModalProps = {
-  bookId: number
+  bookId: string
   bookTitle?: string
   initialReviews?: BookReview[]
 }

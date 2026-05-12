@@ -47,7 +47,7 @@ class BookService {
     return data
   }
 
-  async getBookDetail(id: number) {
+  async getBookDetail(id: string) {
     const queryById = () =>
       axios.get<BookJSON>(import.meta.env.VITE_API_URL + "/book-detail/" + id, {
         params: { userId: getId() },
@@ -80,7 +80,7 @@ class BookService {
     return genderFilters
   }
 
-  async getReviews(bookId: number, page: number, pageSize: number) {
+  async getReviews(bookId: string, page: number, pageSize: number) {
       return axios.get<BookReview[]>(
         `${import.meta.env.VITE_API_URL}/book-review/${bookId}?page=${page}&pageSize=${pageSize}`,
       )

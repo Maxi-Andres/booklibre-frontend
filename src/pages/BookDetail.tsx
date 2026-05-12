@@ -23,13 +23,13 @@ export default function BookDetail() {
   const [searchParams] = useSearchParams()
 
   const getReservedDates = async () => {
-    const res = await reserveService.getReservedDates(Number(id))
+    const res = await reserveService.getReservedDates(id!)
     setReservedDates(res.data)
   }
 
   const getBook = async () => {
     try {
-      const bookResponse = await bookService.getBookDetail(Number(id))
+      const bookResponse = await bookService.getBookDetail(id!)
       setBook(bookResponse)
     } catch (error) {
       showToast.httpError(error, "Error al cargar libro")
@@ -40,7 +40,7 @@ export default function BookDetail() {
 
   const getBookReviews = async () => {
     try {
-      const response = await bookService.getReviews(Number(id), 0, 4)
+      const response = await bookService.getReviews(id!, 0, 4)
       setReviews(response.data)
       // console.log('Reseñas cargadas:', response.data)
     } catch (error) {
@@ -224,7 +224,7 @@ export default function BookDetail() {
                 ) : (
                   reviews.length >= 2 && (
                     <ReviewsModal
-                      bookId={book.id}
+                      bookId={book.id!}
                       bookTitle={book.title}
                       initialReviews={reviews}
                     />

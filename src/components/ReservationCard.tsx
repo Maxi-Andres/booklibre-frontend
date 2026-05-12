@@ -46,7 +46,7 @@ export function ReservationCard({
 
   const handleConfirmReservation = async () => {
     try {
-      await reserveService.createReservation(book.id, pickUpDate, dropOffDate)
+      await reserveService.createReservation(book.id!, pickUpDate, dropOffDate)
       await refreshProfile()
       showToast.success(
         "Reserva confirmada! Seras redireccionado a la página principal",
@@ -61,8 +61,8 @@ export function ReservationCard({
   const recalculateBibliokarmas = async (pickup: string, dropoff: string) => {
     const userId = getId()
     const res = await reserveService.getBibliokarmas(
-      book.id,
-      userId,
+      book.id!,
+      userId!,
       pickup,
       dropoff,
     )
