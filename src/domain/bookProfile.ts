@@ -1,7 +1,7 @@
 import type { ProfileBookJSON } from "@/json/bookJSON"
 
 export class BookProfile {
-  id: number
+  id: string
   title: string
   authorName: string
   gender: string
@@ -10,7 +10,7 @@ export class BookProfile {
   state: string
 
   constructor(
-    id: number = -1,
+    id: string = "",
     title: string = "",
     authorName: string = "",
     gender: string = "",
