@@ -4,6 +4,7 @@ import { BookConditionStyle } from "@/types/bookCondition"
 import { BookTypeLabels, BookTypeStyle } from "@/types/bookType"
 import { IconStar } from "@tabler/icons-react"
 import { Link, useSearchParams } from "react-router"
+import { bookService } from "@/services/bookService"
 
 const BookCardHome = ({
   book,
@@ -11,7 +12,7 @@ const BookCardHome = ({
   book: Book
 }) => {
   const [searchParams] = useSearchParams()
-  
+
   return (
     <Link
       key={book.id}
@@ -19,6 +20,7 @@ const BookCardHome = ({
         pathname: `/detalle-de-libro/${book.id}`,
         search: searchParams.toString()
       }}
+      onClick={() => { bookService.registerClick(book.id) }}
       className="group grid h-full cursor-pointer grid-rows-[1fr_auto] rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.03] hover:shadow-xl hover:shadow-gray-300/60"
     >
       <img

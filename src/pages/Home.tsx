@@ -52,7 +52,6 @@ export default function Home() {
   // FILTERING, SORTING AND PAGINATION STATES
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([])
   const [searchParams, setSearchParams] = useSearchParams()
-  const navigate = useNavigate()
   
 
   // Leer los filtros de la URL con fallback a initialFilters
@@ -191,11 +190,12 @@ export default function Home() {
   }
 
   //* ==== APPLY FILTERS & RESTART PAGE ====
-  const handleApplyFilters = (filters: BookFilters) => {
+  const handleApplyFilters = () => {
     //  console.log("Applying filters: ", filters)
     setPage(0)
-    syncToURL(filters)
-    getFilteredBooksPage(filters)
+    const newFilters = updateSimpleFilter("page", 0)
+    syncToURL(newFilters)
+    getFilteredBooksPage(newFilters)
   }
 
   //* ==== CLEAR FILTERS & RESTART PAGE ====
@@ -208,7 +208,7 @@ export default function Home() {
   const handleClearFilters = () => {
     updateSortOptions(initialSortOptions[0].value) // resetea la opcion de ordenamiento al default
     setFilters(initialFilters)
-    handleApplyFilters(initialFilters)
+    handleApplyFilters()
     setFilterKey((prev) => prev + 1) // fuerza el remount del slider
   }
 
@@ -232,7 +232,7 @@ export default function Home() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Enter") {
-        handleApplyFilters(filters)
+        handleApplyFilters()
       }
     }
     window.addEventListener("keydown", handleKeyDown)
@@ -439,7 +439,7 @@ export default function Home() {
                 >
                   <button
                     type="button"
-                    onClick={() => handleApplyFilters(filters)}
+                    onClick={() => handleApplyFilters()}
                     className="mt-4 inline-block rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-150 ease-out hover:scale-[1.08] hover:bg-blue-600"
                   >
                     Aplicar Filtros
@@ -480,7 +480,7 @@ export default function Home() {
                       }
                     />
                     <button
-                      onClick={() => handleApplyFilters(filters)}
+                      onClick={() => handleApplyFilters()}
                       className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
                     >
                       Buscar

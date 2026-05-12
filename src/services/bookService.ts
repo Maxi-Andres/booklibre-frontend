@@ -49,9 +49,19 @@ class BookService {
 
   async getBookDetail(id: number) {
     const queryById = () =>
-      axios.get<BookJSON>(import.meta.env.VITE_API_URL + "/book-detail/" + id)
+      axios.get<BookJSON>(import.meta.env.VITE_API_URL + "/book-detail/" + id, {
+        params: { userId: getId() },
+      }) 
     const bookJSON = await getAxiosData(queryById)
     return Book.fromJSON(bookJSON)
+  }
+
+  async registerClick(id: number) {
+    const response = () =>
+      axios.post(import.meta.env.VITE_API_URL + `/book-detail/${id}/click`, null, { 
+        params: { userId: getId() }
+      })
+    return await getAxiosData(response)
   }
 
   async getBookGenders() {
