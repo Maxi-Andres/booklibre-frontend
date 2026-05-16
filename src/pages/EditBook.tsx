@@ -29,9 +29,9 @@ export default function EditBook() {
 
     const fetchBook = async () => {
       try {
-        const found = await bookService.getBookDetail(Number(id))
+        const found = await bookService.getBookDetail(String(id))
         if (found) {
-          if (found.owner.id !== Number(getId())) {
+          if (found.owner.id !==getId()) {
             navigate("/", { replace: true })
             return
           }
@@ -61,7 +61,7 @@ export default function EditBook() {
 
     try {
       if (isEditing) {
-        await bookService.updateBook(Number(id), book)
+        await bookService.updateBook(String(id), book)
         showToast.success(
           "Libro actualizado con éxito, redirigiendote a tu perfil",
         )

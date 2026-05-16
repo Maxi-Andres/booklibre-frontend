@@ -21,7 +21,7 @@ export default function ProfileBook({
   bookGender: string
   bookState: string
   timestamp: Date
-  bookId: Number
+  bookId: String
   onDelete: () => void
 }) {
   const navigate = useNavigate()
@@ -31,7 +31,7 @@ export default function ProfileBook({
       showToast.error("No es posible eliminar un libro que esta prestado")
     } else {
       try {
-        await bookService.deleteBook(Number(bookId))
+        await bookService.deleteBook(String(bookId))
         showToast.success("Libro eliminado con éxito")
         onDelete()
       } catch (error: any) {

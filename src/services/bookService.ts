@@ -16,14 +16,14 @@ class BookService {
     return await getAxiosData(response)
   }
 
-  async updateBook(id: number, book: Book): Promise<Book> {
+  async updateBook(id: string, book: Book): Promise<Book> {
     const dto = toBookCreateDTO(book)
     const response = () =>
       axios.put<Book>(import.meta.env.VITE_API_URL + `/edit-book/${id}`, dto)
     return await getAxiosData(response)
   }
 
-  async deleteBook(id: number): Promise<void> {
+  async deleteBook(id: string): Promise<void> {
     await axios.delete(import.meta.env.VITE_API_URL + `/delete-book/${id}`)
   }
 

@@ -1,7 +1,7 @@
 import type { UserKind } from "@/types/userKind"
 
 export type UserProfileJSON = {
-  id: number
+  id: string //cambio por nuevo id UUID
   name: string
   description: string
   email: string
@@ -14,7 +14,7 @@ export type UserProfileJSON = {
 }
 
 export type UserProfileUpdateJSON = {
-  id: number
+  id: string //cambio por nuevo id UUID
   name: string
   description: string
   email: string
