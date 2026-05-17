@@ -26,7 +26,7 @@ export type BookJSON = {
 }
 
 export type ProfileBookJSON = {
-  id: number
+  id: string
   title: string
   author: string
   gender: BookGender
@@ -38,7 +38,7 @@ export type ProfileBookJSON = {
 //esto es para la creacion/actualizacion del libro
 
 export type BookCreateDTO = {
-  ownerId: number
+  ownerId: string
   book: {
     bookType: BookType
     title: string
@@ -59,7 +59,7 @@ export type BookCreateDTO = {
 }
 
 export const toBookCreateDTO = (book: Book): BookCreateDTO => ({
-  ownerId: Number(getId()),
+  ownerId: String(getId()),
   book: {
     bookType: book.bookType,
     title: book.title,

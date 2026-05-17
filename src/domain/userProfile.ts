@@ -7,7 +7,7 @@ export class UserProfile {
   NAME_MAX_CHARACTERS: number = 15
   errors: ValidationMessage[] = []
 
-  id: number
+  id: string //cambio por el nuevo UUID
   name: string
   description: string
   img: string
@@ -19,7 +19,7 @@ export class UserProfile {
   userType: UserKind
 
   constructor(
-    id: number = 0,
+    id: string = "", //cambio por el nuevo UUID
     name: string = "",
     description: string = "",
     img: string = "",

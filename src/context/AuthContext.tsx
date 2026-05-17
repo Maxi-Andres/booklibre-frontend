@@ -4,7 +4,7 @@ import { useOnInit } from "@/hooks/UseOnInit"
 import { tokenMemory, tokenService } from "@/services/tokenService"
 
 export interface AuthUser {
-  id: number
+  id: string //cambio por nuevo id UUID
   accessToken: string
   refreshToken: string
   sessionExpiresAt: number
@@ -18,7 +18,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-export const getId = (): number | null => {
+export const getId = (): string | null => {
   try {
     const stored = localStorage.getItem("user") || sessionStorage.getItem("user")
     return stored ? (JSON.parse(stored) as Omit<AuthUser, 'accessToken'>).id : null
