@@ -104,7 +104,7 @@ class ReserveService {
 
   async getBibliokarmas(
     bookId: string,
-    userId: number,
+    userId: string,
     pickUpDate: string,
     dropOffDate: string,
   ) {

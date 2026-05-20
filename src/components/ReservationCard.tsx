@@ -49,9 +49,9 @@ export function ReservationCard({
       await reserveService.createReservation(book.id!, pickUpDate, dropOffDate)
       await refreshProfile()
       showToast.success(
-        "Reserva confirmada! Seras redireccionado a la página principal",
+        "Reserva confirmada! Seras redireccionado a la página principal", 1000 
       )
-      setTimeout(() => navigate("/"), 4000)
+      setTimeout(() => navigate("/"), 1500)
     } catch (error) {
       showToast.httpError(error, "Error al reservar")
       // window.location.reload()
