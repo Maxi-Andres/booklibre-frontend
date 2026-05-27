@@ -44,6 +44,12 @@ export default function ProfileBookList({ userKind }: { userKind: string }) {
     getUserOwnBooks(filter, newSort, activePage)
   }
 
+  const toggleClicksSort = () => {
+    const newSort = sort == "CLICKS_ASC" ? "CLICKS_DESC" : "CLICKS_ASC"
+    setSort(newSort)
+    getUserOwnBooks(filter, newSort, activePage)
+  }
+
   const getUserOwnBooks = async (
     filterCriteria: string,
     sortCriteria: string,
@@ -152,6 +158,20 @@ export default function ProfileBookList({ userKind }: { userKind: string }) {
               />
             </button>
           </div>
+          <div className="flex w-24 gap-3 items-center justify-center">
+            <p>Clicks</p>
+            <button
+              className={`hover:cursor-pointer ${disabledButtonCondition}`}
+              disabled={isReader}
+            >
+              <ArrowsDownUpIcon
+                size={15}
+                onClick={() => {
+                  toggleClicksSort()
+                }}
+              />
+            </button>
+          </div>
           <div className="flex w-28 items-center justify-center">
             <p>Disponibilidad</p>
           </div>
@@ -188,6 +208,7 @@ export default function ProfileBookList({ userKind }: { userKind: string }) {
                   bookName={book.title}
                   bookState={book.state}
                   timestamp={book.timestamp}
+                  clicks={1234567}
                   onDelete={() => getUserOwnBooks(filter, sort, activePage)}
                 />
               ))}

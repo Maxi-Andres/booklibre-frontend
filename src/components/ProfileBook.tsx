@@ -1,6 +1,7 @@
 import { DotIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react"
 import { useNavigate } from "react-router"
 import { formatDate } from "@/utils/formatDate"
+import { formatClicks } from "@/utils/formatClicks"
 import { bookService } from "@/services/bookService"
 import { showToast } from "@/utils/toast"
 import { ownerStatusStyles, ownerStatusLabels } from "@/types/statusLabels"
@@ -13,6 +14,7 @@ export default function ProfileBook({
   bookState,
   timestamp,
   bookId,
+  clicks,
   onDelete,
 }: {
   bookImg: string
@@ -22,6 +24,7 @@ export default function ProfileBook({
   bookState: string
   timestamp: Date
   bookId: String
+  clicks: number
   onDelete: () => void
 }) {
   const navigate = useNavigate()
@@ -49,6 +52,9 @@ export default function ProfileBook({
         <p className="truncate">{bookName}</p>
         <p className="truncate text-sm text-gray-400">{bookAuthor}</p>
         <p className="truncate text-sm text-gray-400">{bookGender}</p>
+      </div>
+      <div className="flex w-24 items-center justify-center text-sm text-gray-400">
+        {formatClicks(clicks)}
       </div>
       <div className="w-28">
         <span
