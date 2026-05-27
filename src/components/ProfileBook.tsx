@@ -46,9 +46,9 @@ export default function ProfileBook({
   }
 
   return (
-    <div className="flex h-25 items-center justify-center gap-4 pr-2 pl-2">
+    <div className="flex h-25 items-center gap-4 pr-2 pl-2">
       <img src={bookImg} alt="" className="h-23 w-15 rounded-lg" />
-      <div className="max-w-65 min-w-0 flex-1">
+      <div className="min-w-0 flex-1">
         <p className="truncate">{bookName}</p>
         <p className="truncate text-sm text-gray-400">{bookAuthor}</p>
         <p className="truncate text-sm text-gray-400">{bookGender}</p>
@@ -65,7 +65,7 @@ export default function ProfileBook({
         </span>
       </div>
       <div className="w-24 text-sm text-gray-400">{formatDate(timestamp)}</div>
-      <div className="w-14">
+      <div className="w-16">
         <button className="text-gray-500 hover:cursor-pointer hover:text-gray-900">
           <PencilIcon
             size={24}

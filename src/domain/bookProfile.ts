@@ -8,6 +8,7 @@ export class BookProfile {
   timestamp: Date
   imageSrc: string
   state: string
+  clicks: number
 
   constructor(
     id: string = "",
@@ -16,7 +17,8 @@ export class BookProfile {
     gender: string = "",
     timestamp: Date = new Date(),
     imageSrc: string = "",
-    state: string = ""
+    state: string = "",
+    clicks: number = 0
   ) {
   
     this.id = id
@@ -26,6 +28,7 @@ export class BookProfile {
     this.timestamp = timestamp
     this.imageSrc = imageSrc
     this.state = state
+    this.clicks = clicks
   }
 
   static fromJSON(

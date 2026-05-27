@@ -33,6 +33,7 @@ export type ProfileBookJSON = {
   timestamp: Date
   imageSrc: string
   state: string
+  clicks: number
 }
 
 //esto es para la creacion/actualizacion del libro
