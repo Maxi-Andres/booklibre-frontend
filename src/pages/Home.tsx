@@ -24,10 +24,11 @@ import OrderDirectionArrow from "@/components/OrderDirectionArrow/OrderDirection
 import { useOnInit } from "@/hooks/UseOnInit"
 import { showToast } from "@/utils/toast"
 import SelectSorting from "@/components/SelectSorting"
-import { useNavigate, useSearchParams } from "react-router"
+import { useSearchParams } from "react-router"
 
 const initialSortOptions = [
-  { name: "Título", value: "title", current: true },
+  { name: "Relevancia", value: "bookClicks", current: true },
+  { name: "Título", value: "title", current: false },
   { name: "Autor", value: "author.name", current: false },
   { name: "Dueño", value: "owner.name", current: false },
 ]
@@ -44,7 +45,7 @@ const initialFilters: BookFilters = {
   ownersName: "",
   page: 0,
   pageSize: 6,
-  sortBy: "title",
+  sortBy: "bookClicks",
   ascending: true,
 }
 
