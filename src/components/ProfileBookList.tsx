@@ -44,6 +44,12 @@ export default function ProfileBookList({ userKind }: { userKind: string }) {
     getUserOwnBooks(filter, newSort, activePage)
   }
 
+  const toggleClicksSort = () => {
+    const newSort = sort == "CLICKS_ASC" ? "CLICKS_DESC" : "CLICKS_ASC"
+    setSort(newSort)
+    getUserOwnBooks(filter, newSort, activePage)
+  }
+
   const getUserOwnBooks = async (
     filterCriteria: string,
     sortCriteria: string,
@@ -81,7 +87,7 @@ export default function ProfileBookList({ userKind }: { userKind: string }) {
   })
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex min-w-0 flex-1 flex-col">
       <section className="mb-4 flex justify-between">
         <p className="text-2xl font-bold">Gestión de Mis Libros</p>
         {userKind !== UserKind.READER
@@ -101,7 +107,7 @@ export default function ProfileBookList({ userKind }: { userKind: string }) {
         
       </section>
 
-      <section className="flex h-102 flex-1 flex-col gap-1 rounded-xl border border-gray-200 bg-white">
+      <section className="flex h-102 min-h-0 flex-1 flex-col gap-1 overflow-hidden rounded-xl border border-gray-200 bg-white">
         <section className="flex gap-2 p-4">
           <Tag
             disabled={isReader}
@@ -152,6 +158,20 @@ export default function ProfileBookList({ userKind }: { userKind: string }) {
               />
             </button>
           </div>
+          <div className="flex w-24 gap-3 items-center justify-center">
+            <p>Clicks</p>
+            <button
+              className={`hover:cursor-pointer ${disabledButtonCondition}`}
+              disabled={isReader}
+            >
+              <ArrowsDownUpIcon
+                size={15}
+                onClick={() => {
+                  toggleClicksSort()
+                }}
+              />
+            </button>
+          </div>
           <div className="flex w-28 items-center justify-center">
             <p>Disponibilidad</p>
           </div>
@@ -176,8 +196,8 @@ export default function ProfileBookList({ userKind }: { userKind: string }) {
             Cargando...
           </div>
         ) : userKind != UserKind.READER ? (
-          <div>
-            <section className="pr-1">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+            <section className="min-h-0 flex-1 overflow-y-auto pr-1">
               {shownBooks.map((book) => (
                 <ProfileBook
                   key={book.id}
@@ -188,6 +208,7 @@ export default function ProfileBookList({ userKind }: { userKind: string }) {
                   bookName={book.title}
                   bookState={book.state}
                   timestamp={book.timestamp}
+                  clicks={book.clicks}
                   onDelete={() => getUserOwnBooks(filter, sort, activePage)}
                 />
               ))}

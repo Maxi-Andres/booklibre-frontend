@@ -7,7 +7,7 @@ import { Book } from "@/domain/book"
 import { getId } from "@/context/AuthContext"
 
 export type BookJSON = {
-  id: number
+  id: string
   title: string
   bookType: BookType // string?
   desc: string
@@ -26,19 +26,20 @@ export type BookJSON = {
 }
 
 export type ProfileBookJSON = {
-  id: number
+  id: string
   title: string
   author: string
   gender: BookGender
   timestamp: Date
   imageSrc: string
   state: string
+  clicks: number
 }
 
 //esto es para la creacion/actualizacion del libro
 
 export type BookCreateDTO = {
-  ownerId: number
+  ownerId: string
   book: {
     bookType: BookType
     title: string
@@ -59,7 +60,7 @@ export type BookCreateDTO = {
 }
 
 export const toBookCreateDTO = (book: Book): BookCreateDTO => ({
-  ownerId: Number(getId()),
+  ownerId: String(getId()),
   book: {
     bookType: book.bookType,
     title: book.title,

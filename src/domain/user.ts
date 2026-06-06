@@ -11,7 +11,7 @@ export interface UserJSONResponse {
   expirationTime: number
   email: string
   name: string
-  id: number
+  id: string
 }
 
 export interface UserJSONRegisterRequest {

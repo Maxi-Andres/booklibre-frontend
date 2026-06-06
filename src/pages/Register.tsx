@@ -61,6 +61,14 @@ export const Register = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
+        <div className="flex items-center justify-center" >
+        <img
+            src={"/logo.svg"
+            }
+            alt="logo booklibre"
+            className="h-26 w-26  rounded-full object-cover"
+          />
+        </div>
         {/* Header */}
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">Book Libre</h1>

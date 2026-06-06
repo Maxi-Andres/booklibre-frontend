@@ -1,22 +1,24 @@
 import type { ProfileBookJSON } from "@/json/bookJSON"
 
 export class BookProfile {
-  id: number
+  id: string
   title: string
   authorName: string
   gender: string
   timestamp: Date
   imageSrc: string
   state: string
+  clicks: number
 
   constructor(
-    id: number = -1,
+    id: string = "",
     title: string = "",
     authorName: string = "",
     gender: string = "",
     timestamp: Date = new Date(),
     imageSrc: string = "",
-    state: string = ""
+    state: string = "",
+    clicks: number = 0
   ) {
   
     this.id = id
@@ -26,6 +28,7 @@ export class BookProfile {
     this.timestamp = timestamp
     this.imageSrc = imageSrc
     this.state = state
+    this.clicks = clicks
   }
 
   static fromJSON(

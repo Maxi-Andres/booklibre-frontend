@@ -16,14 +16,14 @@ class BookService {
     return await getAxiosData(response)
   }
 
-  async updateBook(id: number, book: Book): Promise<Book> {
+  async updateBook(id: string, book: Book): Promise<Book> {
     const dto = toBookCreateDTO(book)
     const response = () =>
       axios.put<Book>(import.meta.env.VITE_API_URL + `/edit-book/${id}`, dto)
     return await getAxiosData(response)
   }
 
-  async deleteBook(id: number): Promise<void> {
+  async deleteBook(id: string): Promise<void> {
     await axios.delete(import.meta.env.VITE_API_URL + `/delete-book/${id}`)
   }
 
@@ -47,11 +47,21 @@ class BookService {
     return data
   }
 
-  async getBookDetail(id: number) {
+  async getBookDetail(id: string) {
     const queryById = () =>
-      axios.get<BookJSON>(import.meta.env.VITE_API_URL + "/book-detail/" + id)
+      axios.get<BookJSON>(import.meta.env.VITE_API_URL + "/book-detail/" + id, {
+        params: { userId: getId() },
+      }) 
     const bookJSON = await getAxiosData(queryById)
     return Book.fromJSON(bookJSON)
+  }
+
+  async registerClick(id: number) {
+    const response = () =>
+      axios.post(import.meta.env.VITE_API_URL + `/book-detail/${id}/click`, null, { 
+        params: { userId: getId() }
+      })
+    return await getAxiosData(response)
   }
 
   async getBookGenders() {
@@ -70,7 +80,7 @@ class BookService {
     return genderFilters
   }
 
-  async getReviews(bookId: number, page: number, pageSize: number) {
+  async getReviews(bookId: string, page: number, pageSize: number) {
       return axios.get<BookReview[]>(
         `${import.meta.env.VITE_API_URL}/book-review/${bookId}?page=${page}&pageSize=${pageSize}`,
       )

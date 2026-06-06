@@ -46,12 +46,12 @@ export function ReservationCard({
 
   const handleConfirmReservation = async () => {
     try {
-      await reserveService.createReservation(book.id, pickUpDate, dropOffDate)
+      await reserveService.createReservation(book.id!, pickUpDate, dropOffDate)
       await refreshProfile()
       showToast.success(
-        "Reserva confirmada! Seras redireccionado a la página principal",
+        "Reserva confirmada! Seras redireccionado a la página principal", 1000 
       )
-      setTimeout(() => navigate("/"), 4000)
+      setTimeout(() => navigate("/"), 1500)
     } catch (error) {
       showToast.httpError(error, "Error al reservar")
       // window.location.reload()
@@ -61,8 +61,8 @@ export function ReservationCard({
   const recalculateBibliokarmas = async (pickup: string, dropoff: string) => {
     const userId = getId()
     const res = await reserveService.getBibliokarmas(
-      book.id,
-      userId,
+      book.id!,
+      userId!,
       pickup,
       dropoff,
     )

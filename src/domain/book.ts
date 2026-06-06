@@ -10,7 +10,7 @@ import { ValidationMessage } from "@/validation/validationMessage"
 export class Book {
   errors: ValidationMessage[] = []
 
-  public id: number
+  public id: string
   public title: string
   public bookType: BookType
   public desc: string
@@ -28,7 +28,7 @@ export class Book {
   public rating: number = 0
 
   constructor(
-    id: number = 0,
+    id: string = "",
     title: string = "",
     bookType: BookType = BookType.Common,
     desc: string = "",

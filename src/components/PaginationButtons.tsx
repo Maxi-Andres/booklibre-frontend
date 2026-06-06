@@ -21,7 +21,7 @@ export default function PaginationButtons( {page, listSize, totalPages, onPageCh
     <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-6">
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <p className="text-sm text-gray-300">
-          Showing <span className="font-medium">{listSize}</span> of{' '}<span className="font-medium">{filteredBooksLength}</span> results
+          Mostrando <span className="font-medium">{listSize}</span> de{' '}<span className="font-medium">{filteredBooksLength}</span> resultados
         </p>
         <nav aria-label="Pagination" className="isolate inline-flex -space-x-px rounded-md">
           <button
