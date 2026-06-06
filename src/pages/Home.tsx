@@ -24,12 +24,13 @@ import OrderDirectionArrow from "@/components/OrderDirectionArrow/OrderDirection
 import { useOnInit } from "@/hooks/UseOnInit"
 import { showToast } from "@/utils/toast"
 import SelectSorting from "@/components/SelectSorting"
-import { useNavigate, useSearchParams } from "react-router"
+import { useSearchParams } from "react-router"
 
 const initialSortOptions = [
   { name: "Título", value: "title", current: true },
   { name: "Autor", value: "author.name", current: false },
   { name: "Dueño", value: "owner.name", current: false },
+  // { name: "Relevancia", value: "bookClicks", current: false },
 ]
 
 const initialFilters: BookFilters = {

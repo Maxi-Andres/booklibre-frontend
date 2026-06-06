@@ -3,6 +3,11 @@ import SegmentedBar, { type Segment } from "@/components/dashboard/SegmentedBar"
 import ProgressRow from "@/components/dashboard/ProgressRow"
 import LeaderboardRow from "@/components/dashboard/LeaderboardRow"
 import ActivityItem, { type Activity } from "@/components/dashboard/ActivityItem"
+import { useOnInit } from "@/hooks/UseOnInit"
+import { graphqlService } from "@/services/graphqlService"
+import { useState } from "react"
+import type { BookConversion } from "@/domain/BookConversion"
+import { showToast } from "@/utils/toast"
 
 /* ===== Datos hardcodeados (sin services / endpoints por ahora) ===== */
 
@@ -15,21 +20,13 @@ const catalogStatus: Segment[] = [
   { label: "Devueltos", value: 40, color: "bg-red-400" },
 ]
 
-type Conversion = {
-  title: string
-  clicks: number
-  reservas: number
-  rate: number
-  barColor: string
-}
-
-const conversions: Conversion[] = [
-  { title: "Ficciones", clicks: 210, reservas: 42, rate: 20, barColor: "bg-blue-700" },
-  { title: "El Aleph", clicks: 320, reservas: 48, rate: 15, barColor: "bg-blue-500" },
-  { title: "Rayuela", clicks: 280, reservas: 35, rate: 12, barColor: "bg-cyan-500" },
-  { title: "Martín Fierro", clicks: 190, reservas: 19, rate: 10, barColor: "bg-blue-500" },
+const conversionsBarColors = [
+  { barColor: "bg-blue-800" },
+  { barColor: "bg-blue-600" },
+  { barColor: "bg-blue-500" },
+  { barColor: "bg-cyan-500" },
+  { barColor: "bg-cyan-400" },
 ]
-const maxRate = Math.max(...conversions.map((c) => c.rate))
 
 const leaderboard = [
   { rank: 1, name: "Sofía M.", value: 1240, img: "https://i.pravatar.cc/150?img=47" },
@@ -56,6 +53,27 @@ const recentActivity: Activity[] = [
 ]
 
 export default function ControlPanel() {
+  const [conversions, setConversions] = useState<BookConversion[]>([])
+  const [maxRate, setMaxRate] = useState(0.0)
+  
+  const getConversionRate = async () => {
+    try {
+      const response = await graphqlService.getConversionRate()
+      setConversions(response)
+      const rates = response.map((c) => c.conversionRate)
+      const newMaxRate = rates.length ? Math.max(...rates) : 0
+      setMaxRate(newMaxRate)
+      // console.log(response)
+      // console.log(newMaxRate)
+    } catch (error) {
+      showToast.httpError(error)
+    }
+  }
+
+  useOnInit( () => {
+    getConversionRate()
+  })
+
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-8">
       <div className="mx-auto flex max-w-5xl flex-col gap-4">
@@ -77,14 +95,14 @@ export default function ControlPanel() {
           {/* Tasa de conversión */}
           <DashboardCard title="Tasa de conversión">
             <div className="flex flex-col gap-5">
-              {conversions.map((c) => (
+              {conversions.map((c, idx) => (
                 <ProgressRow
                   key={c.title}
                   title={c.title}
-                  subtitle={`${c.clicks} clicks · ${c.reservas} reservas`}
-                  value={`${c.rate}%`}
-                  progress={(c.rate / maxRate) * 100}
-                  barColor={c.barColor}
+                  subtitle={`${c.clicks} clicks · ${c.reservations} reservas`}
+                  value={`${(c.conversionRate * 100).toPrecision(2)}%`}
+                  progress={maxRate > 0 ? (c.conversionRate / maxRate) * 100 : 0}
+                  barColor={conversionsBarColors[idx].barColor}
                 />
               ))}
             </div>
