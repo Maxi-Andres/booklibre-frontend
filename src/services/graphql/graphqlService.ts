@@ -1,4 +1,4 @@
-import type { BookConversion } from "@/domain/BookConversion";
+import type { BookConversion } from "@/domain/graphql/BookConversion";
 import axios from "axios";
 
  export type GraphQLResponse<T> = {

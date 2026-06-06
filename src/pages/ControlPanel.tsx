@@ -4,9 +4,9 @@ import ProgressRow from "@/components/dashboard/ProgressRow"
 import LeaderboardRow from "@/components/dashboard/LeaderboardRow"
 import ActivityItem, { type Activity } from "@/components/dashboard/ActivityItem"
 import { useOnInit } from "@/hooks/UseOnInit"
-import { graphqlService } from "@/services/graphqlService"
+import { graphqlService } from "@/services/graphql/graphqlService"
 import { useState } from "react"
-import type { BookConversion } from "@/domain/BookConversion"
+import type { BookConversion } from "@/domain/graphql/BookConversion"
 import { showToast } from "@/utils/toast"
 
 /* ===== Datos hardcodeados (sin services / endpoints por ahora) ===== */
