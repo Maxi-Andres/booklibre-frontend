@@ -10,6 +10,7 @@ import { InputField } from "@/components/InputField"
 import { useAuth, type AuthUser } from "@/context/AuthContext"
 import { showToast } from "@/utils/toast"
 import { useOnInit } from "@/hooks/UseOnInit"
+import VisibilityIcon from "@/components/VisibilityIcon"
 
 export const Login = () => {
   const navigate = useNavigate()
@@ -21,6 +22,7 @@ export const Login = () => {
   
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
   const [rememberMe, setRememberMe] = useState(false)
+  const [visibilityType, setVisibilityType] = useState("password")
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
     ev.preventDefault()
@@ -111,10 +113,11 @@ export const Login = () => {
               <InputField
                 label="Password"
                 id="password"
-                type="password"
+                type={visibilityType}
                 value={user.password}
                 onChange={(e) => update("password", e.target.value)}
               />
+              <VisibilityIcon visibilityTipe={visibilityType} setVisibilityTipe={setVisibilityType} />
               <ValidationField field="password" errors={errors} />
             </div>
           </div>

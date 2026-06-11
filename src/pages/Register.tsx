@@ -8,6 +8,8 @@ import { userService } from "@/services/UserService"
 import { getErrorMessage } from "@/validation/errorHandler"
 import { InputField } from "@/components/InputField"
 import { showToast } from "@/utils/toast"
+import { vi } from "vitest"
+import VisibilityIcon from "@/components/VisibilityIcon"
 
 export const Register = () => {
   const navigate = useNavigate()
@@ -18,6 +20,7 @@ export const Register = () => {
     passwordRetry: "",
   })
   const [errors, setErrors] = useState<Array<ValidationMessage>>([])
+  const [visibilityType, setVisibilityType] = useState("password")
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
     ev.preventDefault()
@@ -111,25 +114,27 @@ export const Register = () => {
               <InputField
                 label="Contraseña"
                 id="password"
-                type="password"
+                type={visibilityType}
                 required
                 value={user.password}
                 onChange={(e) => update("password", e.target.value)}
               />
+              <VisibilityIcon visibilityTipe={visibilityType} setVisibilityTipe={setVisibilityType} />
               <ValidationField field="password" errors={errors} />
+            </div>
 
-              {/* Password retry */}
-              <div>
-                <InputField
-                  label="Confirmar contraseña"
-                  id="password-retry"
-                  type="password"
-                  required
-                  value={user.passwordRetry}
-                  onChange={(e) => update("passwordRetry", e.target.value)}
-                />
-                <ValidationField field="password" errors={errors} />
-              </div>
+            {/* Password retry */}
+            <div>
+              <InputField
+                label="Confirmar contraseña"
+                id="password-retry"
+                type={visibilityType}
+                required
+                value={user.passwordRetry}
+                onChange={(e) => update("passwordRetry", e.target.value)}
+              />
+              <VisibilityIcon visibilityTipe={visibilityType} setVisibilityTipe={setVisibilityType} />
+              <ValidationField field="password" errors={errors} />
             </div>
           </div>
 
