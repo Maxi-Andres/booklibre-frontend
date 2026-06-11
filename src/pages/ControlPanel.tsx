@@ -8,6 +8,8 @@ import { graphqlService } from "@/services/graphql/graphqlService"
 import { useState } from "react"
 import type { BookConversion } from "@/domain/graphql/BookConversion"
 import { showToast } from "@/utils/toast"
+import type { BookTypeCalification } from "@/domain/graphql/BookTypeCalification"
+import { BookTypeLabels } from "@/types/bookType"
 
 /* ===== Datos hardcodeados (sin services / endpoints por ahora) ===== */
 
@@ -36,13 +38,6 @@ const leaderboard = [
   { rank: 5, name: "Camila T.", value: 870, img: "https://i.pravatar.cc/150?img=44" },
 ]
 
-type Rating = { title: string; score: number }
-
-const ratings: Rating[] = [
-  { title: "Común", score: 4.1 },
-  { title: "Con dedicatoria", score: 4.5 },
-  { title: "Coleccionable", score: 4.7 },
-]
 const MAX_SCORE = 5
 
 const recentActivity: Activity[] = [
@@ -55,7 +50,8 @@ const recentActivity: Activity[] = [
 export default function ControlPanel() {
   const [conversions, setConversions] = useState<BookConversion[]>([])
   const [maxRate, setMaxRate] = useState(0.0)
-  
+  const [calification, setCalification] = useState<BookTypeCalification[]>([])
+
   const getConversionRate = async () => {
     try {
       const response = await graphqlService.getConversionRate()
@@ -70,8 +66,18 @@ export default function ControlPanel() {
     }
   }
 
-  useOnInit( () => {
+  const getBookTypeCalification = async () => {
+    try {
+      const response = await graphqlService.getCalificationAnalisis()
+      setCalification(response)
+    } catch (error) {
+      showToast.httpError(error)
+    }
+  }
+
+  useOnInit(() => {
     getConversionRate()
+    getBookTypeCalification()
   })
 
   return (
@@ -126,12 +132,12 @@ export default function ControlPanel() {
           {/* Calificación por tipo */}
           <DashboardCard title="Calificación por tipo">
             <div className="flex flex-col gap-5">
-              {ratings.map((r) => (
+              {calification.map((bookTypeCalification) => (
                 <ProgressRow
-                  key={r.title}
-                  title={r.title}
-                  value={r.score.toString()}
-                  progress={(r.score / MAX_SCORE) * 100}
+                  key={bookTypeCalification.bookType}
+                  title={BookTypeLabels[bookTypeCalification.bookType]}
+                  value={bookTypeCalification.avgRating.toFixed(2)}
+                  progress={(bookTypeCalification.avgRating / MAX_SCORE) * 100}
                   barColor="bg-violet-400"
                 />
               ))}
