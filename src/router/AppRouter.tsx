@@ -1,5 +1,5 @@
 import { PrivateLayer } from '@/components/PrivateLayer'
-import { PublisherLayer } from '@/components/PublisherLayer'
+import { PublisherLayer } from '@/layouts/PublisherLayer'
 import { useAuth } from '@/context/AuthContext'
 import { useUserProfile } from '@/context/UserProfileContext'
 import { useUserData } from '@/hooks/UseUserData'
@@ -14,6 +14,7 @@ import Profile from '@/pages/Profile'
 import { Register } from '@/pages/Register'
 import { useEffect, useMemo } from 'react'
 import { Navigate, Route, Routes } from 'react-router'
+import { AdminLayer } from '@/layouts/AdminLayer'
 
 const AppRouter = () => {
     const { user, isInitializing } = useAuth()
@@ -44,10 +45,12 @@ const AppRouter = () => {
           <Route path="/detalle-de-libro/:id" element={<BookDetail />} />
           <Route path="/prestamos-de-libros" element={<LoanDetails />} />
           <Route path="/perfil" element={<Profile />} />
-          <Route path="/dashboard" element={<ControlPanel/>}/>
           <Route element={<PublisherLayer />}>
             <Route path="/editar-libro/:id" element={<EditBook />} />
             <Route path="/crear-libro" element={<EditBook />} />
+          </Route>
+          <Route element={<AdminLayer />}>
+            <Route path="/dashboard" element={<ControlPanel />} />
           </Route>
         </Route>
 

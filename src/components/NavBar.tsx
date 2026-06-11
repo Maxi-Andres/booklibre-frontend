@@ -27,6 +27,14 @@ export default function NavBar() {
 
   const isActive = (path: string) => location.pathname === path
 
+  const isHomeAndPublisher = (itemName: string) => {
+    return itemName === "Inicio" && userProfile.userType === UserKind.PUBLISHER
+  }
+
+  const isDashboardAndNotAdmin = (itemName: string) => {
+    return itemName === "Panel de Control" && userProfile.userType !== UserKind.ADMIN
+  }
+
   return (
     <nav className="border-b border-gray-100 bg-white shadow-sm">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
@@ -50,7 +58,7 @@ export default function NavBar() {
                 key={item.name}
                 to={item.name == "Inicio" ? `/?${searchParams.toString()}` : item.href}
                 className={`px-3 py-2 text-sm font-semibold transition-colors duration-150 ${
-                  (item.name == "Inicio" && userProfile.userType == UserKind.PUBLISHER) ? "hidden" : ""
+                  (isHomeAndPublisher(item.name) || isDashboardAndNotAdmin(item.name)) ? "hidden" : ""
                 } ${
                   isActive(item.href)
                     ? "text-blue-500"

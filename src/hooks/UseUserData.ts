@@ -6,6 +6,7 @@ const ROLE_MAP: Record<string, UserKind> = {
   PUBLISHER: UserKind.PUBLISHER,
   READER:    UserKind.READER,
   COMBINED:  UserKind.COMBINED,
+  ADMIN:     UserKind.ADMIN,
 }
 
 export function useUserData() {
@@ -27,5 +28,8 @@ export function useUserData() {
   const isReader = () =>
     getRole() === UserKind.READER
 
-  return { getRole, isPublisher, isReader, isCombined }
+  const isAdmin = () =>
+    getRole() === UserKind.ADMIN
+
+  return { getRole, isPublisher, isReader, isCombined, isAdmin }
 }

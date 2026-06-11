@@ -27,10 +27,10 @@ import SelectSorting from "@/components/SelectSorting"
 import { useSearchParams } from "react-router"
 
 const initialSortOptions = [
-  { name: "Relevancia", value: "bookClicks", current: true },
-  { name: "Título", value: "title", current: false },
+  { name: "Título", value: "title", current: true },
   { name: "Autor", value: "author.name", current: false },
   { name: "Dueño", value: "owner.name", current: false },
+  { name: "Relevancia", value: "bookClicks", current: false },
   // { name: "Relevancia", value: "bookClicks", current: false },
 ]
 
@@ -46,7 +46,7 @@ const initialFilters: BookFilters = {
   ownersName: "",
   page: 0,
   pageSize: 6,
-  sortBy: "bookClicks",
+  sortBy: "title",
   ascending: true,
 }
 
