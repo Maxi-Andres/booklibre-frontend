@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useUserProfile } from '@/context/UserProfileContext'
 import { useUserData } from '@/hooks/UseUserData'
 import BookDetail from '@/pages/BookDetail'
+import ControlPanel from '@/pages/ControlPanel'
 import EditBook from '@/pages/EditBook'
 import Home from '@/pages/Home'
 import LoanDetails from '@/pages/LoanDetails'
@@ -43,6 +44,7 @@ const AppRouter = () => {
           <Route path="/detalle-de-libro/:id" element={<BookDetail />} />
           <Route path="/prestamos-de-libros" element={<LoanDetails />} />
           <Route path="/perfil" element={<Profile />} />
+          <Route path="/dashboard" element={<ControlPanel/>}/>
           <Route element={<PublisherLayer />}>
             <Route path="/editar-libro/:id" element={<EditBook />} />
             <Route path="/crear-libro" element={<EditBook />} />

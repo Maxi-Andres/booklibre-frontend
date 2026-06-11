@@ -31,6 +31,7 @@ const initialSortOptions = [
   { name: "Título", value: "title", current: false },
   { name: "Autor", value: "author.name", current: false },
   { name: "Dueño", value: "owner.name", current: false },
+  // { name: "Relevancia", value: "bookClicks", current: false },
 ]
 
 const initialFilters: BookFilters = {
