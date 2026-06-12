@@ -11,6 +11,7 @@ import { useAuth, type AuthUser } from "@/context/AuthContext"
 import { showToast } from "@/utils/toast"
 import { useOnInit } from "@/hooks/UseOnInit"
 import VisibilityIcon from "@/components/VisibilityIcon"
+import { getTokenPayload } from "@/utils/jwt"
 
 export const Login = () => {
   const navigate = useNavigate()
@@ -47,7 +48,9 @@ export const Login = () => {
           sessionExpiresAt: 0
         }
         login(userData, validation.accessToken, validation.expirationTime, rememberMe)
-        navigate("/", { replace: true })
+        const payload = getTokenPayload(validation.accessToken)
+        const role = (payload?.role?.[0] ?? payload?.roles?.[0])?.replace("ROLE_", "")
+        navigate(role === "ADMIN" ? "/dashboard" : "/", { replace: true })
       }
     } catch (error) {
       showToast.httpError(error, "Error al iniciar sesion")
