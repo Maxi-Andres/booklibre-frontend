@@ -19,7 +19,7 @@ import { AdminLayer } from '@/layouts/AdminLayer'
 const AppRouter = () => {
     const { user, isInitializing } = useAuth()
   const { userProfile, refreshProfile } = useUserProfile()
-  const { isPublisher } = useUserData()
+  const { isPublisher, isAdmin } = useUserData()
 
   useEffect(() => {
     if (user && !isInitializing) refreshProfile()
@@ -36,12 +36,12 @@ const AppRouter = () => {
   return (
     <Routes>
         {/* Rutas públicas - siempre disponibles */}
-        <Route path="/login" element={user ? <Navigate to="/" replace />  : <Login />}/>
+        <Route path="/login" element={user ? <Navigate to={isAdmin() ? "/dashboard" : "/"} replace /> : <Login />}/>
         <Route path="/registrarse" element={!user ? <Register /> : <Navigate to="/" replace />} />
 
         {/* Rutas privadas */}
         <Route element={<PrivateLayer />}>
-          <Route path="/" element={publisherRedirect ? <Navigate to="/perfil" replace/> : <Home />} />
+          <Route path="/" element={isAdmin() ? <Navigate to="/dashboard" replace /> : publisherRedirect ? <Navigate to="/perfil" replace/> : <Home />} />
           <Route path="/detalle-de-libro/:id" element={<BookDetail />} />
           <Route path="/prestamos-de-libros" element={<LoanDetails />} />
           <Route path="/perfil" element={<Profile />} />

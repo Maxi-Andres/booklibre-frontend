@@ -27,6 +27,8 @@ export default function NavBar() {
 
   const isActive = (path: string) => location.pathname === path
 
+  const isAdmin = () => userProfile.userType === UserKind.ADMIN
+
   const isHomeAndPublisher = (itemName: string) => {
     return itemName === "Inicio" && userProfile.userType === UserKind.PUBLISHER
   }
@@ -35,15 +37,19 @@ export default function NavBar() {
     return itemName === "Panel de Control" && userProfile.userType !== UserKind.ADMIN
   }
 
+  const isBlockedForAdmin = (itemName: string) => {
+    return isAdmin() && itemName !== "Panel de Control"
+  }
+
   return (
     <nav className="border-b border-gray-100 bg-white shadow-sm">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link 
-            to={userProfile.userType === UserKind.PUBLISHER ? "#" : `/?${searchParams.toString()}`}
-            className={`flex items-center gap-2 ${userProfile.userType === UserKind.PUBLISHER ? "cursor-default" : ""}`}
-            onClick={(e) => userProfile.userType === UserKind.PUBLISHER && e.preventDefault()}
+          <Link
+            to={(userProfile.userType === UserKind.PUBLISHER || isAdmin()) ? "#" : `/?${searchParams.toString()}`}
+            className={`flex items-center gap-2 ${(userProfile.userType === UserKind.PUBLISHER || isAdmin()) ? "cursor-default" : ""}`}
+            onClick={(e) => (userProfile.userType === UserKind.PUBLISHER || isAdmin()) && e.preventDefault()}
           >
             <img src={logo} className="h-6 w-6" alt="Logo" />
             <span className="text-xl font-bold tracking-tight text-gray-900">
@@ -58,7 +64,7 @@ export default function NavBar() {
                 key={item.name}
                 to={item.name == "Inicio" ? `/?${searchParams.toString()}` : item.href}
                 className={`px-3 py-2 text-sm font-semibold transition-colors duration-150 ${
-                  (isHomeAndPublisher(item.name) || isDashboardAndNotAdmin(item.name)) ? "hidden" : ""
+                  (isHomeAndPublisher(item.name) || isDashboardAndNotAdmin(item.name) || isBlockedForAdmin(item.name)) ? "hidden" : ""
                 } ${
                   isActive(item.href)
                     ? "text-blue-500"
@@ -82,7 +88,7 @@ export default function NavBar() {
               </span>
             </div>
 
-            <Link to={"/perfil"}>
+            <Link to={isAdmin() ? "#" : "/perfil"} onClick={(e) => isAdmin() && e.preventDefault()}>
               <img
                 alt="User avatar"
                 src={
