@@ -2,25 +2,19 @@ import DashboardCard from "@/components/dashboard/DashboardCard"
 import SegmentedBar, { type Segment } from "@/components/dashboard/SegmentedBar"
 import ProgressRow from "@/components/dashboard/ProgressRow"
 import LeaderboardRow from "@/components/dashboard/LeaderboardRow"
-import ActivityItem, { type Activity } from "@/components/dashboard/ActivityItem"
+import ActivityItem, {
+  type Activity,
+} from "@/components/dashboard/ActivityItem"
 import { useOnInit } from "@/hooks/UseOnInit"
 import { graphqlService } from "@/services/graphql/graphqlService"
 import { useState } from "react"
 import type { BookConversion } from "@/domain/graphql/BookConversion"
 import { showToast } from "@/utils/toast"
 import type { BookTypeCalification } from "@/domain/graphql/BookTypeCalification"
+import type { CatalogHealth } from "@/domain/graphql/CatalogHealth"
 import { BookTypeLabels } from "@/types/bookType"
 
 /* ===== Datos hardcodeados (sin services / endpoints por ahora) ===== */
-
-const TOTAL_BOOKS = 200
-
-const catalogStatus: Segment[] = [
-  { label: "Prestados", value: 42, color: "bg-orange-500" },
-  { label: "Nunca reservados", value: 88, color: "bg-neutral-500" },
-  { label: "Reserva a futuro", value: 30, color: "bg-green-500" },
-  { label: "Devueltos", value: 40, color: "bg-red-400" },
-]
 
 const conversionsBarColors = [
   { barColor: "bg-blue-800" },
@@ -31,18 +25,52 @@ const conversionsBarColors = [
 ]
 
 const leaderboard = [
-  { rank: 1, name: "Sofía M.", value: 1240, img: "https://i.pravatar.cc/150?img=47" },
-  { rank: 2, name: "Mateo R.", value: 1180, img: "https://i.pravatar.cc/150?img=12" },
-  { rank: 3, name: "Valentina G.", value: 1095, img: "https://i.pravatar.cc/150?img=45" },
-  { rank: 4, name: "Lucas P.", value: 980, img: "https://i.pravatar.cc/150?img=33" },
-  { rank: 5, name: "Camila T.", value: 870, img: "https://i.pravatar.cc/150?img=44" },
+  {
+    rank: 1,
+    name: "Sofía M.",
+    value: 1240,
+    img: "https://i.pravatar.cc/150?img=47",
+  },
+  {
+    rank: 2,
+    name: "Mateo R.",
+    value: 1180,
+    img: "https://i.pravatar.cc/150?img=12",
+  },
+  {
+    rank: 3,
+    name: "Valentina G.",
+    value: 1095,
+    img: "https://i.pravatar.cc/150?img=45",
+  },
+  {
+    rank: 4,
+    name: "Lucas P.",
+    value: 980,
+    img: "https://i.pravatar.cc/150?img=33",
+  },
+  {
+    rank: 5,
+    name: "Camila T.",
+    value: 870,
+    img: "https://i.pravatar.cc/150?img=44",
+  },
 ]
 
 const MAX_SCORE = 5
 
 const recentActivity: Activity[] = [
-  { type: "alta", book: "Pedro Páramo", owner: "Juan Pérez", time: "hace 5 min" },
-  { type: "reserva", text: "Reserva de Ficciones · Mateo R.", time: "hace 22 min" },
+  {
+    type: "alta",
+    book: "Pedro Páramo",
+    owner: "Juan Pérez",
+    time: "hace 5 min",
+  },
+  {
+    type: "reserva",
+    text: "Reserva de Ficciones · Mateo R.",
+    time: "hace 22 min",
+  },
   { type: "alta", book: "El túnel", owner: "Lucía Gómez", time: "hace 1 h" },
   { type: "reserva", text: "Reserva de Rayuela · Sofía M.", time: "hace 2 h" },
 ]
@@ -51,6 +79,33 @@ export default function ControlPanel() {
   const [conversions, setConversions] = useState<BookConversion[]>([])
   const [maxRate, setMaxRate] = useState(0.0)
   const [calification, setCalification] = useState<BookTypeCalification[]>([])
+  const [catalogHealth, setCatalogHealth] = useState<CatalogHealth | null>(null)
+
+  // Buckets disjuntos...
+  const catalogStatus: Segment[] = catalogHealth
+    ? [
+        {
+          label: "Prestados",
+          value: catalogHealth.prestados,
+          color: "bg-orange-500",
+        },
+        {
+          label: "Nunca reservados",
+          value: catalogHealth.disponiblesNuncaReservados,
+          color: "bg-neutral-500",
+        },
+        {
+          label: "Reserva a futuro",
+          value: catalogHealth.disponiblesReservadosAFuturo,
+          color: "bg-green-500",
+        },
+        {
+          label: "Devueltos",
+          value: catalogHealth.disponiblesDevueltos,
+          color: "bg-red-400",
+        },
+      ]
+    : []
 
   const getConversionRate = async () => {
     try {
@@ -75,9 +130,19 @@ export default function ControlPanel() {
     }
   }
 
+  const getCatalogHealth = async () => {
+    try {
+      const response = await graphqlService.getCatalogHealth()
+      setCatalogHealth(response)
+    } catch (error) {
+      showToast.httpError(error)
+    }
+  }
+
   useOnInit(() => {
     getConversionRate()
     getBookTypeCalification()
+    getCatalogHealth()
   })
 
   return (
@@ -89,7 +154,9 @@ export default function ControlPanel() {
           headerRight={
             <span>
               Total{" "}
-              <span className="font-bold text-gray-900">{TOTAL_BOOKS}</span>
+              <span className="font-bold text-gray-900">
+                {catalogHealth?.total ?? 0}
+              </span>
             </span>
           }
         >
@@ -107,7 +174,9 @@ export default function ControlPanel() {
                   title={c.title}
                   subtitle={`${c.clicks} clicks · ${c.reservations} reservas`}
                   value={`${(c.conversionRate * 100).toPrecision(2)}%`}
-                  progress={maxRate > 0 ? (c.conversionRate / maxRate) * 100 : 0}
+                  progress={
+                    maxRate > 0 ? (c.conversionRate / maxRate) * 100 : 0
+                  }
                   barColor={conversionsBarColors[idx].barColor}
                 />
               ))}
