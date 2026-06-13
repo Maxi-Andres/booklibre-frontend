@@ -1,5 +1,6 @@
 import type { BookConversion } from "@/domain/graphql/BookConversion";
 import type { BookTypeCalification } from "@/domain/graphql/BookTypeCalification";
+import type { CatalogHealth } from "@/domain/graphql/CatalogHealth";
 import axios from "axios";
 
  export type GraphQLResponse<T> = {
@@ -48,6 +49,30 @@ class GraphQLService {
       }
       return response.data.data.calificactionAnalisis
   }
+
+	async getCatalogHealth(): Promise<CatalogHealth> {
+		const response = await axios.post<GraphQLResponse<{ catalogHealth: CatalogHealth }>>(
+			import.meta.env.VITE_API_URL + `/graphql`,
+			{
+				query: `
+					query {
+						catalogHealth {
+							total
+							prestados
+							disponiblesNuncaReservados
+							disponiblesReservadosAFuturo
+							disponiblesDevueltos
+						}
+					}
+					`,
+			}
+		)
+		if (response.data.errors) {
+			throw new Error("Error en consulta GraphQL: "
+				+ response.data.errors.map(e => e.message).join(", "))
+		}
+		return response.data.data.catalogHealth
+	}
 
 }
 

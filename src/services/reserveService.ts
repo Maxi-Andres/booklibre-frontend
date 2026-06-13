@@ -13,7 +13,9 @@ class ReserveService {
 
   async getUserReadBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
-      axios.get<number>(import.meta.env.VITE_API_URL + `/userReadBooks/${this.id}`),
+      axios.get<number>(
+        import.meta.env.VITE_API_URL + `/userReadBooks/${this.id}`,
+      ),
     )
   }
 
@@ -38,9 +40,12 @@ class ReserveService {
     pageSize: number,
   ) {
     // ): Promise<ReservationDTO[]> {
-    const { data } = await axios.get(import.meta.env.VITE_API_URL + "/lector/" + userId, {
-      params: { search, page, pageSize },
-    })
+    const { data } = await axios.get(
+      import.meta.env.VITE_API_URL + "/lector/" + userId,
+      {
+        params: { search, page, pageSize },
+      },
+    )
     // console.log(data, "del user")
     return data
   }
@@ -52,10 +57,13 @@ class ReserveService {
     pageSize: number,
   ) {
     // ): Promise<ReservationDTO[]> {
-    const { data } = await axios.get(import.meta.env.VITE_API_URL + "/owner/" + userId, {
-      params: { search, page, pageSize },
-    })
-    // console.log(data, "que le hicieron al user")
+    const { data } = await axios.get(
+      import.meta.env.VITE_API_URL + "/owner/" + userId,
+      {
+        params: { search, page, pageSize },
+      },
+    )
+    console.log(data, "que le hicieron al user")
     return data
   }
 
@@ -92,7 +100,9 @@ class ReserveService {
 
   async getUserLentBooksNumber(): Promise<number> {
     return getAxiosData<number>(() =>
-      axios.get<number>(import.meta.env.VITE_API_URL + `/userLentBooks/${this.id}`),
+      axios.get<number>(
+        import.meta.env.VITE_API_URL + `/userLentBooks/${this.id}`,
+      ),
     )
   }
 
