@@ -7,6 +7,11 @@ import customAxios from "./customAxios"
 import { tokenMemory, tokenService } from "@/services/tokenService"
 
 const authInterceptor = (config: InternalAxiosRequestConfig) => {
+  // Los endpoints de auth (login/register/refresh) NO deben llevar el access token:
+  // si quedó uno viejo/expirado, el JwtAuthenticationFilter del back lo rechaza con 401
+  // antes de llegar al permitAll, y el login falla. (Mismo criterio que el storageGuard.)
+  if (config.url?.includes("/api/auth")) return config
+
   const accessToken = tokenMemory.get()
   if (accessToken) {
     config.headers["Authorization"] = `Bearer ${accessToken}`

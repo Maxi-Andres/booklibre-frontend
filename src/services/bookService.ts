@@ -56,7 +56,7 @@ class BookService {
     return Book.fromJSON(bookJSON)
   }
 
-  async registerClick(id: number) {
+  async registerClick(id: string) {
     const response = () =>
       axios.post(import.meta.env.VITE_API_URL + `/book-detail/${id}/click`, null, { 
         params: { userId: getId() }
