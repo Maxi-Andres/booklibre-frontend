@@ -1,4 +1,4 @@
-import { PrivateLayer } from '@/components/PrivateLayer'
+import { PrivateLayer } from '@/layouts/PrivateLayer'
 import { PublisherLayer } from '@/layouts/PublisherLayer'
 import { useAuth } from '@/context/AuthContext'
 import { useUserProfile } from '@/context/UserProfileContext'

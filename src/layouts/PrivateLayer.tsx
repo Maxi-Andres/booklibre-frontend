@@ -1,5 +1,5 @@
 import { Outlet, Navigate } from "react-router"
-import NavBar from "./NavBar"
+import NavBar from "../components/NavBar"
 import { useAuth } from "@/context/AuthContext"
 
 export const PrivateLayer = () => {

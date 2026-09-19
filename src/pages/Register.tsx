@@ -1,14 +1,12 @@
-import { Link, useNavigate, useLocation } from "react-router"
+import { Link, useNavigate } from "react-router"
 import type { UserJSONRegisterRequest } from "@/domain/user"
 import { UserType } from "@/domain/user"
 import { useState } from "react"
 import { ValidationMessage } from "@/validation/validationMessage"
 import ValidationField from "@/validation/ValidationField"
 import { userService } from "@/services/UserService"
-import { getErrorMessage } from "@/validation/errorHandler"
 import { InputField } from "@/components/InputField"
 import { showToast } from "@/utils/toast"
-import { vi } from "vitest"
 import VisibilityIcon from "@/components/VisibilityIcon"
 
 export const Register = () => {
@@ -24,8 +22,6 @@ export const Register = () => {
 
   const handleSubmit = async (ev: React.SubmitEvent<HTMLFormElement>) => {
     ev.preventDefault()
-
-    const form = ev.currentTarget as HTMLFormElement
 
     const userRegister = new UserType(user.email, user.password, user.name)
 
