@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react"
+import { render, screen } from "@testing-library/react"
 import { beforeEach, describe, expect, vi, test } from "vitest"
 import BookDetail from "@/pages/BookDetail"
 import { bookService } from "@/services/bookService"
@@ -39,6 +39,7 @@ const mockBook = Object.assign(new Book(), {
   isbn: "978-84-206-3667-2",
   publishDate: "1925-04-26",
   condition: "MUY BUENO",
+  rating: 4.5,
   imageSrc: "https://imagen.com/proceso.jpg",
 })
 
@@ -72,7 +73,7 @@ describe("Tests para BookDetail", () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.spyOn(bookService, "getBookDetail").mockResolvedValue(mockBook)
-    vi.spyOn(reserveService, "getReviews").mockResolvedValue(
+    vi.spyOn(bookService, "getReviews").mockResolvedValue(
       mockAxiosResponse(mockReviews),
     )
     vi.spyOn(reserveService, "getReservedDates").mockResolvedValue(
@@ -86,24 +87,22 @@ describe("Tests para BookDetail", () => {
   describe("Carga del libro", () => {
     test("muestra el estado de carga inicial", () => {
       renderBookDetail()
-      expect(screen.findByText("Cargando...")).toBeTruthy()
+      expect(screen.getByText("Cargando...")).toBeInTheDocument()
     })
 
     test("muestra el título y autor cuando carga correctamente", async () => {
       renderBookDetail()
-      await waitFor(() => {
-        expect(
-          screen.findByRole("heading", { name: "El Proceso" }),
-        ).toBeTruthy()
-        expect(screen.findByText("Franz Kafka")).toBeTruthy()
-      })
+      expect(
+        await screen.findByRole("heading", { name: "El Proceso" }),
+      ).toBeInTheDocument()
+      expect(screen.getByText("Franz Kafka")).toBeInTheDocument()
     })
 
     test("muestra la sinopsis del libro", async () => {
       renderBookDetail()
-      await waitFor(() =>
-        expect(screen.findByText("Una pesadilla burocrática.")).toBeTruthy(),
-      )
+      expect(
+        await screen.findByText("Una pesadilla burocrática."),
+      ).toBeInTheDocument()
     })
 
     test('muestra "Libro no encontrado" si el servicio falla', async () => {
@@ -111,54 +110,52 @@ describe("Tests para BookDetail", () => {
         new Error("Not found"),
       )
       renderBookDetail()
-      await waitFor(() =>
-        expect(screen.getByText("Libro no encontrado")).toBeTruthy(),
-      )
+      expect(await screen.findByText("Libro no encontrado")).toBeInTheDocument()
     })
   })
 
   describe("Reseñas", () => {
-    test("muestra el promedio de rating de las reseñas", async () => {
+    test("pide la primera página de reseñas del libro", async () => {
       renderBookDetail()
-      // promedio de 5 y 4 = 4.5
-      await waitFor(() => expect(screen.findByText("(4.5)")).toBeTruthy())
+      await screen.findByRole("heading", { name: "El Proceso" })
+      expect(bookService.getReviews).toHaveBeenCalledWith("1", 0, 4)
+    })
+
+    test("muestra el rating del libro que informa el backend", async () => {
+      renderBookDetail()
+      expect(await screen.findByText("(4.5)")).toBeInTheDocument()
     })
 
     test("muestra las primeras dos reseñas", async () => {
       renderBookDetail()
-      await waitFor(() => {
-        expect(screen.findByText('"Obra maestra."')).toBeTruthy()
-        expect(screen.findByText('"Brillante pero incómodo."')).toBeTruthy()
-      })
+      expect(await screen.findByText('"Obra maestra."')).toBeInTheDocument()
+      expect(screen.getByText('"Brillante pero incómodo."')).toBeInTheDocument()
     })
 
     test("muestra el botón ver más si hay 2 o más reseñas", async () => {
       renderBookDetail()
-      await waitFor(() =>
-        expect(screen.findByText("Ver todas las reseñas →")).toBeTruthy(),
-      )
+      expect(
+        await screen.findByText("Ver todas las reseñas →"),
+      ).toBeInTheDocument()
     })
 
     test("no muestra el botón ver más si hay menos de 2 reseñas", async () => {
-      vi.spyOn(reserveService, "getReviews").mockResolvedValueOnce(
+      vi.spyOn(bookService, "getReviews").mockResolvedValueOnce(
         mockAxiosResponse([mockReviews[0]]),
       )
       renderBookDetail()
-      await waitFor(() => {
-        expect(screen.queryByText("Ver todas las reseñas →")).toBeNull()
-      })
+      await screen.findByText('"Obra maestra."')
+      expect(screen.queryByText("Ver todas las reseñas →")).toBeNull()
     })
 
     test("muestra mensaje cuando el libro no tiene reseñas", async () => {
-      vi.spyOn(reserveService, "getReviews").mockResolvedValueOnce(
+      vi.spyOn(bookService, "getReviews").mockResolvedValueOnce(
         mockAxiosResponse([]),
       )
       renderBookDetail()
-      await waitFor(() =>
-        expect(
-          screen.findByText("Este libro todavía no tiene reseñas."),
-        ).toBeTruthy(),
-      )
+      expect(
+        await screen.findByText("Este libro todavía no tiene reseñas."),
+      ).toBeInTheDocument()
     })
   })
 })

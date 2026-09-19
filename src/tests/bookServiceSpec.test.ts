@@ -20,7 +20,7 @@ const mockedDelete = vi.spyOn(axios, "delete")
 const VALID_ISBN = "978-0-306-40615-7"
 
 const mockBook = new Book(
-  1,
+  "1",
   "El Principito",
   BookType.Common,
   "Un libro hermoso",
@@ -46,7 +46,10 @@ describe("BookService", () => {
       await bookService.createBook(mockBook)
       expect(mockedPost).toHaveBeenCalledWith(
         expect.stringContaining("/create-book"),
-        expect.objectContaining({ title: "El Principito" }),
+        {
+          ownerId: "1",
+          book: expect.objectContaining({ title: "El Principito" }),
+        },
       )
     })
 
@@ -67,22 +70,25 @@ describe("BookService", () => {
   describe("updateBook", () => {
     it("debería llamar al endpoint correcto al actualizar un libro", async () => {
       mockedPut.mockResolvedValue({ status: 200, data: mockBook })
-      await bookService.updateBook(1, mockBook)
+      await bookService.updateBook("1", mockBook)
       expect(mockedPut).toHaveBeenCalledWith(
         expect.stringContaining("/edit-book/1"),
-        expect.objectContaining({ title: "El Principito" }),
+        {
+          ownerId: "1",
+          book: expect.objectContaining({ title: "El Principito" }),
+        },
       )
     })
 
     it("debería retornar el libro actualizado", async () => {
       mockedPut.mockResolvedValue({ status: 200, data: mockBook })
-      const result = await bookService.updateBook(1, mockBook)
+      const result = await bookService.updateBook("1", mockBook)
       expect(result).toEqual(mockBook)
     })
 
     it("debería lanzar un error si falla la actualización", async () => {
       mockedPut.mockRejectedValue(new Error("Error al actualizar libro"))
-      await expect(bookService.updateBook(1, mockBook)).rejects.toThrow(
+      await expect(bookService.updateBook("1", mockBook)).rejects.toThrow(
         "Error al actualizar libro",
       )
     })
@@ -91,7 +97,7 @@ describe("BookService", () => {
   describe("deleteBook", () => {
     it("debería llamar al endpoint correcto al eliminar un libro", async () => {
       mockedDelete.mockResolvedValue({ status: 200, data: undefined })
-      await bookService.deleteBook(1)
+      await bookService.deleteBook("1")
       expect(mockedDelete).toHaveBeenCalledWith(
         expect.stringContaining("/delete-book/1"),
       )
@@ -99,7 +105,7 @@ describe("BookService", () => {
 
     it("debería lanzar un error si falla la eliminación", async () => {
       mockedDelete.mockRejectedValue(new Error("Error al eliminar libro"))
-      await expect(bookService.deleteBook(1)).rejects.toThrow(
+      await expect(bookService.deleteBook("1")).rejects.toThrow(
         "Error al eliminar libro",
       )
     })

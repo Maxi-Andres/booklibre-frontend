@@ -1,15 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import axios from "axios"
 import { userService } from "../services/UserService"
-import { UserType } from "@/domain/user"
+import { UserType, type UserJSONResponse } from "@/domain/user"
 // para correrlos pnpm exec vitest run
 
 const mockedPost = vi.spyOn(axios, "post")
 
-const mockUserResponse = {
-  id: 1,
-  name: "Juan",
+const mockUserResponse: UserJSONResponse = {
+  accessToken: "access-token",
+  refreshToken: "",
+  expirationTime: 1800000,
   email: "juan@example.com",
+  name: "Juan",
+  id: "8f1c2c1e-1111-4a2b-9c3d-000000000001",
 }
 
 describe("UserService", () => {
@@ -18,15 +21,14 @@ describe("UserService", () => {
   })
 
   describe("login", () => {
-    it("debería retornar un UserType al loguearse correctamente", async () => {
+    it("debería devolver el access token y los datos de sesión del backend", async () => {
       mockedPost.mockResolvedValue({ data: mockUserResponse })
 
       const result = await userService.login("juan@example.com", "123456")
 
-      expect(result).toBeInstanceOf(UserType)
-      expect(result.email).toBe("juan@example.com")
-      expect(result.name).toBe("Juan")
-      expect(result.password).toBe("")
+      expect(result).toEqual(mockUserResponse)
+      expect(result.accessToken).toBe("access-token")
+      expect(result.expirationTime).toBe(1800000)
     })
 
     it("debería llamar al endpoint correcto con los datos correctos", async () => {
@@ -35,7 +37,7 @@ describe("UserService", () => {
       await userService.login("juan@example.com", "123456")
 
       expect(mockedPost).toHaveBeenCalledWith(
-        expect.stringContaining("/login"),
+        expect.stringMatching(/\/api\/auth$/),
         { email: "juan@example.com", password: "123456" },
       )
     })

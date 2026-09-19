@@ -85,6 +85,6 @@ describe("BookCard", () => {
     )
     expect(screen.getByText("Rayuela")).toBeInTheDocument()
     expect(screen.getByText("Cortázar")).toBeInTheDocument()
-    expect(screen.getByText("DEVUELTO")).toBeInTheDocument()
+    expect(screen.getByText("Devuelto")).toBeInTheDocument()
   })
 })
